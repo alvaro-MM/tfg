@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('drinks', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('slug');
+            $table->text('description');
+            $table->foreignId('category_id')->constrained('categories');
+            $table->foreignId('allergen_id')->constrained('allergens');
+            $table->foreignId('order_id')->constrained('orders');
             $table->timestamps();
         });
     }
