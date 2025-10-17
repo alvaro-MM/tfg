@@ -16,8 +16,14 @@ class BookingFactory extends Factory
      */
     public function definition(): array
     {
+        $name = 'Reserva ' . $this->faker->unique()->numberBetween(1, 5000);
         return [
-            //
+            'name' => $name,
+            'slug' => str($name)->slug(),
+            'description' => $this->faker->sentence(10),
+            'table_id' => \App\Models\table::factory(),
+            'user_id' => \App\Models\User::factory(),
+            'offer_id' => \App\Models\offer::factory(),
         ];
     }
 }

@@ -16,8 +16,14 @@ class ReviewFactory extends Factory
      */
     public function definition(): array
     {
+        $name = 'Reseña ' . $this->faker->unique()->numberBetween(1, 10000);
         return [
-            //
+            'name' => $name,
+            'slug' => str($name)->slug(),
+            'description' => $this->faker->paragraph(),
+            'user_id' => \App\Models\User::factory(),
+            'dish_id' => \App\Models\Dish::factory(),
+            'drink_id' => \App\Models\drink::factory(),
         ];
     }
 }

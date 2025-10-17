@@ -13,11 +13,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // Usuarios base
+        User::factory(5)->create();
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+        ]);
+
+        // Orden recomendado para respetar FKs sin ciclos
+        $this->call([
+            CategorySeeder::class,
+            AllergenSeeder::class,
+            TableSeeder::class,
+            MenuSeeder::class, // crea ofertas asociadas
+            OfferSeeder::class,
+            DrinkSeeder::class,
+            DishSeeder::class,
+            OrderSeeder::class,
+            BookingSeeder::class,
+            ReviewSeeder::class,
         ]);
     }
 }

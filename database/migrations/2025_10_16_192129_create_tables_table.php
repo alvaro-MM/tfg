@@ -16,8 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             $table->text('description');
-            $table->foreignId('order_id')->constrained('orders');
-            $table->foreignId('booking_id')->constrained('bookings');
             
             $table->timestamps();
         });

@@ -16,8 +16,11 @@ class TableFactory extends Factory
      */
     public function definition(): array
     {
+        $name = 'Mesa ' . $this->faker->unique()->numberBetween(1, 50);
         return [
-            //
+            'name' => $name,
+            'slug' => str($name)->slug(),
+            'description' => $this->faker->sentence(8),
         ];
     }
 }

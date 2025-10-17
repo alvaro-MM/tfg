@@ -16,8 +16,13 @@ class DrinkFactory extends Factory
      */
     public function definition(): array
     {
+        $name = $this->faker->unique()->words(2, true);
         return [
-            //
+            'name' => ucfirst($name),
+            'slug' => str($name)->slug(),
+            'description' => $this->faker->sentence(10),
+            'category_id' => \App\Models\category::query()->inRandomOrder()->value('id') ?? \App\Models\category::factory(),
+            'allergen_id' => \App\Models\allergen::query()->inRandomOrder()->value('id') ?? \App\Models\allergen::factory(),
         ];
     }
 }

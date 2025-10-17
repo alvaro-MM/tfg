@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             $table->text('description');
-            $table->foreignId('table_id')->constrained('tables');
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('offer_id')->constrained('offers');
+            $table->foreignId('table_id')->constrained('tables')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('offer_id')->constrained('offers')->cascadeOnDelete();
             $table->timestamps();
         });
     }

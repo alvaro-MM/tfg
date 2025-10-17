@@ -17,8 +17,6 @@ return new class extends Migration
             $table->string('slug');
             $table->text('description');
             $table->string('image');
-            $table->foreignId('dish_id')->constrained('dishes');
-            $table->foreignId('drink_id')->constrained('drinks');
             $table->timestamps();
         });
     }

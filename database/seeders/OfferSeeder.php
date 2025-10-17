@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\offer;
 
 class OfferSeeder extends Seeder
 {
@@ -12,6 +13,6 @@ class OfferSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        offer::factory()->count(10)->create();
     }
 }

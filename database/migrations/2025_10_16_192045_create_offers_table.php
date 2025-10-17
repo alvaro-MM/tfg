@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             $table->text('description');
-            $table->foreignId('menu_id')->constrained('menus');
+            $table->foreignId('menu_id')->constrained('menus')->cascadeOnDelete();
             $table->integer('discount');
             $table->timestamps();
         });

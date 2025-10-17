@@ -16,8 +16,13 @@ class OfferFactory extends Factory
      */
     public function definition(): array
     {
+        $name = 'Oferta ' . ucfirst($this->faker->unique()->word());
         return [
-            //
+            'name' => $name,
+            'slug' => str($name)->slug(),
+            'description' => $this->faker->sentence(12),
+            'menu_id' => \App\Models\Menu::factory(),
+            'discount' => $this->faker->numberBetween(5, 50),
         ];
     }
 }

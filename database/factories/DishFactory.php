@@ -16,8 +16,14 @@ class DishFactory extends Factory
      */
     public function definition(): array
     {
+        $name = $this->faker->unique()->words(3, true);
         return [
-            //
+            'name' => ucfirst($name),
+            'slug' => str($name)->slug(),
+            'description' => $this->faker->paragraph(),
+            'image' => $this->faker->imageUrl(800, 600, 'food', true),
+            'category_id' => \App\Models\category::query()->inRandomOrder()->value('id') ?? \App\Models\category::factory(),
+            'allergen_id' => \App\Models\allergen::query()->inRandomOrder()->value('id') ?? \App\Models\allergen::factory(),
         ];
     }
 }
