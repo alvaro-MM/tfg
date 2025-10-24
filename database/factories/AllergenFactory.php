@@ -17,8 +17,6 @@ class AllergenFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $name,
-            'slug' => str($name)->slug(),
             'description' => $this->faker->sentence(12),
             'image' => $this->faker->imageUrl(640, 480, 'food', true),
         ];
