@@ -16,6 +16,9 @@ class AllergenFactory extends Factory
      */
     public function definition(): array
     {
+
+        $name = $this->faker->unique()->word();
+        
         return [
             'description' => $this->faker->sentence(12),
             'image' => $this->faker->imageUrl(640, 480, 'food', true),
