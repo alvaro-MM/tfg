@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ReturnedDishDetail extends Model
 {
+    use HasFactory;
     protected $fillable = ['dish_id', 'returned_dish_id'];
 
     public function returnedDish()

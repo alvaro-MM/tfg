@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 class ReturnedDish extends Model
 {
+    use HasFactory;
     protected $fillable = ['table_id', 'invoice_id', 'reason'];
 
     public function table()

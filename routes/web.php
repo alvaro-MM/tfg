@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DishController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -16,6 +17,7 @@ Route::view('dashboard', 'dashboard')
 Route::middleware(['auth'])->group(function () {
 
     Route::resource('categories', CategoryController::class);
+    Route::resource('dishes', DishController::class);
     
     Route::redirect('settings', 'settings/profile');
 

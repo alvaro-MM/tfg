@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Drink extends Model
 {
+    use HasFactory;
     protected $fillable = ['name', 'price', 'category_id'];
 
     public function category()

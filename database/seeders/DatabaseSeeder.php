@@ -13,7 +13,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Usuarios base
+        // Crear roles y usuarios con roles (super-admin, admin, client)
+        $this->call([
+            RolesSeeder::class,
+            UsersWithRolesSeeder::class,
+        ]);
+
+        // Usuarios base adicionales
         User::factory(5)->create();
         User::factory()->create([
             'name' => 'Test User',

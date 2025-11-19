@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Menu extends Model
 {
+    use HasFactory;
     protected $fillable = ['name', 'type', 'price', 'offer_id'];
 
     public function dishes()
