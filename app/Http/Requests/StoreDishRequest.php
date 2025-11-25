@@ -6,23 +6,27 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreDishRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        // Adjust authorization as needed (policies / gates can be used)
+        return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            //
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'ingredients' => ['nullable', 'string'],
+            'image' => ['nullable', 'image', 'max:2048'],
+            'slug' => ['sometimes', 'string'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'available' => ['sometimes', 'boolean'],
+            'special' => ['sometimes', 'boolean'],
+            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
+            'allergen_ids' => ['nullable', 'array'],
+            'allergen_ids.*' => ['integer', 'exists:allergens,id'],
         ];
     }
+
 }

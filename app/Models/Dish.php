@@ -4,10 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Allergen;
 
 class Dish extends Model
 {
-    protected $fillable = ['name', 'ingredients', 'available', 'special', 'price', 'category_id'];
+    use HasFactory;
+    protected $fillable = ['name', 'slug', 'description', 'ingredients', 'image', 'price', 'available', 'special', 'category_id'];
+
+    protected $casts = [
+        'available' => 'boolean',
+        'special' => 'boolean',
+        'price' => 'decimal:2',
+    ];
 
     public function category()
     {
@@ -18,6 +26,8 @@ class Dish extends Model
     {
         return $this->belongsToMany(Allergen::class, 'dish_allergen', 'dish_id', 'allergen_id');
     }
+
+    // single allergen FK removed in favor of pivot table `dish_allergen`
 
     public function menus()
     {

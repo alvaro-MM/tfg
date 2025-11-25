@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Offer extends Model
 {
+    use HasFactory;
     protected $fillable = ['name', 'discount', 'menu_id'];
 
     public function menu()
