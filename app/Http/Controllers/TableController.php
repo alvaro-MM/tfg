@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\table;
-use App\Http\Requests\StoretableRequest;
-use App\Http\Requests\UpdatetableRequest;
+use App\Http\Requests\StoreTableRequest;
+use App\Http\Requests\UpdateTableRequest;
 
 class TableController extends Controller
 {
@@ -27,7 +27,7 @@ class TableController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoretableRequest $request)
+    public function store(StoreTableRequest $request)
     {
         //
     }
@@ -51,7 +51,7 @@ class TableController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatetableRequest $request, table $table)
+    public function update(UpdateTableRequest $request, table $table)
     {
         //
     }
