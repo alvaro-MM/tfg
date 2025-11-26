@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Allergen extends Model
 {
     use HasFactory;
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'slug', 'description', 'image'];
 
     public function dishes()
     {
@@ -19,4 +19,11 @@ class Allergen extends Model
     {
         return $this->belongsToMany(Drink::class, 'drink_allergen', 'allergen_id', 'drink_id');
     }
+
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = $value;
+        $this->attributes['slug'] = \Str::slug($value);
+    }
+    
 }
