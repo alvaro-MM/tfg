@@ -5,6 +5,7 @@ use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DishController;
+use App\Http\Controllers\AllergenController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,6 +19,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('categories', CategoryController::class);
     Route::resource('dishes', DishController::class);
+    Route::resource('allergens', AllergenController::class);
     
     Route::redirect('settings', 'settings/profile');
 
