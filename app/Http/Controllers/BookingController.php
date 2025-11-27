@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\booking;
-use App\Http\Requests\StorebookingRequest;
-use App\Http\Requests\UpdatebookingRequest;
+use App\Http\Requests\StoreBookingRequest;
+use App\Http\Requests\UpdateBookingRequest;
 
 class BookingController extends Controller
 {
@@ -27,7 +27,7 @@ class BookingController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorebookingRequest $request)
+    public function store(StoreBookingRequest $request)
     {
         //
     }
@@ -51,7 +51,7 @@ class BookingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatebookingRequest $request, booking $booking)
+    public function update(UpdateBookingRequest $request, booking $booking)
     {
         //
     }

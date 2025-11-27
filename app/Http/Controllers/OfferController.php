@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\offer;
-use App\Http\Requests\StoreofferRequest;
-use App\Http\Requests\UpdateofferRequest;
+use App\Http\Requests\StoreOfferRequest;
+use App\Http\Requests\UpdateOfferRequest;
 
 class OfferController extends Controller
 {
@@ -27,7 +27,7 @@ class OfferController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreofferRequest $request)
+    public function store(StoreOfferRequest $request)
     {
         //
     }
@@ -51,7 +51,7 @@ class OfferController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateofferRequest $request, offer $offer)
+    public function update(UpdateOfferRequest $request, offer $offer)
     {
         //
     }

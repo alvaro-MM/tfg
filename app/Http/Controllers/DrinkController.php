@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\drink;
-use App\Http\Requests\StoredrinkRequest;
-use App\Http\Requests\UpdatedrinkRequest;
+use App\Http\Requests\StoreDrinkRequest;
+use App\Http\Requests\UpdateDrinkRequest;
 
 class DrinkController extends Controller
 {
@@ -27,7 +27,7 @@ class DrinkController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoredrinkRequest $request)
+    public function store(StoreDrinkRequest $request)
     {
         //
     }
@@ -51,7 +51,7 @@ class DrinkController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatedrinkRequest $request, drink $drink)
+    public function update(UpdateDrinkRequest $request, drink $drink)
     {
         //
     }
