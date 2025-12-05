@@ -29,6 +29,15 @@
                             <button class="rounded bg-red-600 px-3 py-1 text-white">Ir a Alérgenos</button>
                         </div>
                     </a>
+
+                    <a href="{{ route('review.index') }}" class="block rounded-lg border border-neutral-200 px-4 py-5 hover:bg-neutral-50">
+                        <h3 class="text-lg font-medium">Reviews</h3>
+                        <p class="mt-1 text-sm text-gray-500">Gestiona las reviews de los platos y bebidas.</p>
+                        <div class="mt-3">
+                            <button class="rounded bg-red-600 px-3 py-1 text-white">Ir a Reviews</button>
+                        </div>
+                    </a>
+
                 </div>
             </div>
         </div>
