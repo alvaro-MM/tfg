@@ -11,7 +11,7 @@ class UpdateReviewRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class UpdateReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255|unique:reviews,name,' . $this->review->id,
+            'description' => 'required|string',
+            'dish_id' => 'required|exists:dishes,id',
+            'drink_id' => 'required|exists:drinks,id',
+            'slug' => 'nullable|string|unique:reviews,slug,' . $this->review->id,
         ];
     }
 }
