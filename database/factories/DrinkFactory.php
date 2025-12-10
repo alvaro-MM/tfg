@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,7 +22,7 @@ class DrinkFactory extends Factory
             'name' => ucfirst($name),
             'slug' => str($name)->slug(),
             'description' => $this->faker->sentence(10),
-            'category_id' => \App\Models\category::query()->inRandomOrder()->value('id') ?? \App\Models\category::factory(),
+            'category_id' => Category::query()->inRandomOrder()->value('id') ?? Category::factory(),
         ];
     }
 }
