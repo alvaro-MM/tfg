@@ -22,7 +22,6 @@ class DrinkFactory extends Factory
             'slug' => str($name)->slug(),
             'description' => $this->faker->sentence(10),
             'category_id' => \App\Models\category::query()->inRandomOrder()->value('id') ?? \App\Models\category::factory(),
-            'allergen_id' => \App\Models\allergen::query()->inRandomOrder()->value('id') ?? \App\Models\allergen::factory(),
         ];
     }
 }
