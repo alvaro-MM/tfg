@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Drink extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'price', 'category_id'];
+    protected $fillable = ['name', 'slug', 'description', 'image', 'price', 'available', 'category_id'];
 
     public function category()
     {
@@ -17,7 +17,12 @@ class Drink extends Model
 
     public function allergens()
     {
-        return $this->belongsToMany(Allergen::class, 'drink_allergen', 'drink_id', 'allergen_id');
+        return $this->belongsToMany(
+            Allergen::class,
+            'drink_allergen',
+            'drink_id',
+            'allergen_id'
+        );
     }
 
     public function orders()

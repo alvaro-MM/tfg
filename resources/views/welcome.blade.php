@@ -1,41 +1,74 @@
 <x-layouts.app :title="__('Inicio')">
-    <div class="py-8">
-        <div class="mx-auto max-w-4xl">
-            <div class="rounded-lg bg-white p-6 shadow-sm dark:bg-neutral-800">
-                <h1 class="text-3xl font-bold">Bienvenido al TFG</h1>
-                <p class="mt-2 text-sm text-gray-600">Panel de ejemplo con accesos rápidos a las secciones principales.</p>
+    <div class="py-10">
+        <div class="mx-auto max-w-5xl px-4">
+            <div class="rounded-xl bg-white p-8 shadow-md dark:bg-neutral-900">
 
-                <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                    <a href="{{ route('categories.index') }}" class="block rounded-lg border border-neutral-200 px-4 py-5 hover:bg-neutral-50">
-                        <h3 class="text-lg font-medium">Categorías</h3>
-                        <p class="mt-1 text-sm text-gray-500">Gestiona las categorías de platos y bebidas.</p>
-                        <div class="mt-3">
-                            <button class="rounded bg-indigo-600 px-3 py-1 text-white">Ir a Categorías</button>
-                        </div>
+                {{-- Header --}}
+                <div class="mb-8">
+                    <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">
+                        Bienvenido al TFG
+                    </h1>
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        Panel de control con acceso rápido a la gestión del sistema.
+                    </p>
+                </div>
+
+                {{-- Cards --}}
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+                    {{-- Categorías --}}
+                    <a href="{{ route('categories.index') }}"
+                        class="group rounded-xl border border-gray-200 bg-gray-50 p-6 transition hover:border-indigo-500 hover:bg-white hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-900">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white group-hover:text-indigo-600">
+                            Categorías
+                        </h3>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                            Gestiona las categorías de platos y bebidas.
+                        </p>
                     </a>
 
-                    <a href="{{ route('dishes.index') }}" class="block rounded-lg border border-neutral-200 px-4 py-5 hover:bg-neutral-50">
-                        <h3 class="text-lg font-medium">Platos</h3>
-                        <p class="mt-1 text-sm text-gray-500">Crear, editar y revisar los platos del menú.</p>
-                        <div class="mt-3">
-                            <button class="rounded bg-green-600 px-3 py-1 text-white">Ir a Platos</button>
-                        </div>
+                    {{-- Platos --}}
+                    <a href="{{ route('dishes.index') }}"
+                        class="group rounded-xl border border-gray-200 bg-gray-50 p-6 transition hover:border-green-500 hover:bg-white hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-900">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white group-hover:text-green-600">
+                            Platos
+                        </h3>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                            Crear, editar y revisar los platos del menú.
+                        </p>
                     </a>
 
-                    <a href="{{ route('allergens.index') }}" class="block rounded-lg border border-neutral-200 px-4 py-5 hover:bg-neutral-50">
-                        <h3 class="text-lg font-medium">Alérgenos</h3>
-                        <p class="mt-1 text-sm text-gray-500">Gestiona los alérgenos de los platos y bebidas.</p>
-                        <div class="mt-3">
-                            <button class="rounded bg-red-600 px-3 py-1 text-white">Ir a Alérgenos</button>
-                        </div>
+                    {{-- Alérgenos --}}
+                    <a href="{{ route('allergens.index') }}"
+                        class="group rounded-xl border border-gray-200 bg-gray-50 p-6 transition hover:border-red-500 hover:bg-white hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-900">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white group-hover:text-red-600">
+                            Alérgenos
+                        </h3>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                            Control de alérgenos asociados a productos.
+                        </p>
                     </a>
 
-                    <a href="{{ route('review.index') }}" class="block rounded-lg border border-neutral-200 px-4 py-5 hover:bg-neutral-50">
-                        <h3 class="text-lg font-medium">Reviews</h3>
-                        <p class="mt-1 text-sm text-gray-500">Gestiona las reviews de los platos y bebidas.</p>
-                        <div class="mt-3">
-                            <button class="rounded bg-red-600 px-3 py-1 text-white">Ir a Reviews</button>
-                        </div>
+                    {{-- Reviews --}}
+                    <a href="{{ route('review.index') }}"
+                        class="group rounded-xl border border-gray-200 bg-gray-50 p-6 transition hover:border-yellow-500 hover:bg-white hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-900">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white group-hover:text-yellow-600">
+                            Reviews
+                        </h3>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                            Gestión de opiniones de platos y bebidas.
+                        </p>
+                    </a>
+
+                    {{-- Bebidas --}}
+                    <a href="{{ route('drinks.index') }}"
+                        class="group rounded-xl border border-gray-200 bg-gray-50 p-6 transition hover:border-blue-500 hover:bg-white hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-900">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white group-hover:text-blue-600">
+                            Bebidas
+                        </h3>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                            Administración de las bebidas disponibles.
+                        </p>
                     </a>
 
                 </div>

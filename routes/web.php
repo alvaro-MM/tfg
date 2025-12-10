@@ -6,6 +6,7 @@ use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DishController;
+use App\Http\Controllers\DrinkController;
 use App\Http\Controllers\AllergenController;
 
 Route::get('/', function () {
@@ -20,6 +21,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('categories', CategoryController::class);
     Route::resource('dishes', DishController::class);
+    Route::resource('drinks', DrinkController::class);
     Route::resource('allergens', AllergenController::class);
     Route::resource('review', ReviewController::class);
 
@@ -41,4 +43,4 @@ Route::middleware(['auth'])->group(function () {
         ->name('two-factor.show');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
