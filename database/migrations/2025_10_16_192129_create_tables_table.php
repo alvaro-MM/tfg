@@ -14,9 +14,13 @@ return new class extends Migration
         Schema::create('tables', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug');
-            $table->text('description');
-            
+            $table->unsignedInteger('capacity')->default(1);
+            $table->enum('status', ['available', 'occupied', 'reserved'])->default('available');
+            $table->text('notes')->nullable();
+
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('menu_id')->nullable()->constrained()->nullOnDelete();
+
             $table->timestamps();
         });
     }
