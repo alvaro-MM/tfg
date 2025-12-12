@@ -117,6 +117,17 @@
                         </p>
                     </a>
 
+                    {{-- Mesas --}}
+                    <a href="{{ route('tables.index') }}"
+                       class="group rounded-xl border border-gray-200 bg-gray-50 p-6 transition hover:border-blue-500 hover:bg-white hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-900">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white group-hover:text-blue-600">
+                            Mesas
+                        </h3>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                            Administración de las mesas disponibles.
+                        </p>
+                    </a>
+
                 </div>
             </div>
         </div>

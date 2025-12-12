@@ -11,18 +11,20 @@ class StoreTableRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|unique:tables,name',
+            'capacity' => 'required|integer|min:1',
+            'status' => 'required|in:available,occupied,reserved',
+            'notes' => 'nullable|string',
+
+            // relaciones
+            'menu_id' => 'nullable|exists:menus,id',
+            'user_id' => 'nullable|exists:users,id',
         ];
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\TableController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
@@ -24,6 +25,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('drinks', DrinkController::class);
     Route::resource('allergens', AllergenController::class);
     Route::resource('review', ReviewController::class);
+    Route::resource('tables', TableController::class);
 
     Route::redirect('settings', 'settings/profile');
 
