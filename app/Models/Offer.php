@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Offer extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'slug', 'description', 'discount', 'menu_id'];
+    protected $fillable = ['name', 'discount', 'menu_id'];
 
     public function menu()
     {
-        return $this->belongsTo(Menu::class);
+        return $this->hasOne(Menu::class, 'offer_id');
     }
 }

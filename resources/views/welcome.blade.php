@@ -128,39 +128,6 @@
                         </p>
                     </a>
 
-                    {{-- Menús --}}
-                    <a href="{{ route('menus.index') }}"
-                       class="group rounded-xl border border-gray-200 bg-gray-50 p-6 transition hover:border-purple-500 hover:bg-white hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-900">
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white group-hover:text-purple-600">
-                            Menús
-                        </h3>
-                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                            Gestión de menús y combinaciones de platos.
-                        </p>
-                    </a>
-
-                    {{-- Ofertas --}}
-                    <a href="{{ route('offers.index') }}"
-                       class="group rounded-xl border border-gray-200 bg-gray-50 p-6 transition hover:border-pink-500 hover:bg-white hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-900">
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white group-hover:text-pink-600">
-                            Ofertas
-                        </h3>
-                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                            Administración de descuentos y promociones.
-                        </p>
-                    </a>
-
-                    {{-- Facturas --}}
-                    <a href="{{ route('invoices.index') }}"
-                       class="group rounded-xl border border-gray-200 bg-gray-50 p-6 transition hover:border-cyan-500 hover:bg-white hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-900">
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white group-hover:text-cyan-600">
-                            Facturas
-                        </h3>
-                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                            Gestión de facturas y cobros.
-                        </p>
-                    </a>
-
                 </div>
             </div>
         </div>

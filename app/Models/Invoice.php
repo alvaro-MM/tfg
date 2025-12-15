@@ -7,12 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Invoice extends Model
 {
     use HasFactory;
-    protected $fillable = ['table_id', 'total', 'date'];
-
-    protected $casts = [
-        'total' => 'decimal:2',
-        'date' => 'date',
-    ];
+    protected $fillable = ['order_id', 'table_id', 'total', 'date'];
 
     public function order()
     {
