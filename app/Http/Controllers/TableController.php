@@ -2,65 +2,94 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\table;
+use App\Models\Table;
+use App\Models\User;
+use App\Models\Menu;
 use App\Http\Requests\StoreTableRequest;
 use App\Http\Requests\UpdateTableRequest;
 
 class TableController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $tables = Table::with(['user', 'menu'])->get();
+
+        return view('tables.index', compact('tables'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('tables.create', [
+            'users' => User::all(),
+            'menus' => Menu::all(),
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreTableRequest $request)
     {
-        //
+        $data = $request->validated();
+
+        // Si la mesa está libre → user_id debe ser null
+        if ($data['status'] === 'available') {
+            $data['user_id'] = null;
+        }
+
+        // Si la mesa NO está libre → user_id es obligatorio
+        if (in_array($data['status'], ['occupied', 'reserved']) && empty($data['user_id'])) {
+            return back()
+                ->withErrors(['user_id' => 'Debe asignar un usuario si la mesa está ocupada o reservada.'])
+                ->withInput();
+        }
+
+        Table::create($data);
+
+        return redirect()
+            ->route('tables.index')
+            ->with('success', 'Mesa creada correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(table $table)
+    public function show(Table $table)
     {
-        //
+        return view('tables.show', compact('table'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(table $table)
+    public function edit(Table $table)
     {
-        //
+        return view('tables.edit', [
+            'table' => $table,
+            'users' => User::all(),
+            'menus' => Menu::all(),
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateTableRequest $request, table $table)
+    public function update(UpdateTableRequest $request, Table $table)
     {
-        //
+        $data = $request->validated();
+
+        // Regla de negocio igual que en store
+        if ($data['status'] === 'available') {
+            $data['user_id'] = null;
+        }
+
+        if (in_array($data['status'], ['occupied', 'reserved']) && empty($data['user_id'])) {
+            return back()
+                ->withErrors(['user_id' => 'Debe asignar un usuario si la mesa está ocupada o reservada.'])
+                ->withInput();
+        }
+
+        $table->update($data);
+
+        return redirect()
+            ->route('tables.index')
+            ->with('success', 'Mesa actualizada correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(table $table)
+    public function destroy(Table $table)
     {
-        //
+        $table->delete();
+
+        return redirect()
+            ->route('tables.index')
+            ->with('success', 'Mesa eliminada correctamente.');
     }
 }
