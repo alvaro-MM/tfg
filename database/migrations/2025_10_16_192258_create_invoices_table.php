@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('menus', function (Blueprint $table) {
+        Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->enum('type', ['daily', 'special', 'seasonal', 'themed'])->default('daily');
-            $table->decimal('price', 10, 2)->default(0);
+            $table->foreignId('table_id')->constrained('tables')->cascadeOnDelete();
+            $table->decimal('total', 10, 2);
+            $table->date('date');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('menus');
+        Schema::dropIfExists('invoices');
     }
 };

@@ -16,22 +16,60 @@ class MenuFactory extends Factory
      */
     public function definition(): array
     {
-        $name = 'Menú ' . ucfirst($this->faker->word());
         return [
-            'name' => $name,
-            'slug' => str($name)->slug(),
-            'description' => $this->faker->sentence(15),
-            'allergen_id' => \App\Models\allergen::query()->inRandomOrder()->value('id') ?? \App\Models\allergen::factory(),
+            'name' => 'Menú ' . ucfirst($this->faker->word()),
+            'type' => $this->faker->randomElement(['daily', 'special', 'seasonal', 'themed']),
+            'price' => $this->faker->randomFloat(2, 15, 50),
         ];
     }
 
     /**
-     * Indicate que el menú tenga varias ofertas asociadas una vez creado.
+     * Create a daily menu
+     */
+    public function daily(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => 'daily',
+        ]);
+    }
+
+    /**
+     * Create a special menu
+     */
+    public function special(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => 'special',
+        ]);
+    }
+
+    /**
+     * Create a seasonal menu
+     */
+    public function seasonal(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => 'seasonal',
+        ]);
+    }
+
+    /**
+     * Create a themed menu
+     */
+    public function themed(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => 'themed',
+        ]);
+    }
+
+    /**
+     * Create menu with offers
      */
     public function withOffers(int $count = 2): static
     {
         return $this->afterCreating(function (\App\Models\Menu $menu) use ($count) {
-            \App\Models\offer::factory()->count($count)->create([
+            \App\Models\Offer::factory()->count($count)->create([
                 'menu_id' => $menu->id,
             ]);
         });
