@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Allergen;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreallergenRequest;
-use App\Http\Requests\UpdateallergenRequest;
+use App\Http\Requests\StoreAllergenRequest;
+use App\Http\Requests\UpdateAllergenRequest;
 
 class AllergenController extends Controller
 {
