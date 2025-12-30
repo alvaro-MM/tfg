@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\allergen;
+use App\Models\Allergen;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreallergenRequest;
 use App\Http\Requests\UpdateallergenRequest;
