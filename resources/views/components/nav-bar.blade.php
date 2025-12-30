@@ -13,11 +13,16 @@
 
             <!-- Links -->
             <div class="hidden md:flex space-x-6">
-                <a href="/" class="nav-link">Inicio</a>
-{{--                <a href="{{ route('menu') }}" class="nav-link">Menú</a>--}}
-{{--                <a href="{{ route('reservas') }}" class="nav-link">Reservas</a>--}}
-{{--                <a href="{{ route('reviews.index') }}" class="nav-link">Reseñas</a>--}}
-{{--                <a href="{{ route('contact') }}" class="nav-link">Contacto</a>--}}
+                <a href="{{ route('home') }}" class="nav-link">Inicio</a>
+                @auth
+                    <a href="{{ route('dashboard') }}" class="nav-link">Dashboard</a>
+                    <a href="{{ route('categories.index') }}" class="nav-link">Categorías</a>
+                    <a href="{{ route('dishes.index') }}" class="nav-link">Platos</a>
+                    <a href="{{ route('drinks.index') }}" class="nav-link">Bebidas</a>
+                    <a href="{{ route('allergens.index') }}" class="nav-link">Alérgenos</a>
+                    <a href="{{ route('tables.index') }}" class="nav-link">Mesas</a>
+                    <a href="{{ route('review.index') }}" class="nav-link">Reseñas</a>
+                @endauth
             </div>
 
             <!-- Auth -->
@@ -40,10 +45,37 @@
                         </button>
 
                         <!-- Dropdown -->
-                        <div class="hidden peer-hover:block hover:block absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2">
+                        <div class="hidden peer-hover:block hover:block absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-2 z-50">
 
                             <a href="{{ route('dashboard') }}" class="dropdown-item block px-4 py-2 text-gray-700 hover:bg-gray-100">
                                 Dashboard
+                            </a>
+                            
+                            <div class="border-t my-1"></div>
+                            
+                            <a href="{{ route('categories.index') }}" class="dropdown-item block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                Categorías
+                            </a>
+                            <a href="{{ route('dishes.index') }}" class="dropdown-item block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                Platos
+                            </a>
+                            <a href="{{ route('drinks.index') }}" class="dropdown-item block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                Bebidas
+                            </a>
+                            <a href="{{ route('allergens.index') }}" class="dropdown-item block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                Alérgenos
+                            </a>
+                            <a href="{{ route('tables.index') }}" class="dropdown-item block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                Mesas
+                            </a>
+                            <a href="{{ route('review.index') }}" class="dropdown-item block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                Reseñas
+                            </a>
+                            
+                            <div class="border-t my-1"></div>
+                            
+                            <a href="{{ route('profile.edit') }}" class="dropdown-item block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                Configuración
                             </a>
 
                             <form method="POST" action="{{ route('logout') }}">

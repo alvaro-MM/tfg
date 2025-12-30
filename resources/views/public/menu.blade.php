@@ -89,13 +89,27 @@ let currentCategory = 'all';
 async function loadMenuData() {
     try {
         const response = await fetch(`/menu/${tableToken}/data`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
+        console.log('Menu data loaded:', data); // Debug
         menuData = data;
+        
+        if (!menuData || (!menuData.dishes && !menuData.drinks)) {
+            console.warn('No menu data received');
+            document.getElementById('empty-state').classList.remove('hidden');
+            document.getElementById('empty-state').innerHTML = '<p class="text-gray-500">No hay productos disponibles en este momento.</p>';
+            return;
+        }
+        
         renderCategories();
         renderProducts('all');
         updateBuffetStatus();
     } catch (error) {
         console.error('Error loading menu:', error);
+        document.getElementById('empty-state').classList.remove('hidden');
+        document.getElementById('empty-state').innerHTML = '<p class="text-red-500">Error al cargar el menú. Por favor, recarga la página.</p>';
     }
 }
 

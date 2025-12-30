@@ -16,25 +16,47 @@
 
         <!-- Secciones -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-10">
+            @auth
+            <a href="{{ route('dashboard') }}"
+               class="sushi-card">
+                <h2 class="text-2xl font-bold">Dashboard</h2>
+                <p class="mt-1 text-sm">Accede al panel de control del sistema.</p>
+            </a>
+            @else
+            <a href="{{ route('login') }}"
+               class="sushi-card">
+                <h2 class="text-2xl font-bold">Iniciar Sesión</h2>
+                <p class="mt-1 text-sm">Accede a tu cuenta para gestionar el sistema.</p>
+            </a>
+            @endauth
 
-{{--            <a href="{{ route('menu') }}"--}}
-{{--               class="sushi-card">--}}
-                <h2 class="text-2xl font-bold">Menú</h2>
-                <p class="mt-1 text-sm">Variedad ilimitada de sushi, ramen, yakisoba y más.</p>
-
-
-{{--            <a href="{{ route('reservas') }}"--}}
-{{--               class="sushi-card">--}}
-                <h2 class="text-2xl font-bold">Reservas</h2>
-                <p class="mt-1 text-sm">Asegura tu mesa y evita esperas.</p>
-
-
-{{--            <a href="{{ route('reviews.index') }}"--}}
-{{--               class="sushi-card">--}}
+            @auth
+            <a href="{{ route('review.index') }}"
+               class="sushi-card">
                 <h2 class="text-2xl font-bold">Reseñas</h2>
                 <p class="mt-1 text-sm">Lee opiniones o deja la tuya.</p>
+            </a>
+            @else
+            <a href="{{ route('register') }}"
+               class="sushi-card">
+                <h2 class="text-2xl font-bold">Registrarse</h2>
+                <p class="mt-1 text-sm">Crea una cuenta nueva para comenzar.</p>
+            </a>
+            @endauth
 
-
+            @auth
+            <a href="{{ route('tables.index') }}"
+               class="sushi-card">
+                <h2 class="text-2xl font-bold">Mesas</h2>
+                <p class="mt-1 text-sm">Gestiona las mesas del restaurante.</p>
+            </a>
+            @else
+            <a href="{{ route('login') }}"
+               class="sushi-card">
+                <h2 class="text-2xl font-bold">Acceso</h2>
+                <p class="mt-1 text-sm">Inicia sesión para acceder a todas las funciones.</p>
+            </a>
+            @endauth
         </div>
     </div>
 
@@ -45,6 +67,7 @@
         }
     </style>
 
+    @auth
     <div class="py-10">
         <div class="mx-auto max-w-5xl px-4">
             <div class="rounded-xl bg-white p-8 shadow-md dark:bg-neutral-900">
@@ -52,10 +75,10 @@
                 {{-- Header --}}
                 <div class="mb-8">
                     <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                        Bienvenido al TFG
+                        Panel de Gestión
                     </h1>
                     <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                        Panel de control con acceso rápido a la gestión del sistema.
+                        Acceso rápido a todas las secciones de gestión del sistema.
                     </p>
                 </div>
 
@@ -132,5 +155,6 @@
             </div>
         </div>
     </div>
+    @endauth
 
 @endsection

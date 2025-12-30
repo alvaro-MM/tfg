@@ -13,6 +13,7 @@
             <th class="p-2">Nombre</th>
             <th class="p-2">Capacidad</th>
             <th class="p-2">Estado</th>
+            <th class="p-2">QR / Menú</th>
             <th class="p-2">Acciones</th>
         </tr>
         </thead>
@@ -23,6 +24,21 @@
                 <td class="p-2">{{ $table->name }}</td>
                 <td class="p-2">{{ $table->capacity }}</td>
                 <td class="p-2">{{ ucfirst($table->status) }}</td>
+                <td class="p-2">
+                    @if($table->qr_token)
+                        @php($qrUrl = route('public.menu', $table->qr_token))
+                        <div class="flex flex-col gap-1">
+                            <a href="{{ $qrUrl }}" target="_blank" class="text-indigo-600 text-sm underline">
+                                Abrir menú
+                            </a>
+                            <span class="text-xs text-gray-500 break-all">
+                                {{ $qrUrl }}
+                            </span>
+                        </div>
+                    @else
+                        <span class="text-xs text-gray-500">Sin QR asignado</span>
+                    @endif
+                </td>
                 <td class="p-2 space-x-2">
                     <a href="{{ route('tables.edit', $table) }}" class="text-blue-600">Editar</a>
                     <a href="{{ route('tables.show', $table) }}" class="text-purple-600">Ver</a>

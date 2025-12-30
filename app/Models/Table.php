@@ -20,6 +20,18 @@ class Table extends Model
     ];
 
     /**
+     * Booted model hook to ensure each table has a QR token
+     */
+    protected static function booted(): void
+    {
+        static::created(function (Table $table) {
+            if (!$table->qr_token) {
+                $table->generateQrToken();
+            }
+        });
+    }
+
+    /**
      * Generate a unique QR token for the table
      */
     public function generateQrToken(): string

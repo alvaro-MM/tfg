@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\TableController;
+use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PublicMenuController;
 use App\Http\Controllers\PublicCartController;
 use App\Http\Controllers\PublicOrderController;
@@ -50,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('allergens', AllergenController::class);
     Route::resource('review', ReviewController::class);
     Route::resource('tables', TableController::class);
+    Route::resource('menus', MenuController::class)->except(['show']);
 
     Route::redirect('settings', 'settings/profile');
 

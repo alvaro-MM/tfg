@@ -41,7 +41,12 @@ class TableController extends Controller
                 ->withInput();
         }
 
-        Table::create($data);
+        $table = Table::create($data);
+
+        // Generar token QR si no existe
+        if (!$table->qr_token) {
+            $table->generateQrToken();
+        }
 
         return redirect()
             ->route('tables.index')
@@ -78,6 +83,11 @@ class TableController extends Controller
         }
 
         $table->update($data);
+
+        // Asegurar que tiene token QR si ya no lo tenía
+        if (!$table->qr_token) {
+            $table->generateQrToken();
+        }
 
         return redirect()
             ->route('tables.index')
