@@ -35,15 +35,16 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(order $order)
+    public function show(Order $order): View
     {
-        //
+        $order->load(['table', 'user', 'dishes', 'drinks', 'invoice']);
+        return view('orders.show', compact('order'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(order $order)
+    public function edit(Order $order)
     {
         //
     }
@@ -51,7 +52,7 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateOrderRequest $request, order $order)
+    public function update(UpdateOrderRequest $request, Order $order)
     {
         //
     }
@@ -59,8 +60,10 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(order $order)
+    public function destroy(Order $order)
     {
-        //
+        $order->delete();
+        return redirect()->route('orders.index')
+            ->with('success', 'Pedido eliminado exitosamente');
     }
 }

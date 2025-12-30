@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Table extends Model
 {
@@ -14,8 +15,32 @@ class Table extends Model
         'status',
         'notes',
         'user_id',
-        'menu_id'
+        'menu_id',
+        'qr_token'
     ];
+
+    /**
+     * Generate a unique QR token for the table
+     */
+    public function generateQrToken(): string
+    {
+        do {
+            $token = Str::random(32);
+        } while (self::where('qr_token', $token)->exists());
+
+        $this->qr_token = $token;
+        $this->save();
+
+        return $token;
+    }
+
+    /**
+     * Scope to find table by QR token
+     */
+    public function scopeByQrToken($query, string $token)
+    {
+        return $query->where('qr_token', $token);
+    }
 
     public function user()
     {
