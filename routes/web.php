@@ -4,7 +4,6 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PublicMenuController;
-use App\Http\Controllers\PublicCartController;
 use App\Http\Controllers\PublicOrderController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
@@ -24,20 +23,17 @@ Route::prefix('menu')->group(function () {
     Route::get('/{token}/data', [PublicMenuController::class, 'getMenuData'])->name('public.menu.data');
 });
 
-Route::prefix('api/cart')->group(function () {
-    Route::get('/{token}', [PublicCartController::class, 'getCart'])->name('public.cart.get');
-    Route::post('/{token}/add', [PublicCartController::class, 'addItem'])->name('public.cart.add');
-    Route::post('/{token}/remove', [PublicCartController::class, 'removeItem'])->name('public.cart.remove');
-    Route::post('/{token}/update', [PublicCartController::class, 'updateQuantity'])->name('public.cart.update');
-    Route::delete('/{token}', [PublicCartController::class, 'clearCart'])->name('public.cart.clear');
+
+Route::prefix('order')->group(function () {
+    Route::post('/{token}/send', [PublicOrderController::class, 'sendToKitchen'])->name('public.order.send');
+    Route::get('/{token}/confirm/{orderId}', [PublicOrderController::class, 'confirm'])->name('public.order.confirm');
 });
 
 Route::prefix('checkout')->group(function () {
+    Route::get('/{token}', [PublicOrderController::class, 'showPayment'])->name('public.payment');
     Route::post('/{token}', [PublicOrderController::class, 'checkout'])->name('public.checkout');
     Route::get('/{token}/status', [PublicOrderController::class, 'getBuffetStatus'])->name('public.buffet.status');
 });
-
-Route::get('/order/{token}/confirm/{orderId}', [PublicOrderController::class, 'confirm'])->name('public.order.confirm');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
