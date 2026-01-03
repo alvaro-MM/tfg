@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\OfferController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\TableController;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +29,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('allergens', AllergenController::class);
     Route::resource('review', ReviewController::class);
     Route::resource('tables', TableController::class);
+    Route::resource('menus', MenuController::class);
+    Route::resource('offers', OfferController::class);
+    Route::resource('invoices', InvoiceController::class);
 
     Route::redirect('settings', 'settings/profile');
 

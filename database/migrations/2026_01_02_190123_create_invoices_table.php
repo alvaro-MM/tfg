@@ -4,20 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration  {
+
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('offers', function (Blueprint $table) {
+        Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug');
-            $table->text('description');
-            $table->foreignId('menu_id')->nullable()->constrained('menus')->nullOnDelete();
-            $table->integer('discount');
+            $table->foreignId('table_id')->constrained('tables')->cascadeOnDelete();
+            $table->decimal('total', 10, 2);
+            $table->date('date');
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('offers');
+        Schema::dropIfExists('invoices');
     }
 };
