@@ -9,6 +9,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DishController;
 use App\Http\Controllers\DrinkController;
 use App\Http\Controllers\AllergenController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\AdminDashboardController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -26,6 +28,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('allergens', AllergenController::class);
     Route::resource('review', ReviewController::class);
     Route::resource('tables', TableController::class);
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::resource('users', UserController::class)->except(['show', 'create', 'store']);
+    });
 
     Route::redirect('settings', 'settings/profile');
 
