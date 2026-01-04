@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateOfferRequest extends FormRequest
+class UpdateInvoiceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return $this->user()->can('update', $this->route('offer'));
+        return $this->user()->can('update', $this->route('invoice'));
     }
 
     /**
@@ -21,14 +21,10 @@ class UpdateOfferRequest extends FormRequest
      */
     public function rules(): array
     {
-        $offerId = $this->route('offer')->id;
-
         return [
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:offers,slug,' . $offerId,
-            'description' => 'required|string|max:1000',
-            'discount' => 'required|integer|min:1|max:100',
-            'menu_id' => 'required|exists:menus,id',
+            'table_id' => 'required|exists:tables,id',
+            'total' => 'required|numeric|min:0',
+            'date' => 'required|date|before_or_equal:today',
         ];
     }
 
@@ -38,11 +34,9 @@ class UpdateOfferRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => 'nombre',
-            'slug' => 'slug',
-            'description' => 'descripción',
-            'discount' => 'descuento',
-            'menu_id' => 'menú',
+            'table_id' => 'mesa',
+            'total' => 'total',
+            'date' => 'fecha',
         ];
     }
 
@@ -52,8 +46,8 @@ class UpdateOfferRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'slug.unique' => 'El slug ya está en uso.',
-            'menu_id.exists' => 'El menú seleccionado no existe.',
+            'table_id.exists' => 'La mesa seleccionada no existe.',
+            'date.before_or_equal' => 'La fecha no puede ser futura.',
         ];
     }
 }

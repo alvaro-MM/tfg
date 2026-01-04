@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug');
-            $table->text('description');
+            $table->enum('type', ['daily', 'special', 'seasonal', 'themed'])->default('daily');
+            $table->decimal('price', 10, 2)->default(0);
             $table->foreignId('allergen_id')->constrained('allergens')->cascadeOnDelete();
-            
+
             $table->timestamps();
         });
     }

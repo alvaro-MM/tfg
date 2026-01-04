@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
             DrinkSeeder::class,
             DishSeeder::class,
             OrderSeeder::class,
+            InvoiceSeeder::class,
             BookingSeeder::class,
             ReviewSeeder::class,
         ]);
