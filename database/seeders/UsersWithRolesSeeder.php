@@ -9,15 +9,6 @@ class UsersWithRolesSeeder extends Seeder
 {
     public function run(): void
     {
-        // Super Admin
-        $super = User::firstOrCreate(
-            ['email' => 'superadmin@example.com'],
-            [
-                'name' => 'Super Admin',
-                'password' => bcrypt('password'),
-            ]
-        );
-        $super->assignRole('super-admin');
 
         // Admin
         $admin = User::firstOrCreate(
@@ -38,5 +29,25 @@ class UsersWithRolesSeeder extends Seeder
             ]
         );
         $client->assignRole('client');
+
+        // Dueño
+        $client = User::firstOrCreate(
+            ['email' => 'owner@example.com'],
+            [
+                'name' => 'Dueño',
+                'password' => bcrypt('password'),
+            ]
+        );
+        $client->assignRole('owner');
+
+        // Trabajador
+        $client = User::firstOrCreate(
+            ['email' => 'staff@example.com'],
+            [
+                'name' => 'Trabajador',
+                'password' => bcrypt('password'),
+            ]
+        );
+        $client->assignRole('staff');
     }
 }
