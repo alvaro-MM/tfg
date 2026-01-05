@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Allergen;
+use App\Models\Offer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,12 +18,10 @@ class MenuFactory extends Factory
      */
     public function definition(): array
     {
-        $name = 'Menú ' . ucfirst($this->faker->word());
+
         return [
-            'name' => $name,
-            'slug' => str($name)->slug(),
-            'description' => $this->faker->sentence(15),
-            'allergen_id' => \App\Models\allergen::query()->inRandomOrder()->value('id') ?? \App\Models\allergen::factory(),
+            'name' => 'Menú ' . ucfirst($this->faker->word()),
+            'allergen_id' => Allergen::query()->inRandomOrder()->value('id') ?? Allergen::factory(),
         ];
     }
 
@@ -31,7 +31,7 @@ class MenuFactory extends Factory
     public function withOffers(int $count = 2): static
     {
         return $this->afterCreating(function (\App\Models\Menu $menu) use ($count) {
-            \App\Models\offer::factory()->count($count)->create([
+            Offer::factory()->count($count)->create([
                 'menu_id' => $menu->id,
             ]);
         });
