@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OfferController;
@@ -19,10 +20,6 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
-
 Route::middleware(['auth'])->group(function () {
 
     Route::resource('categories', CategoryController::class);
@@ -31,15 +28,20 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('allergens', AllergenController::class);
     Route::resource('review', ReviewController::class);
     Route::resource('tables', TableController::class);
-
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-        Route::resource('users', UserController::class)->except(['show', 'create', 'store']);
-    });
-
     Route::resource('menus', MenuController::class);
     Route::resource('offers', OfferController::class);
     Route::resource('invoices', InvoiceController::class);
+
+    // DASHBOARD
+
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/admin-dashboard', [AdminDashboardController::class, 'index'])->name('admin-dashboard.index');
+        Route::resource('admin-dashboard/users', UserController::class)->except(['show', 'create', 'store']);
+    });
+
+    // No hechos por nosotros
 
     Route::redirect('settings', 'settings/profile');
 

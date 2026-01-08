@@ -6,7 +6,7 @@
                     Editar cliente
                 </h1>
 
-                <form action="{{ route('admin.users.update', $user) }}" method="POST" class="space-y-4">
+                <form action="{{ route('users.update', $user) }}" method="POST" class="space-y-4">
                     @csrf
                     @method('PUT')
 
@@ -33,7 +33,7 @@
                     </div>
 
                     <div class="flex justify-end space-x-2 pt-4">
-                        <a href="{{ route('admin.users.index') }}"
+                        <a href="{{ route('users.index') }}"
                            class="rounded bg-gray-500 px-4 py-2 text-white">
                             Cancelar
                         </a>
