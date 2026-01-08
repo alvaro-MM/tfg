@@ -35,12 +35,12 @@
                                     {{ $user->created_at->format('d/m/Y') }}
                                 </td>
                                 <td class="border px-4 py-2 text-center space-x-2">
-                                    <a href="{{ route('admin.users.edit', $user) }}"
+                                    <a href="{{ route('users.edit', $user) }}"
                                        class="rounded bg-blue-500 px-2 py-1 text-sm text-white">
                                         Editar
                                     </a>
 
-                                    <form action="{{ route('admin.users.destroy', $user) }}"
+                                    <form action="{{ route('users.destroy', $user) }}"
                                           method="POST"
                                           class="inline-block">
                                         @csrf

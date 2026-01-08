@@ -18,7 +18,7 @@
 
         <ul class="mt-6 space-y-2 text-sm text-gray-700 dark:text-gray-300">
             <li>
-                <a href="{{ route('admin.users.index') }}"
+                <a href="{{ route('users.index') }}"
                    class="block px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-stone-700">
                     Usuarios
                 </a>
