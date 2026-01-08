@@ -1,7 +1,18 @@
 <x-layouts.admin :title="'Dashboard Admin'">
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="mb-8 rounded-lg bg-white p-6 shadow dark:bg-stone-800">
+        <h2 class="mb-4 text-xl font-semibold text-stone-900 dark:text-stone-100">
+            Usuarios registrados en los últimos 7 días
+        </h2>
+        <canvas
+            id="usersChart"
+            height="120"
+            data-labels='@json($chartLabels)'
+            data-data='@json($chartData)'>
+        </canvas>
+    </div>
 
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div class="rounded-lg bg-white p-5 shadow dark:bg-stone-800">
             <p class="text-sm text-gray-500 dark:text-gray-400">Usuarios registrados hoy</p>
             <p class="mt-2 text-3xl font-bold text-stone-900 dark:text-stone-100">
@@ -29,17 +40,13 @@
                 {{ $totalOrders }}
             </p>
         </div>
-
     </div>
 
-    {{-- Estado de mesas --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-
+    <div class="mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="rounded-lg bg-white p-6 shadow dark:bg-stone-800">
             <h2 class="mb-4 text-lg font-semibold text-stone-900 dark:text-stone-100">
                 Estado de mesas
             </h2>
-
             <ul class="space-y-2 text-sm">
                 <li class="flex justify-between">
                     <span>Disponibles</span>
@@ -64,7 +71,6 @@
             <h2 class="mb-4 text-lg font-semibold text-stone-900 dark:text-stone-100">
                 Últimos usuarios registrados
             </h2>
-
             <table class="w-full text-sm">
                 <thead>
                     <tr class="border-b dark:border-stone-700">
@@ -75,31 +81,29 @@
                 </thead>
                 <tbody>
                     @forelse($latestUsers as $user)
-                        <tr class="border-b dark:border-stone-700">
-                            <td class="py-2">{{ $user->name }}</td>
-                            <td class="py-2">{{ $user->email }}</td>
-                            <td class="py-2 text-gray-500">
-                                {{ $user->created_at->format('d/m/Y H:i') }}
-                            </td>
-                        </tr>
+                    <tr class="border-b dark:border-stone-700">
+                        <td class="py-2">{{ $user->name }}</td>
+                        <td class="py-2">{{ $user->email }}</td>
+                        <td class="py-2 text-gray-500">
+                            {{ $user->created_at->format('d/m/Y H:i') }}
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="3" class="py-4 text-center text-gray-500">
-                                No hay usuarios recientes
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="3" class="py-4 text-center text-gray-500">
+                            No hay usuarios recientes
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-
     </div>
 
-    <div class="rounded-lg bg-white p-6 shadow dark:bg-stone-800">
+    <div class="rounded-lg bg-white p-6 shadow dark:bg-stone-800 mb-8">
         <h2 class="mb-4 text-lg font-semibold text-stone-900 dark:text-stone-100">
             Últimos pedidos
         </h2>
-
         <table class="w-full text-sm">
             <thead>
                 <tr class="border-b dark:border-stone-700">
@@ -111,20 +115,20 @@
             </thead>
             <tbody>
                 @forelse($latestOrders as $order)
-                    <tr class="border-b dark:border-stone-700">
-                        <td class="py-2">{{ $order->name }}</td>
-                        <td class="py-2">{{ $order->user->name ?? '—' }}</td>
-                        <td class="py-2">{{ $order->table->name ?? '—' }}</td>
-                        <td class="py-2 text-gray-500">
-                            {{ $order->created_at->format('d/m/Y H:i') }}
-                        </td>
-                    </tr>
+                <tr class="border-b dark:border-stone-700">
+                    <td class="py-2">{{ $order->name }}</td>
+                    <td class="py-2">{{ $order->user->name ?? '—' }}</td>
+                    <td class="py-2">{{ $order->table->name ?? '—' }}</td>
+                    <td class="py-2 text-gray-500">
+                        {{ $order->created_at->format('d/m/Y H:i') }}
+                    </td>
+                </tr>
                 @empty
-                    <tr>
-                        <td colspan="4" class="py-4 text-center text-gray-500">
-                            No hay pedidos recientes
-                        </td>
-                    </tr>
+                <tr>
+                    <td colspan="4" class="py-4 text-center text-gray-500">
+                        No hay pedidos recientes
+                    </td>
+                </tr>
                 @endforelse
             </tbody>
         </table>
