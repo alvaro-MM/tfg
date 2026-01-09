@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Alérgenos')">
+<x-layouts.admin :title="__('Alérgenos')">
     <div class="py-8">
         <div class="mx-auto max-w-4xl">
             <div class="rounded-lg bg-white p-6 shadow-sm dark:bg-neutral-800">
@@ -55,4 +55,4 @@
             </div>
         </div>
     </div>
-</x-layouts.app>
+</x-layouts.admin>

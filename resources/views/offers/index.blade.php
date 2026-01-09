@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Ofertas')">
+<x-layouts.admin :title="__('Ofertas')">
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Ofertas</h1>
         @can('create', App\Models\Offer::class)
@@ -66,4 +66,4 @@
             {{ $offers->links() }}
         </div>
     </div>
-</x-layouts.app>
+</x-layouts.admin>

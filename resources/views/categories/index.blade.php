@@ -1,4 +1,4 @@
-<x-layout title="Categorías">
+<x-layouts.admin title="Categorías">
     <h1>Categorías</h1>
 
     <a href="{{ route('categories.create') }}" class="btn btn-primary mb-3">Crear nueva categoría</a>
@@ -37,4 +37,4 @@
             @endforelse
         </tbody>
     </table>
-</x-layout>
+</x-layouts.admin>

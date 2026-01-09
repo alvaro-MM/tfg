@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Facturas')">
+<x-layouts.admin :title="__('Facturas')">
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Facturas</h1>
         @can('create', App\Models\Invoice::class)
@@ -62,4 +62,4 @@
             {{ $invoices->links() }}
         </div>
     </div>
-</x-layouts.app>
+</x-layouts.admin>

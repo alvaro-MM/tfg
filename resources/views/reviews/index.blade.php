@@ -1,7 +1,7 @@
 {{--@extends('layouts.app')--}}
 
 {{--@section('content')--}}
-<x-layouts.app :title="__('Review')">
+<x-layouts.admin :title="__('Review')">
     <div class="max-w-5xl mx-auto py-8">
 
         <h1 class="text-2xl font-bold text-gray-800 dark:text-stone-100 mb-6">
@@ -124,5 +124,5 @@
 {{--            {{ $reviews->links() }}--}}
 {{--        </div>--}}
     </div>
-</x-layouts.app>
+</x-layouts.admin>
 {{--@endsection--}}

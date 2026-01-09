@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Menús')">
+<x-layouts.admin :title="__('Menús')">
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Menús</h1>
         @can('create', App\Models\Menu::class)
@@ -80,4 +80,4 @@
             {{ $menus->links() }}
         </div>
     </div>
-</x-layouts.app>
+</x-layouts.admin>

@@ -47,6 +47,16 @@
     }
 }
 
+@layer components {
+    .sidebar-sub {
+        @apply block px-3 py-2 rounded
+               text-gray-400
+               hover:text-white hover:bg-gray-800
+               transition;
+    }
+}
+
+
 [data-flux-field]:not(ui-radio, ui-checkbox) {
     @apply grid gap-2;
 }

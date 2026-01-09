@@ -1,4 +1,4 @@
-<x-layouts.app :title="'Mesas'">
+<x-layouts.admin :title="'Mesas'">
 
     <h1 class="text-2xl font-semibold mb-4">Mesas</h1>
 
@@ -40,4 +40,4 @@
         </tbody>
     </table>
 
-</x-layouts.app>
+</x-layouts.admin>

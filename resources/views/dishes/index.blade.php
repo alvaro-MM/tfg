@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Platos')">
+<x-layouts.admin :title="__('Platos')">
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Platos</h1>
         <a href="{{ route('dishes.create') }}" class="rounded bg-blue-600 px-4 py-2 text-white">Nuevo plato</a>
@@ -52,4 +52,4 @@
             {{ $dishes->links() }}
         </div>
     </div>
-</x-layouts.app>
+</x-layouts.admin>
