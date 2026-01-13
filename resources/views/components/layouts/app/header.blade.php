@@ -12,6 +12,9 @@
             </a>
 
             <flux:navbar class="-mb-px max-lg:hidden">
+                <flux:navbar.item icon="home" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>
+                    {{ __('Inicio') }}
+                </flux:navbar.item>
                 <flux:navbar.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                     {{ __('Dashboard') }}
                 </flux:navbar.item>
@@ -98,8 +101,35 @@
 
             <flux:navlist variant="outline">
                 <flux:navlist.group :heading="__('Platform')">
+                    <flux:navlist.item icon="home" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>
+                    {{ __('Inicio') }}
+                    </flux:navlist.item>
                     <flux:navlist.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                     {{ __('Dashboard') }}
+                    </flux:navlist.item>
+                </flux:navlist.group>
+                
+                <flux:navlist.group :heading="__('Gestión')">
+                    <flux:navlist.item icon="folder" :href="route('categories.index')" :current="request()->routeIs('categories.*')" wire:navigate>
+                    {{ __('Categorías') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="rectangle-stack" :href="route('menus.index')" :current="request()->routeIs('menus.*')" wire:navigate>
+                    {{ __('Menús') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="beaker" :href="route('dishes.index')" :current="request()->routeIs('dishes.*')" wire:navigate>
+                    {{ __('Platos') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="beaker" :href="route('drinks.index')" :current="request()->routeIs('drinks.*')" wire:navigate>
+                    {{ __('Bebidas') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="exclamation-triangle" :href="route('allergens.index')" :current="request()->routeIs('allergens.*')" wire:navigate>
+                    {{ __('Alérgenos') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="table-cells" :href="route('tables.index')" :current="request()->routeIs('tables.*')" wire:navigate>
+                    {{ __('Mesas') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="star" :href="route('review.index')" :current="request()->routeIs('review.*')" wire:navigate>
+                    {{ __('Reseñas') }}
                     </flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>

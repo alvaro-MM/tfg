@@ -41,7 +41,12 @@ class TableController extends Controller
                 ->withInput();
         }
 
-        Table::create($data);
+        $table = Table::create($data);
+
+        // Generar token QR si no existe
+        if (!$table->qr_token) {
+            $table->generateQrToken();
+        }
 
         return redirect()
             ->route('tables.index')
@@ -79,6 +84,11 @@ class TableController extends Controller
 
         $table->update($data);
 
+        // Asegurar que tiene token QR si ya no lo tenía
+        if (!$table->qr_token) {
+            $table->generateQrToken();
+        }
+
         return redirect()
             ->route('tables.index')
             ->with('success', 'Mesa actualizada correctamente.');
@@ -91,5 +101,22 @@ class TableController extends Controller
         return redirect()
             ->route('tables.index')
             ->with('success', 'Mesa eliminada correctamente.');
+    }
+
+    /**
+     * Generate QR token for a table
+     */
+    public function generateQr(Table $table)
+    {
+        if (!$table->qr_token) {
+            $table->generateQrToken();
+            return redirect()
+                ->route('tables.show', $table)
+                ->with('success', 'Token QR generado correctamente.');
+        }
+
+        return redirect()
+            ->route('tables.show', $table)
+            ->with('info', 'La mesa ya tiene un token QR asignado.');
     }
 }

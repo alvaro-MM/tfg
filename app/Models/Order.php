@@ -9,6 +9,10 @@ class Order extends Model
 {
     use HasFactory;
     protected $fillable = ['user_id', 'table_id', 'invoice_id', 'type', 'date'];
+    
+    protected $casts = [
+        'date' => 'datetime',
+    ];
 
     public function user()
     {
@@ -27,11 +31,15 @@ class Order extends Model
 
     public function dishes()
     {
-        return $this->belongsToMany(Dish::class, 'dish_order', 'order_id', 'dish_id');
+        return $this->belongsToMany(Dish::class, 'dish_order', 'order_id', 'dish_id')
+            ->withPivot('quantity', 'created_at', 'updated_at')
+            ->withTimestamps();
     }
 
     public function drinks()
     {
-        return $this->belongsToMany(Drink::class, 'drink_order', 'order_id', 'drink_id');
+        return $this->belongsToMany(Drink::class, 'drink_order', 'order_id', 'drink_id')
+            ->withPivot('quantity', 'created_at', 'updated_at')
+            ->withTimestamps();
     }
 }
