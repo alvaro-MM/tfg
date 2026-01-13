@@ -18,7 +18,7 @@ class UsersWithRolesSeeder extends Seeder
                 'password' => bcrypt('password'),
             ]
         );
-        $admin->assignRole('admin');
+        $admin->assignRole(['admin', 'owner', 'staff', 'client']);
 
         // Cliente
         $client = User::firstOrCreate(

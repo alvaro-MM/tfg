@@ -13,7 +13,7 @@ class OfferPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(['admin', 'owner', 'staff']);
+        return $user->hasRole('admin');
     }
 
     /**
@@ -21,7 +21,7 @@ class OfferPolicy
      */
     public function view(User $user, Offer $offer): bool
     {
-        return $user->hasRole(['admin', 'owner', 'staff']);
+        return $user->hasRole('admin');
     }
 
     /**
@@ -29,7 +29,7 @@ class OfferPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole(['admin', 'owner']);
+        return $user->hasRole('admin');
     }
 
     /**
@@ -37,7 +37,7 @@ class OfferPolicy
      */
     public function update(User $user, Offer $offer): bool
     {
-        return $user->hasRole(['admin', 'owner']);
+        return $user->hasRole('admin');
     }
 
     /**
@@ -45,7 +45,7 @@ class OfferPolicy
      */
     public function delete(User $user, Offer $offer): bool
     {
-        return $user->hasRole(['admin']);
+        return $user->hasRole('admin');
     }
 
     /**

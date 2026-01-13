@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\order;
+use App\Models\Order;
+use Illuminate\View\View;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 

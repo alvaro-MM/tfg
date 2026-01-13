@@ -1,13 +1,8 @@
-<<<<<<< HEAD
-<x-layouts.admin title="Categorías">
-    <h1>Categorías</h1>
-=======
 <x-layouts.app :title="__('Categorías')">
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Categorías</h1>
         <a href="{{ route('categories.create') }}" class="rounded bg-blue-600 px-4 py-2 text-white">Crear nueva categoría</a>
     </div>
->>>>>>> qr-menu-orders
 
     <div class="mt-4">
         @if(session('success'))
@@ -22,14 +17,6 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Categoría Padre</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Acciones</th>
                 </tr>
-<<<<<<< HEAD
-            @empty
-                <tr><td colspan="4" class="text-center">No hay categorías registradas.</td></tr>
-            @endforelse
-        </tbody>
-    </table>
-</x-layouts.admin>
-=======
             </thead>
             <tbody class="bg-white divide-y divide-gray-200 dark:bg-zinc-800 dark:divide-zinc-700">
                 @forelse($categories as $category)
@@ -56,4 +43,3 @@
         </table>
     </div>
 </x-layouts.app>
->>>>>>> qr-menu-orders
