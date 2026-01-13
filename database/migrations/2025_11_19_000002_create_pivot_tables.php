@@ -38,17 +38,21 @@ return new class extends Migration
         Schema::create('dish_order', function (Blueprint $table) {
             $table->unsignedBigInteger('dish_id');
             $table->unsignedBigInteger('order_id');
+            $table->unsignedInteger('quantity')->default(1);
             $table->primary(['dish_id', 'order_id']);
             $table->foreign('dish_id')->references('id')->on('dishes')->onDelete('cascade');
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->timestamps();
         });
 
         Schema::create('drink_order', function (Blueprint $table) {
             $table->unsignedBigInteger('drink_id');
             $table->unsignedBigInteger('order_id');
+            $table->unsignedInteger('quantity')->default(1);
             $table->primary(['drink_id', 'order_id']);
             $table->foreign('drink_id')->references('id')->on('drinks')->onDelete('cascade');
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 

@@ -16,13 +16,12 @@ class OrderFactory extends Factory
      */
     public function definition(): array
     {
-        $name = 'Pedido ' . $this->faker->unique()->numberBetween(1000, 9999);
         return [
-            'name' => $name,
-            'slug' => str($name)->slug(),
-            'description' => $this->faker->sentence(12),
-            'table_id' => \App\Models\table::factory(),
             'user_id' => \App\Models\User::factory(),
+            'table_id' => \App\Models\Table::factory(),
+            'invoice_id' => null,
+            'type' => $this->faker->randomElement(['buffet', 'a_la_carta']),
+            'date' => $this->faker->dateTimeBetween('-1 month', 'now'),
         ];
     }
 }

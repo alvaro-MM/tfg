@@ -20,6 +20,7 @@ return new class extends Migration
 
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('menu_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('qr_token', 64)->unique()->nullable();
 
             $table->timestamps();
         });
