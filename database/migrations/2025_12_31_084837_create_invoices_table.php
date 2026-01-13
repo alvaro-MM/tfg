@@ -25,8 +25,11 @@ return new class extends Migration
             $table->text('customer_notes')->nullable();
             
             // Payment information
-            $table->string('payment_method')->nullable(); // cash, card, mobile, transfer
-            
+            $table->string('payment_method')->nullable(); // cash, card, mobile, transfer, cash
+            $table->string('payment_status')->nullable(); // pending, paid, failed
+            $table->string('payment_reference')->nullable(); // reference number from the payment gateway
+            $table->string('payment_amount')->nullable();
+            $table->string('payment_currency')->nullable(); // EUR
             $table->timestamps();
         });
     }

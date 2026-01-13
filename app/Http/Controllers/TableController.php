@@ -102,4 +102,21 @@ class TableController extends Controller
             ->route('tables.index')
             ->with('success', 'Mesa eliminada correctamente.');
     }
+
+    /**
+     * Generate QR token for a table
+     */
+    public function generateQr(Table $table)
+    {
+        if (!$table->qr_token) {
+            $table->generateQrToken();
+            return redirect()
+                ->route('tables.show', $table)
+                ->with('success', 'Token QR generado correctamente.');
+        }
+
+        return redirect()
+            ->route('tables.show', $table)
+            ->with('info', 'La mesa ya tiene un token QR asignado.');
+    }
 }

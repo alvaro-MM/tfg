@@ -47,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('allergens', AllergenController::class);
     Route::resource('review', ReviewController::class);
     Route::resource('tables', TableController::class);
+    Route::post('tables/{table}/generate-qr', [TableController::class, 'generateQr'])->name('tables.generate-qr');
     Route::resource('menus', MenuController::class)->except(['show']);
 
     Route::redirect('settings', 'settings/profile');
