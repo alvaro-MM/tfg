@@ -1,15 +1,12 @@
 <x-layouts.admin :title="'Dashboard Admin'">
 
-    <div class="mb-8 rounded-lg bg-white p-6 shadow dark:bg-stone-800">
-        <h2 class="mb-4 text-xl font-semibold text-stone-900 dark:text-stone-100">
-            Usuarios registrados en los últimos 7 días
-        </h2>
-        <canvas
-            id="usersChart"
-            height="120"
-            data-labels='@json($chartLabels)'
-            data-data='@json($chartData)'>
-        </canvas>
+    <div class="mb-6">
+        <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">
+            Resumen del día
+        </h1>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            {{ now()->format('d/m/Y') }}
+        </p>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

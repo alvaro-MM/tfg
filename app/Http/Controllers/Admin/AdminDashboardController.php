@@ -31,6 +31,22 @@ class AdminDashboardController extends Controller
             ->take(5)
             ->get();
 
+        return view('admin.dashboard', compact(
+            'totalUsers',
+            'usersToday',
+            'latestUsers',
+            'totalTables',
+            'availableTables',
+            'occupiedTables',
+            'reservedTables',
+            'totalOrders',
+            'ordersToday',
+            'latestOrders'
+        ));
+    }
+
+    public function performance()
+    {
         $startDate = Carbon::today()->subDays(6);
         $endDate = Carbon::today();
 
@@ -55,17 +71,7 @@ class AdminDashboardController extends Controller
 
         $chartData = array_values($chartData);
 
-        return view('admin.dashboard', compact(
-            'totalUsers',
-            'usersToday',
-            'latestUsers',
-            'totalTables',
-            'availableTables',
-            'occupiedTables',
-            'reservedTables',
-            'totalOrders',
-            'ordersToday',
-            'latestOrders',
+        return view('admin.performance.index', compact(
             'chartLabels',
             'chartData'
         ));

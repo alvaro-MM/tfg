@@ -39,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:admin')->group(function () {
         Route::get('/admin-dashboard', [AdminDashboardController::class, 'index'])->name('admin-dashboard.index');
         Route::resource('admin-dashboard/users', UserController::class)->except(['show', 'create', 'store']);
+        Route::get('/performance', [AdminDashboardController::class, 'performance'])->name('performance');
     });
 
     // No hechos por nosotros
