@@ -13,7 +13,7 @@ class MenuPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(['admin', 'owner', 'client']);
+        return $user->hasRole('admin');
     }
 
     /**
@@ -21,7 +21,7 @@ class MenuPolicy
      */
     public function view(User $user, Menu $menu): bool
     {
-        return $user->hasRole(['admin', 'owner', 'client']);
+        return $user->hasRole('admin');
     }
 
     /**
@@ -29,7 +29,7 @@ class MenuPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole(['admin', 'owner']);
+        return $user->hasRole('admin');
     }
 
     /**
@@ -37,7 +37,7 @@ class MenuPolicy
      */
     public function update(User $user, Menu $menu): bool
     {
-        return $user->hasRole(['admin', 'owner']);
+        return $user->hasRole('admin');
     }
 
     /**
@@ -45,8 +45,7 @@ class MenuPolicy
      */
     public function delete(User $user, Menu $menu): bool
     {
-        return $user->hasRole(['admin', 'owner']) &&
-            !$menu->tables()->exists();
+        return $user->hasRole('admin');
     }
 
     /**

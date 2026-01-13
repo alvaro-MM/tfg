@@ -13,7 +13,7 @@ class DishPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasRole('admin');
     }
 
     /**
@@ -21,7 +21,7 @@ class DishPolicy
      */
     public function view(User $user, Dish $dish): bool
     {
-        return false;
+        return $user->hasRole('admin');
     }
 
     /**
@@ -29,7 +29,7 @@ class DishPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasRole('admin');
     }
 
     /**
@@ -37,7 +37,7 @@ class DishPolicy
      */
     public function update(User $user, Dish $dish): bool
     {
-        return false;
+        return $user->hasRole('admin');
     }
 
     /**
@@ -45,7 +45,7 @@ class DishPolicy
      */
     public function delete(User $user, Dish $dish): bool
     {
-        return false;
+        return $user->hasRole('admin');
     }
 
     /**

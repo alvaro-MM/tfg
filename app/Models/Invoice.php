@@ -8,10 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Invoice extends Model
 {
     use HasFactory;
-<<<<<<< HEAD
-
-    protected $fillable = ['order_id', 'table_id', 'total', 'date'];
-=======
     protected $fillable = [
         'order_id', 
         'table_id', 
@@ -32,12 +28,7 @@ class Invoice extends Model
         'date' => 'datetime',
         'total' => 'decimal:2',
     ];
->>>>>>> qr-menu-orders
 
-    protected $casts = [
-        'total' => 'decimal:2',
-        'date' => 'date',
-    ];
 
     public function order()
     {

@@ -9,7 +9,6 @@ use App\Http\Controllers\Staff\StaffDashboardController;
 use App\Http\Controllers\Staff\StaffOrderController;
 use App\Http\Controllers\Staff\StaffTableController;
 use App\Http\Controllers\TableController;
-use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PublicMenuController;
 use App\Http\Controllers\PublicOrderController;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +25,23 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+// Public routes for QR menu access
+Route::prefix('menu')->group(function () {
+    Route::get('/{token}', [PublicMenuController::class, 'show'])->name('public.menu');
+    Route::get('/{token}/data', [PublicMenuController::class, 'getMenuData'])->name('public.menu.data');
+});
+
+Route::prefix('order')->group(function () {
+    Route::post('/{token}/send', [PublicOrderController::class, 'sendToKitchen'])->name('public.order.send');
+    Route::get('/{token}/confirm/{orderId}', [PublicOrderController::class, 'confirm'])->name('public.order.confirm');
+});
+
+Route::prefix('checkout')->group(function () {
+    Route::get('/{token}', [PublicOrderController::class, 'showPayment'])->name('public.payment');
+    Route::post('/{token}', [PublicOrderController::class, 'checkout'])->name('public.checkout');
+    Route::get('/{token}/status', [PublicOrderController::class, 'getBuffetStatus'])->name('public.buffet.status');
+});
+
 Route::middleware(['auth'])->group(function () {
 
     Route::resource('categories', CategoryController::class);
@@ -34,6 +50,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('allergens', AllergenController::class);
     Route::resource('review', ReviewController::class);
     Route::resource('tables', TableController::class);
+    Route::post('tables/{table}/generate-qr', [TableController::class, 'generateQr'])->name('tables.generate-qr');
     Route::resource('menus', MenuController::class);
     Route::resource('offers', OfferController::class);
     Route::resource('invoices', InvoiceController::class);

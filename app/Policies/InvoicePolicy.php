@@ -13,7 +13,7 @@ class InvoicePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(['admin', 'manager', 'staff']);
+        return $user->hasRole('admin');
     }
 
     /**
@@ -21,7 +21,7 @@ class InvoicePolicy
      */
     public function view(User $user, Invoice $invoice): bool
     {
-        return $user->hasRole(['admin', 'manager', 'staff']);
+        return $user->hasRole('admin');
     }
 
     /**
@@ -29,7 +29,7 @@ class InvoicePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole(['admin', 'manager']);
+        return $user->hasRole('admin');
     }
 
     /**
@@ -37,7 +37,7 @@ class InvoicePolicy
      */
     public function update(User $user, Invoice $invoice): bool
     {
-        return $user->hasRole(['admin', 'manager']);
+        return $user->hasRole('admin');
     }
 
     /**
@@ -45,6 +45,6 @@ class InvoicePolicy
      */
     public function delete(User $user, Invoice $invoice): bool
     {
-        return $user->hasRole(['admin']);
+        return $user->hasRole('admin');
     }
 }

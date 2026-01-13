@@ -4,14 +4,14 @@
     <p>Estado: {{ $table->status }}</p>
 
     @if($table->status === 'available')
-        <form method="POST" action="{{ route('staff.tables.occupy', $table) }}">
+        <form method="POST" action="{{ route('tables.occupy', $table) }}">
             @csrf
             <button class="bg-green-600 text-white px-4 py-2 rounded">
                 Ocupar mesa
             </button>
         </form>
     @else
-        <form method="POST" action="{{ route('staff.tables.free', $table) }}">
+        <form method="POST" action="{{ route('tables.free', $table) }}">
             @csrf
             <button class="bg-red-600 text-white px-4 py-2 rounded">
                 Liberar mesa
