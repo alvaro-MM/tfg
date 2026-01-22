@@ -49,10 +49,11 @@
 
 @layer components {
     .sidebar-sub {
-        @apply block px-3 py-2 rounded
-               text-gray-400
-               hover:text-white hover:bg-gray-800
-               transition;
+        @apply block px-3 py-2 rounded text-gray-400 hover:text-white hover:bg-gray-800 transition;
+    }
+
+    .sidebar-sub-active {
+        @apply text-emerald-400 font-semibold bg-gray-800;
     }
 }
 
@@ -62,7 +63,7 @@
 }
 
 [data-flux-label] {
-    @apply  !mb-0 !leading-tight;
+    @apply !mb-0 !leading-tight;
 }
 
 input:focus[data-flux-control],
@@ -71,6 +72,30 @@ select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
 }
 
-/* \[:where(&)\]:size-4 {
-    @apply size-4;
-} */
+@layer utilities {
+
+    .scrollbar-thin {
+        scrollbar-width: thin;
+    }
+
+    .scrollbar-thumb-gray-700 {
+        scrollbar-color: #374151 transparent;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background-color: #374151;
+        border-radius: 9999px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+        background-color: #4b5563;
+    }
+}
