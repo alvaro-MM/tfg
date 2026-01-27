@@ -26,7 +26,6 @@ return new class extends Migration
             $table->boolean('special')->default(false);
 
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
-            $table->foreignId('allergen_id')->constrained('allergens')->cascadeOnDelete();
             
             $table->timestamps();
         });

@@ -22,6 +22,8 @@ class DrinkFactory extends Factory
             'name' => ucfirst($name),
             'slug' => str($name)->slug(),
             'description' => $this->faker->sentence(10),
+            'price' => $this->faker->randomFloat(2, 2, 8),
+            'available' => $this->faker->boolean(80),
             'category_id' => Category::query()->inRandomOrder()->value('id') ?? Category::factory(),
         ];
     }

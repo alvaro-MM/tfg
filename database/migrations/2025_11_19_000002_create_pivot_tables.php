@@ -30,6 +30,8 @@ return new class extends Migration
         Schema::create('dish_menu', function (Blueprint $table) {
             $table->unsignedBigInteger('dish_id');
             $table->unsignedBigInteger('menu_id');
+            $table->boolean('is_special')->default(false)->comment('Indica si el plato tiene precio especial independiente del menú');
+            $table->decimal('custom_price', 8, 2)->nullable()->comment('Precio personalizado si is_special es true, sino usa el precio del menú');
             $table->primary(['dish_id', 'menu_id']);
             $table->foreign('dish_id')->references('id')->on('dishes')->onDelete('cascade');
             $table->foreign('menu_id')->references('id')->on('menus')->onDelete('cascade');

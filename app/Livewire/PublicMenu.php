@@ -78,12 +78,13 @@ class PublicMenu extends Component
                 ->where('available', true)
                 ->orderBy('name')
                 ->get()
-                ->map(function ($dish) {
+                ->map(function ($dish) use ($menu) {
                     return [
                         'id' => $dish->id,
                         'name' => $dish->name,
                         'description' => $dish->description,
-                        'price' => (float) $dish->price,
+                        'price' => $menu->getDishPrice($dish->id),
+                        'is_special' => (bool) $dish->pivot->is_special,
                         'image' => $dish->image ? asset('storage/' . $dish->image) : null,
                         'category_id' => $dish->category_id,
                         'allergens' => $dish->allergens->pluck('name')->toArray(),

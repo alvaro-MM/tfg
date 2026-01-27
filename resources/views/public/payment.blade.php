@@ -42,39 +42,9 @@
         @endif
         
         <div class="space-y-3 mb-4">
-            @if(isset($orders) && $orders->count() > 0)
-                @foreach($orders as $order)
-                    <div class="mb-4 p-3 bg-gray-50 rounded-lg">
-                        <p class="text-sm font-semibold text-gray-700 mb-2">Pedido #{{ $order->id }} - {{ $order->date->format('H:i') }}</p>
-                        @foreach($order->dishes as $dish)
-                            <div class="flex justify-between items-center py-1 border-b border-gray-200">
-                                <div class="flex-1">
-                                    <p class="font-medium text-gray-900">{{ $dish->name }}</p>
-                                    <p class="text-sm text-gray-600">Cantidad: {{ $dish->pivot->quantity }}</p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-900">€{{ number_format($dish->price * $dish->pivot->quantity, 2) }}</p>
-                                    <p class="text-xs text-gray-500">€{{ number_format($dish->price, 2) }} c/u</p>
-                                </div>
-                            </div>
-                        @endforeach
-                        @foreach($order->drinks as $drink)
-                            <div class="flex justify-between items-center py-1 border-b border-gray-200">
-                                <div class="flex-1">
-                                    <p class="font-medium text-gray-900">{{ $drink->name }}</p>
-                                    <p class="text-sm text-gray-600">Cantidad: {{ $drink->pivot->quantity }}</p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-900">€{{ number_format($drink->price * $drink->pivot->quantity, 2) }}</p>
-                                    <p class="text-xs text-gray-500">€{{ number_format($drink->price, 2) }} c/u</p>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @endforeach
-            @else
+            @if(isset($cartItems) && count($cartItems) > 0)
                 @foreach($cartItems as $item)
-                <div class="flex justify-between items-center py-2 border-b">
+                <div class="flex justify-between items-center py-2 border-b border-gray-200">
                     <div class="flex-1">
                         <p class="font-medium text-gray-900">{{ $item['name'] }}</p>
                         <p class="text-sm text-gray-600">Cantidad: {{ $item['quantity'] }}</p>
@@ -85,6 +55,8 @@
                     </div>
                 </div>
                 @endforeach
+            @else
+                <p class="text-gray-600">No hay items en el carrito</p>
             @endif
         </div>
         

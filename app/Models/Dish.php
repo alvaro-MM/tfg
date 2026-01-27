@@ -31,7 +31,8 @@ class Dish extends Model
 
     public function menus()
     {
-        return $this->belongsToMany(Menu::class, 'dish_menu', 'dish_id', 'menu_id');
+        return $this->belongsToMany(Menu::class, 'dish_menu', 'dish_id', 'menu_id')
+            ->withPivot('is_special', 'custom_price');
     }
 
     public function orders()

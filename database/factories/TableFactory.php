@@ -24,9 +24,8 @@ class TableFactory extends Factory
             'capacity' => $this->faker->numberBetween(1, 12),
             'status' => $this->faker->randomElement(['available', 'occupied', 'reserved']),
             'notes' => $this->faker->optional()->sentence(),
-
             'user_id' => User::inRandomOrder()->value('id') ?? User::factory(),
-            'menu_id' => Menu::inRandomOrder()->value('id') ?? Menu::factory(),
+            'menu_id' => null, // Será asignado por TableSeeder después de MenuSeeder
         ];
     }
 }

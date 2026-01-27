@@ -87,6 +87,7 @@ class PublicCart extends Component
                 'name' => $product->name,
                 'price' => (float) $product->price,
                 'quantity' => $quantity,
+                'menu_id' => $table->menu_id,
             ];
         }
 
@@ -229,9 +230,21 @@ class PublicCart extends Component
         $this->count = 0;
         $this->total = 0.00;
 
+        // Get table to access menu
+        $table = Table::byQrToken($this->token)->with(['menu'])->first();
+        $menu = $table?->menu;
+
         foreach ($this->items as $item) {
             $this->count += $item['quantity'];
-            $this->total += ($item['price'] * $item['quantity']);
+            
+            $itemPrice = $item['price'];
+            
+            // If we have a menu and this is a dish (not a drink), recalculate price
+            if ($menu && $item['type'] === 'dish') {
+                $itemPrice = $menu->getDishPrice($item['id']);
+            }
+            
+            $this->total += ($itemPrice * $item['quantity']);
         }
 
         $this->total = round($this->total, 2);

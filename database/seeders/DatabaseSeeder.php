@@ -30,10 +30,10 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             AllergenSeeder::class,
             TableSeeder::class,
-            MenuSeeder::class, // crea ofertas asociadas
-            OfferSeeder::class,
             DrinkSeeder::class,
             DishSeeder::class,
+            MenuSeeder::class, // crea ofertas asociadas y asocia platos
+            OfferSeeder::class,
             OrderSeeder::class,
             InvoiceSeeder::class,
             BookingSeeder::class,

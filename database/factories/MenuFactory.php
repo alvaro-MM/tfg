@@ -21,7 +21,8 @@ class MenuFactory extends Factory
 
         return [
             'name' => 'Menú ' . ucfirst($this->faker->word()),
-            'allergen_id' => Allergen::query()->inRandomOrder()->value('id') ?? Allergen::factory(),
+            'type' => $this->faker->randomElement(['daily', 'special', 'seasonal', 'themed']),
+            'price' => $this->faker->randomFloat(2, 10, 30),
         ];
     }
 

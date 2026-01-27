@@ -180,10 +180,10 @@ class PublicOrderController extends Controller
      */
     public function showPayment(string $token): View|RedirectResponse
     {
-        $table = Table::byQrToken($token)->firstOrFail();
+        $table = Table::byQrToken($token)->with(['menu'])->firstOrFail();
         
         // Get all orders for this table that don't have an invoice (pending payment)
-        $orders = Order::with(['dishes', 'drinks'])
+        $orders = Order::with(['dishes', 'drinks', 'table.menu'])
             ->where('table_id', $table->id)
             ->whereNull('invoice_id')
             ->orderBy('date', 'asc')
@@ -194,30 +194,44 @@ class PublicOrderController extends Controller
                 ->with('info', 'No hay pedidos pendientes de pago.');
         }
 
-        // Calculate total from all orders
+        // Calculate total: each order (client) pays menu price
+        // First beverage included, pay for 2nd onwards
         $total = 0.00;
         $allItems = [];
         
+        // Add menu price per client (each order = 1 client)
+        $orderCount = $orders->count();
+        if ($table->menu) {
+            $menuPrice = $table->menu->price;
+            $total += $menuPrice * $orderCount;
+            $allItems[] = [
+                'name' => "Menú {$table->menu->name} ({$orderCount} cliente" . ($orderCount > 1 ? 's' : '') . ") - 1ª bebida incluida",
+                'price' => $menuPrice,
+                'quantity' => $orderCount,
+                'type' => 'menu',
+                'order_id' => null,
+            ];
+        }
+        
+        // Add beverages (first one free, pay from 2nd onwards)
         foreach ($orders as $order) {
-            foreach ($order->dishes as $dish) {
-                $total += $dish->price * $dish->pivot->quantity;
-                $allItems[] = [
-                    'order_id' => $order->id,
-                    'name' => $dish->name,
-                    'price' => $dish->price,
-                    'quantity' => $dish->pivot->quantity,
-                    'type' => 'dish',
-                ];
-            }
+            $drinkCount = 0;
             foreach ($order->drinks as $drink) {
-                $total += $drink->price * $drink->pivot->quantity;
-                $allItems[] = [
-                    'order_id' => $order->id,
-                    'name' => $drink->name,
-                    'price' => $drink->price,
-                    'quantity' => $drink->pivot->quantity,
-                    'type' => 'drink',
-                ];
+                $drinkCount += $drink->pivot->quantity;
+                
+                // Only charge drinks beyond the first one
+                $chargeableQuantity = max(0, $drinkCount - 1);
+                if ($chargeableQuantity > 0) {
+                    $drinkCost = $drink->price * $chargeableQuantity;
+                    $total += $drinkCost;
+                    $allItems[] = [
+                        'order_id' => $order->id,
+                        'name' => $drink->name . ' (a partir de 2ª)',
+                        'price' => $drink->price,
+                        'quantity' => $chargeableQuantity,
+                        'type' => 'drink',
+                    ];
+                }
             }
         }
         
@@ -237,7 +251,7 @@ class PublicOrderController extends Controller
      */
     public function checkout(Request $request, string $token): JsonResponse|RedirectResponse
     {
-        $table = Table::byQrToken($token)->firstOrFail();
+        $table = Table::byQrToken($token)->with(['menu'])->firstOrFail();
         
         // Validate payment form data (only if not JSON request)
         if (!$request->expectsJson()) {
@@ -260,79 +274,50 @@ class PublicOrderController extends Controller
             ];
         }
         
-        // Get cart from session
-        $cart = session("cart_{$token}", ['items' => []]);
-        $items = $cart['items'] ?? [];
-        
-        if (empty($items)) {
+        // Get all pending orders for this table
+        $orders = Order::with(['dishes', 'drinks', 'table.menu'])
+            ->where('table_id', $table->id)
+            ->whereNull('invoice_id')
+            ->get();
+
+        if ($orders->isEmpty()) {
             if ($request->expectsJson()) {
                 return response()->json([
-                    'error' => 'El carrito está vacío'
+                    'error' => 'No hay pedidos pendientes'
                 ], 400);
             }
             return redirect()->route('public.menu', $token)
-                ->with('error', 'El carrito está vacío');
+                ->with('error', 'No hay pedidos pendientes de pago');
         }
 
-        // Calculate totals
-        $count = 0;
+        // Calculate total: each order (client) pays menu price
+        // First beverage included, pay for 2nd onwards
         $total = 0.00;
-        foreach ($items as $item) {
-            $count += $item['quantity'];
-            $total += ($item['price'] * $item['quantity']);
+        $orderCount = $orders->count();
+        
+        // Menu price per client
+        if ($table->menu) {
+            $total += $table->menu->price * $orderCount;
+        }
+        
+        // Beverages (first one free per order, charge from 2nd onwards)
+        foreach ($orders as $order) {
+            $drinkCount = 0;
+            foreach ($order->drinks as $drink) {
+                $drinkCount += $drink->pivot->quantity;
+                // Only charge from 2nd beverage onwards
+                $chargeableQuantity = max(0, $drinkCount - 1);
+                $total += $drink->price * $chargeableQuantity;
+            }
         }
         $total = round($total, 2);
-
-        $validation = $this->validateBuffetLimit($table, $count);
-
-        if (!$validation['valid']) {
-            $message = "Has pedido {$validation['requested']} ítems, pero solo puedes pedir {$validation['available']} más en los próximos 10 minutos (límite: {$validation['limit']} por {$table->capacity} personas)";
-            
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'error' => 'Límite de buffet excedido',
-                    'message' => $message,
-                    'validation' => $validation,
-                ], 422);
-            }
-            
-            return redirect()->route('public.payment', $token)
-                ->with('error', $message);
-        }
 
         try {
             DB::beginTransaction();
 
-            // Create order - using table's user_id if available, otherwise get first admin user
-            $userId = $table->user_id ?? User::role('admin')->first()?->id ?? 1;
-
-            $order = Order::create([
-                'user_id' => $userId,
-                'table_id' => $table->id,
-                'type' => 'buffet',
-                'date' => now(),
-            ]);
-
-            // Attach dishes and drinks with quantities
-            foreach ($items as $item) {
-                if ($item['type'] === 'dish') {
-                    $order->dishes()->attach($item['id'], [
-                        'quantity' => $item['quantity'],
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                } else {
-                    $order->drinks()->attach($item['id'], [
-                        'quantity' => $item['quantity'],
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                }
-            }
-
-            // Create invoice with customer and payment information
+            // Create invoice for all orders
             $invoice = Invoice::create([
-                'order_id' => $order->id,
+                'order_id' => $orders->first()->id,
                 'table_id' => $table->id,
                 'total' => $total,
                 'date' => now(),
@@ -343,40 +328,39 @@ class PublicOrderController extends Controller
                 'payment_method' => $validated['payment_method'],
             ]);
 
-            // Update order with invoice_id
-            $order->invoice_id = $invoice->id;
-            $order->save();
-
-            // Clear cart
-            session()->forget("cart_{$token}");
+            // Update all orders with invoice_id
+            foreach ($orders as $order) {
+                $order->invoice_id = $invoice->id;
+                $order->save();
+            }
 
             DB::commit();
 
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => true,
-                    'order_id' => $order->id,
                     'invoice_id' => $invoice->id,
-                    'message' => 'Pedido creado exitosamente',
+                    'total' => $total,
+                    'message' => 'Pedido procesado exitosamente',
                 ]);
             }
 
-            return redirect()->route('public.order.confirm', ['token' => $token, 'orderId' => $order->id])
-                ->with('success', 'Pedido creado exitosamente');
+            return redirect()->route('public.order.confirm', ['token' => $token, 'orderId' => $orders->first()->id])
+                ->with('success', 'Pedido procesado exitosamente');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error creating order: ' . $e->getMessage());
+            Log::error('Error processing checkout: ' . $e->getMessage());
 
             if ($request->expectsJson()) {
                 return response()->json([
-                    'error' => 'Error al procesar el pedido',
+                    'error' => 'Error al procesar el pago',
                     'message' => $e->getMessage(),
                 ], 500);
             }
 
-            return redirect()->route('public.menu', $token)
-                ->with('error', 'Error al procesar el pedido: ' . $e->getMessage());
+            return redirect()->route('public.payment', $token)
+                ->with('error', 'Error al procesar el pago: ' . $e->getMessage());
         }
     }
 
