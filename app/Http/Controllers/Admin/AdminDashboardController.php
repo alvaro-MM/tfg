@@ -44,16 +44,20 @@ class AdminDashboardController extends Controller
             ->orderBy('hour')
             ->get();
 
+        $openHours = array_merge(range(12, 16), range(19, 23));
+
         $ordersPerHourLabels = [];
         $ordersPerHourData   = [];
 
-        for ($i = 0; $i < 24; $i++) {
-            $ordersPerHourLabels[] = sprintf('%02d:00', $i);
-            $ordersPerHourData[$i] = 0;
+        foreach ($openHours as $hour) {
+            $ordersPerHourLabels[] = sprintf('%02d:00', $hour);
+            $ordersPerHourData[$hour] = 0;
         }
 
         foreach ($ordersPerHour as $row) {
-            $ordersPerHourData[$row->hour] = $row->total;
+            if (in_array($row->hour, $openHours)) {
+                $ordersPerHourData[$row->hour] = $row->total;
+            }
         }
 
         $ordersPerHourData = array_values($ordersPerHourData);
@@ -128,65 +132,58 @@ class AdminDashboardController extends Controller
     }
 
     public function performance()
-{
-    $today = Carbon::today();
-    $startDate = Carbon::today()->subDays(6); // últimos 7 días
-    $endDate = $today;
+    {
+        $today = Carbon::today();
+        $startDate = Carbon::today()->subDays(6); // últimos 7 días
+        $endDate = $today;
 
-    $period = CarbonPeriod::create($startDate, $endDate);
+        $period = CarbonPeriod::create($startDate, $endDate);
 
-    // Inicializar arrays
-    $chartLabels = [];
-    $chartData = [];         // Usuarios
-    $ordersChartLabels = [];
-    $ordersChartData = [];   // Pedidos
+        $chartLabels = [];
+        $chartData = [];
+        $ordersChartLabels = [];
+        $ordersChartData = [];
 
-    // Inicializar con 0 para cada día
-    foreach ($period as $date) {
-        $label = $date->format('d/m');
-        $chartLabels[] = $label;
-        $ordersChartLabels[] = $label;
+        foreach ($period as $date) {
+            $label = $date->format('d/m');
+            $chartLabels[] = $label;
+            $ordersChartLabels[] = $label;
 
-        $chartData[$date->format('Y-m-d')] = 0;
-        $ordersChartData[$date->format('Y-m-d')] = 0;
+            $chartData[$date->format('Y-m-d')] = 0;
+            $ordersChartData[$date->format('Y-m-d')] = 0;
+        }
+
+        $usersPerDay = User::selectRaw('DATE(created_at) as date, COUNT(*) as total')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy('date')
+            ->get();
+
+        foreach ($usersPerDay as $row) {
+            $chartData[$row->date] = $row->total;
+        }
+
+        $ordersPerDay = Order::selectRaw('DATE(created_at) as date, COUNT(*) as total')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy('date')
+            ->get();
+
+        foreach ($ordersPerDay as $row) {
+            $ordersChartData[$row->date->format('Y-m-d')] = $row->total;
+        }
+
+        $chartData = array_values($chartData);
+        $ordersChartData = array_values($ordersChartData);
+
+        $totalUsers = User::count();
+        $totalOrders = Order::count();
+
+        return view('admin.performance.index', compact(
+            'totalUsers',
+            'totalOrders',
+            'chartLabels',
+            'chartData',
+            'ordersChartLabels',
+            'ordersChartData'
+        ));
     }
-
-    // Usuarios por día
-    $usersPerDay = User::selectRaw('DATE(created_at) as date, COUNT(*) as total')
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->groupBy('date')
-        ->get();
-
-    foreach ($usersPerDay as $row) {
-    $chartData[$row->date] = $row->total;
-}
-
-    // Pedidos por día
-    $ordersPerDay = Order::selectRaw('DATE(created_at) as date, COUNT(*) as total')
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->groupBy('date')
-        ->get();
-
-    foreach ($ordersPerDay as $row) {
-    $ordersChartData[$row->date->format('Y-m-d')] = $row->total;
-}
-
-    // Convertir a arrays indexados para Chart.js
-    $chartData = array_values($chartData);
-    $ordersChartData = array_values($ordersChartData);
-
-    // Totales generales
-    $totalUsers = User::count();
-    $totalOrders = Order::count();
-
-    return view('admin.performance.index', compact(
-        'totalUsers',
-        'totalOrders',
-        'chartLabels',
-        'chartData',
-        'ordersChartLabels',
-        'ordersChartData'
-    ));
-}
-
 }
