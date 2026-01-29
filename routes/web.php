@@ -20,6 +20,7 @@ use App\Http\Controllers\DrinkController;
 use App\Http\Controllers\AllergenController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\PDFController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -63,6 +64,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin-dashboard', [AdminDashboardController::class, 'index'])->name('admin-dashboard.index');
         Route::resource('admin-dashboard/users', UserController::class)->except(['show', 'create', 'store']);
         Route::get('/performance', [AdminDashboardController::class, 'performance'])->name('performance');
+        Route::get('/admin/pdf/daily-performance', [PDFController::class, 'dailyPerformance'])->name('admin.pdf.daily-performance');
     });
 
     Route::middleware('role:staff')->group(function () {
