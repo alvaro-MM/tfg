@@ -164,7 +164,8 @@ class AdminDashboardController extends Controller
 
         $ordersPerDay = Order::selectRaw('DATE(created_at) as date, COUNT(*) as total')
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->groupBy('date')
+            ->groupByRaw('DATE(created_at)')
+            ->orderBy('date')
             ->get();
 
         foreach ($ordersPerDay as $row) {
