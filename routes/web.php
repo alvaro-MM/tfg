@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\PublicController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Staff\StaffDashboardController;
 use App\Http\Controllers\Staff\StaffOrderController;
@@ -25,6 +26,9 @@ use App\Http\Controllers\Admin\PDFController;
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
+Route::get('/platos', [PublicController::class, 'dishes'])->name('dishes.public');
+Route::get('/precios', [PublicController::class, 'prices'])->name('prices');
+Route::get('/sobre-nosotros', [PublicController::class, 'about'])->name('about');
 
 // Public routes for QR menu access
 Route::prefix('menu')->group(function () {
