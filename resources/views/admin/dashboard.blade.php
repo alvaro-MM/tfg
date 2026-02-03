@@ -1,6 +1,7 @@
 <x-layouts.admin :title="'Dashboard Admin'">
 
-    <div class="mb-6">
+    <div class="mb-6 flex items-start justify-between gap-4">
+    <div>
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">
             Resumen del día
         </h1>
@@ -8,6 +9,20 @@
             {{ now()->format('d/m/Y') }}
         </p>
     </div>
+
+    <a href="{{ route('admin.pdf.daily-performance') }}"
+       class="inline-flex items-center gap-2 rounded-lg bg-stone-900 px-4 py-2 text-sm font-medium text-white
+              hover:bg-stone-800 dark:bg-stone-700 dark:hover:bg-stone-600 transition">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
+        </svg>
+
+        Descargar PDF
+    </a>
+</div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
 
