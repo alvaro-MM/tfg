@@ -48,7 +48,6 @@
                 class="w-full flex items-center justify-between px-3 py-2 rounded
            text-gray-200 hover:bg-gray-800 transition">
 
-
                 <div class="flex items-center gap-3">
                     <svg class="h-5 w-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -117,12 +116,23 @@
                     Ofertas
                 </a>
 
-                <a href="{{ route('invoices.index') }}"
-                    class="sidebar-sub {{ request()->routeIs('invoices.*') ? 'sidebar-sub-active' : '' }}">
-                    Facturas
-                </a>
-
             </div>
+
+            <a href="{{ route('admin.billing') }}"
+                class="w-full flex items-center gap-3 px-3 py-2 rounded
+          transition
+          {{ request()->routeIs('invoices.*')
+                ? 'bg-gray-800 text-white'
+                : 'text-gray-200 hover:bg-gray-800' }}">
+
+                <svg class="h-5 w-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 7h18M5 11h2m4 0h6m2 8H5
+             a2 2 0 01-2-2V7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2z" />
+                </svg>
+
+                <span class="font-medium">Facturación</span>
+            </a>
 
             <button
                 @click="togglePerformance()"
