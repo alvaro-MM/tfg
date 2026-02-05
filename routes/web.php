@@ -67,6 +67,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:admin')->group(function () {
         Route::get('/admin-dashboard', [AdminDashboardController::class, 'index'])->name('admin-dashboard.index');
         Route::resource('admin-dashboard/users', UserController::class)->except(['show', 'create', 'store']);
+        Route::get('/admin/facturacion', [AdminDashboardController::class, 'billing'])->name('admin.billing');
         Route::get('/performance', [AdminDashboardController::class, 'performance'])->name('performance');
         Route::get('/admin/pdf/daily-performance', [PDFController::class, 'dailyPerformance'])->name('admin.pdf.daily-performance');
     });

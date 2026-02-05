@@ -103,4 +103,48 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // grafico de facturacion
+    const billingCanvas = document.getElementById('billingChart');
+
+    if (billingCanvas) {
+        const labels = JSON.parse(billingCanvas.dataset.labels || '[]');
+        const data = JSON.parse(billingCanvas.dataset.data || '[]');
+
+        new Chart(billingCanvas, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{
+                    data,
+                    backgroundColor: 'rgba(79,70,229,0.7)',
+                    borderRadius: 6,
+                    maxBarThickness: 40
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => `${ctx.raw.toFixed(2)} €`
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: value => value + ' €'
+                        }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
 });

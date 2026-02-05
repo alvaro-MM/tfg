@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Table;
 use App\Models\Order;
 use App\Models\Review;
+use App\Models\Invoice;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 
@@ -128,6 +130,82 @@ class AdminDashboardController extends Controller
             'topDrinksToday',
 
             'alerts'
+        ));
+    }
+
+    public function billing()
+    {
+        $today = Carbon::today();
+
+        $stats = [
+            'today' => Invoice::whereDate('date', $today)->sum('total'),
+
+            'week' => Invoice::whereBetween('date', [
+                now()->startOfWeek(),
+                now()->endOfWeek()
+            ])->sum('total'),
+
+            'month' => Invoice::whereMonth('date', now()->month)
+                ->whereYear('date', now()->year)
+                ->sum('total'),
+
+            'year' => Invoice::whereYear('date', now()->year)
+                ->sum('total'),
+        ];
+
+        $dailyInvoices = Invoice::select(
+            DB::raw('DATE(date) as day'),
+            DB::raw('SUM(total) as total')
+        )
+            ->whereMonth('date', now()->month)
+            ->whereYear('date', now()->year)
+            ->groupBy('day')
+            ->orderBy('day')
+            ->get();
+
+        $chartLabels = [];
+        $chartData   = [];
+
+        foreach ($dailyInvoices as $row) {
+            $chartLabels[] = Carbon::parse($row->day)->format('d/m');
+            $chartData[]   = (float) $row->total;
+        }
+
+        $monthlyInvoices = Invoice::select(
+            DB::raw('MONTH(date) as month'),
+            DB::raw('SUM(total) as total')
+        )
+            ->whereYear('date', now()->year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        $chartLabels = [
+            'Ene',
+            'Feb',
+            'Mar',
+            'Abr',
+            'May',
+            'Jun',
+            'Jul',
+            'Ago',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dic'
+        ];
+
+        $chartData = array_fill(0, 12, 0);
+
+        foreach ($monthlyInvoices as $row) {
+            $index = $row->month - 1;
+            $chartData[$index] = (float) $row->total;
+        }
+
+        return view('admin.billing.index', compact(
+            'stats',
+            'chartLabels',
+            'chartData'
         ));
     }
 
