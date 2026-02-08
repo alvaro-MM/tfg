@@ -10,10 +10,15 @@ class StaffOrderController extends Controller
     public function index()
     {
         return view('staff.orders.index', [
-            'orders' => Order::with('table')
-                ->whereIn('status', ['pending', 'preparing'])
+            'orders' => Order::with([
+                'table',
+                'dishes',
+                'drinks',
+            ])
+//                ->whereIn('status', ['pending', 'preparing'])
                 ->latest()
                 ->get(),
         ]);
     }
+
 }

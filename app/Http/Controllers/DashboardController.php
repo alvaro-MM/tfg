@@ -16,12 +16,8 @@ class DashboardController extends Controller
         }
 
         if ($user->hasRole('staff')) {
-            return redirect()->route('staff.dashboard');
+            return redirect()->route('staff-dashboard.index');
         }
-
-//        if (auth()->user()->hasRole('staff')) {
-//            return redirect()->route('staff.dashboard');
-//        }
 
         return view('dashboard');
     }

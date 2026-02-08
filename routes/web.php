@@ -73,23 +73,29 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::middleware('role:staff')->group(function () {
-        Route::get('/staff/dashboard', [StaffDashboardController::class, 'index'])
-            ->name('staff.dashboard');
+        Route::get('/staff-dashboard', [StaffDashboardController::class, 'index'])
+            ->name('staff-dashboard.index');
 
-        Route::get('/tables', [StaffTableController::class, 'index'])
-            ->name('tables.index');
+        Route::get('/staff-tables', [StaffTableController::class, 'index'])
+            ->name('staff-tables.index');
 
-        Route::get('/tables/{table}', [StaffTableController::class, 'show'])
-            ->name('tables.show');
+        Route::get('/staff-tables/{table}', [StaffTableController::class, 'show'])
+            ->name('staff-tables.show');
 
-        Route::post('/tables/{table}/occupy', [StaffTableController::class, 'occupy'])
-            ->name('tables.occupy');
+        Route::post('/staff-tables/{table}/occupy', [StaffTableController::class, 'occupy'])
+            ->name('staff-tables.occupy');
 
-        Route::post('/tables/{table}/free', [StaffTableController::class, 'free'])
-            ->name('tables.free');
+        Route::post('/staff-tables/{table}/free', [StaffTableController::class, 'free'])
+            ->name('staff-tables.free');
 
-        Route::get('/orders', [StaffOrderController::class, 'index'])
-            ->name('orders.index');
+        Route::post('/tables/{table}/reserve', [StaffTableController::class, 'reserve'])
+            ->name('staff-tables.reserve');
+
+        Route::post('/tables/{table}/cancel-reserve', [StaffTableController::class, 'cancelReserve'])
+            ->name('staff-tables.cancel-reserve');
+
+        Route::get('/staff-orders', [StaffOrderController::class, 'index'])
+            ->name('staff-orders.index');
     });
 
     // No hechos por nosotros

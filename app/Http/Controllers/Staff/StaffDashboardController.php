@@ -12,10 +12,13 @@ class StaffDashboardController extends Controller
     public function index()
     {
         return view('staff.dashboard', [
+            'totalTables' => Table::count(),
             'freeTables' => Table::where('status', 'available')->count(),
             'occupiedTables' => Table::where('status', 'occupied')->count(),
-            'pendingOrders' => Order::where('status', 'pending')->count(),
-            'outOfStockDishes' => Dish::where('stock', '<=', 0)->get(),
+            'reservedTables' => Table::where('status', 'reserved')->count(),
+//            'reservedOrders' => Order::where('status', 'reserved')->count(),
+            'outOfStockDishes' => Dish::with(['category', 'allergens'])->where('available', false)->get()
+
         ]);
     }
 }

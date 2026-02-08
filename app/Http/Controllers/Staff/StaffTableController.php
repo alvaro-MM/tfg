@@ -9,16 +9,25 @@ class StaffTableController extends Controller
 {
     public function index()
     {
-        return view('staff.tables.index', [
-            'tables' => Table::with('orders')->orderBy('status')->get(),
-        ]);
+        $tables = Table::withCount([
+            'orders as orders_count'
+        ])->get();
+
+        return view('staff.tables.index', compact('tables'));
     }
 
     public function show(Table $table)
     {
-        return view('staff.tables.show', [
-            'table' => $table->load('orders.items.dish'),
+        $table->load([
+            'orders' => fn ($q) =>
+            $q->latest()->with([
+                'dishes:id,name,price',
+                'drinks:id,name,price',
+                'user:id,name'
+            ])
         ]);
+
+        return view('staff.tables.show', compact('table'));
     }
 
     public function occupy(Table $table)
@@ -44,4 +53,31 @@ class StaffTableController extends Controller
 
         return back()->with('success', 'Mesa liberada');
     }
+
+    public function reserve(Table $table)
+    {
+        if ($table->status !== 'available') {
+            return back()->with('error', 'La mesa no está disponible.');
+        }
+
+        $table->update([
+            'status' => 'reserved',
+        ]);
+
+        return back()->with('success', 'Mesa reservada correctamente.');
+    }
+
+    public function cancelReserve(Table $table)
+    {
+        if ($table->status !== 'reserved') {
+            return back()->with('error', 'La mesa no está reservada.');
+        }
+
+        $table->update([
+            'status' => 'available',
+        ]);
+
+        return back()->with('success', 'Reserva cancelada.');
+    }
+
 }
