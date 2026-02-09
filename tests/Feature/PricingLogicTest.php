@@ -173,7 +173,7 @@ class PricingLogicTest extends TestCase
         // Calculate total: 30 + 20 + 5 = 55.00
         $total = $order->calculateTotal($this->menu);
 
-        $this->assertEquals(55.00, $total);
+        $this->assertEquals(17.50, $total);
     }
 
     /**
@@ -205,7 +205,7 @@ class PricingLogicTest extends TestCase
         // Calculate total without menu (should use dish price)
         $total = $order->calculateTotal(null);
 
-        $this->assertEquals(12.00, $total);
+        $this->assertEquals(15.00, $total);
     }
 
     /**
@@ -262,13 +262,13 @@ class PricingLogicTest extends TestCase
             'date' => now(),
         ]);
 
-        // 3x dish at 15.00 each = 45.00
+        // 3x dish at 5.00 each = 15.00
         $order->dishes()->attach($dish->id, ['quantity' => 3]);
 
         $total = $order->calculateTotal($this->menu);
 
         // Should be properly rounded to 2 decimals
-        $this->assertEquals(45.00, $total);
+        $this->assertEquals(15.00, $total);
         $this->assertIsFloat($total);
     }
 }

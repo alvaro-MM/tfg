@@ -26,10 +26,13 @@ beforeEach(function () {
 });
 
 it('can view dishes index', function () {
-    Dish::factory()->count(5)->create([
+    $dishes = Dish::factory()->count(5)->create([
         'category_id' => $this->category->id,
-        'allergen_id' => $this->allergen->id,
     ]);
+
+    foreach ($dishes as $dish) {
+        $dish->allergens()->sync([$this->allergen->id]);
+    }
 
     $response = $this->get(route('dishes.index'));
 
@@ -47,8 +50,9 @@ it('can view create dish page', function () {
 it('can show a dish', function () {
     $dish = Dish::factory()->create([
         'category_id' => $this->category->id,
-        'allergen_id' => $this->allergen->id,
     ]);
+
+    $dish->allergens()->sync([$this->allergen->id]);
 
     $response = $this->get(route('dishes.show', $dish));
 
@@ -59,8 +63,9 @@ it('can show a dish', function () {
 it('can view edit dish page', function () {
     $dish = Dish::factory()->create([
         'category_id' => $this->category->id,
-        'allergen_id' => $this->allergen->id,
     ]);
+
+    $dish->allergens()->sync([$this->allergen->id]);
 
     $response = $this->get(route('dishes.edit', $dish));
 
@@ -73,8 +78,9 @@ it('can update a dish', function () {
 
     $dish = Dish::factory()->create([
         'category_id' => $this->category->id,
-        'allergen_id' => $this->allergen->id,
     ]);
+
+    $dish->allergens()->sync([$this->allergen->id]);
 
     $file = UploadedFile::fake()->image('updated.jpg');
 
@@ -100,8 +106,9 @@ it('can update a dish', function () {
 it('can delete a dish', function () {
     $dish = Dish::factory()->create([
         'category_id' => $this->category->id,
-        'allergen_id' => $this->allergen->id,
     ]);
+
+    $dish->allergens()->sync([$this->allergen->id]);
 
     $response = $this->delete(route('dishes.destroy', $dish));
 

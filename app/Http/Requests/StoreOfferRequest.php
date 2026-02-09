@@ -54,3 +54,4 @@ class StoreOfferRequest extends FormRequest
             'menu_id.exists' => 'El menú seleccionado no existe.',
         ];
     }
+}

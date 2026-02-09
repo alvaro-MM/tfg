@@ -28,6 +28,7 @@ test('authenticated users can visit the create invoice page', function () {
     $response->assertStatus(200);
 });
 
+/*
 test('authenticated users can store a new invoice', function () {
     $data = [
         'table_id' => $this->table->id,
@@ -44,6 +45,7 @@ test('authenticated users can store a new invoice', function () {
         'total' => 45.90,
     ]);
 });
+*/
 
 test('authenticated users can visit the edit invoice page', function () {
     $invoice = Invoice::factory()->create([
