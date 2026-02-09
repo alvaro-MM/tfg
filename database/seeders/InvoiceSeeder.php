@@ -4,8 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\Invoice;
 use App\Models\Order;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class InvoiceSeeder extends Seeder
 {
@@ -61,5 +62,31 @@ class InvoiceSeeder extends Seeder
             // Update order with invoice_id
             $order->update(['invoice_id' => $invoice->id]);
         }
+
+        $year = now()->year;
+
+        DB::table('invoices')->insert([
+            [
+                'order_id' => 1,
+                'table_id' => 1,
+                'total' => 4200,
+                'date' => Carbon::create($year, 1, 15),
+                'payment_status' => 'completed',
+            ],
+            [
+                'order_id' => 1,
+                'table_id' => 1,
+                'total' => 1800,
+                'date' => Carbon::create($year, 2, 15),
+                'payment_status' => 'completed',
+            ],
+            [
+                'order_id' => 1,
+                'table_id' => 1,
+                'total' => 1500,
+                'date' => Carbon::create($year, 3, 15),
+                'payment_status' => 'completed',
+            ],
+        ]);
     }
 }

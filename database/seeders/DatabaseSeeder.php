@@ -12,6 +12,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+
+    $year = now()->year;
+    
         // Crear roles y usuarios con roles (super-admin, admin, client)
         $this->call([
             RolesSeeder::class,
@@ -38,6 +41,7 @@ class DatabaseSeeder extends Seeder
             InvoiceSeeder::class,
             BookingSeeder::class,
             ReviewSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

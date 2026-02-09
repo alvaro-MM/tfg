@@ -255,10 +255,12 @@ class AdminDashboardController extends Controller
 
         $totalUsers = User::count();
         $totalOrders = Order::count();
+        $totalReviews = Review::count();
 
         return view('admin.performance.index', compact(
             'totalUsers',
             'totalOrders',
+            'totalReviews',
             'chartLabels',
             'chartData',
             'ordersChartLabels',
