@@ -1,4 +1,4 @@
-<x-layouts.app title="Detalle bebida">
+<x-layouts.admin title="Detalle bebida">
 
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">
@@ -41,4 +41,4 @@
         </div>
     </div>
 
-</x-layouts.app>
+</x-layouts.admin>

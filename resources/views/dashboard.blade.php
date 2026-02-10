@@ -1,80 +1,150 @@
-<x-layouts.app :title="__('Dashboard')">
-    <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
-        <div class="mb-6">
-            <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                Panel de Control
-            </h1>
-            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Acceso rápido a todas las secciones de gestión del sistema.
-            </p>
-        </div>
+@extends('layout.tfg')
 
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {{-- Categorías --}}
-            <a href="{{ route('categories.index') }}"
-               class="group rounded-xl border border-gray-200 bg-gray-50 p-6 transition hover:border-indigo-500 hover:bg-white hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-900">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white group-hover:text-indigo-600">
-                    Categorías
-                </h3>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    Gestiona las categorías de platos y bebidas.
-                </p>
-            </a>
+@section('title', 'Dashboard Cliente')
 
-            {{-- Platos --}}
-            <a href="{{ route('dishes.index') }}"
-               class="group rounded-xl border border-gray-200 bg-gray-50 p-6 transition hover:border-green-500 hover:bg-white hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-900">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white group-hover:text-green-600">
-                    Platos
-                </h3>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    Crear, editar y revisar los platos del menú.
-                </p>
-            </a>
+@section('content')
+    <div class="max-w-7xl mx-auto px-4 py-6">
 
-            {{-- Bebidas --}}
-            <a href="{{ route('drinks.index') }}"
-               class="group rounded-xl border border-gray-200 bg-gray-50 p-6 transition hover:border-blue-500 hover:bg-white hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-900">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white group-hover:text-blue-600">
-                    Bebidas
-                </h3>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    Administración de las bebidas disponibles.
-                </p>
-            </a>
+        <div class="flex flex-col gap-10">
 
-            {{-- Alérgenos --}}
-            <a href="{{ route('allergens.index') }}"
-               class="group rounded-xl border border-gray-200 bg-gray-50 p-6 transition hover:border-red-500 hover:bg-white hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-900">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white group-hover:text-red-600">
-                    Alérgenos
-                </h3>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    Control de alérgenos asociados a productos.
+            {{-- Header --}}
+            <div>
+                <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white">
+                    👋 Bienvenido, {{ auth()->user()->name }}
+                </h1>
+                <p class="text-gray-600 dark:text-gray-400 mt-2 max-w-2xl">
+                    Desde aquí puedes reservar mesas y consultar tus pedidos recientes.
                 </p>
-            </a>
+            </div>
 
-            {{-- Mesas --}}
-            <a href="{{ route('tables.index') }}"
-               class="group rounded-xl border border-gray-200 bg-gray-50 p-6 transition hover:border-purple-500 hover:bg-white hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-900">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white group-hover:text-purple-600">
-                    Mesas
-                </h3>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    Administración de las mesas disponibles.
-                </p>
-            </a>
+            {{-- Estadísticas --}}
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border">
+                    <p class="text-sm text-gray-500">Mesas totales</p>
+                    <p class="text-3xl font-bold">{{ $totalTables }}</p>
+                </div>
 
-            {{-- Reviews --}}
-            <a href="{{ route('review.index') }}"
-               class="group rounded-xl border border-gray-200 bg-gray-50 p-6 transition hover:border-yellow-500 hover:bg-white hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-900">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white group-hover:text-yellow-600">
-                    Reseñas
-                </h3>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    Gestión de opiniones de platos y bebidas.
-                </p>
-            </a>
+                <div class="bg-green-50 dark:bg-gray-800 rounded-2xl p-6 shadow border">
+                    <p class="text-sm text-gray-500">Disponibles</p>
+                    <p class="text-3xl font-bold text-green-600">{{ $availableTables }}</p>
+                </div>
+
+                <div class="bg-red-50 dark:bg-gray-800 rounded-2xl p-6 shadow border">
+                    <p class="text-sm text-gray-500">Ocupadas</p>
+                    <p class="text-3xl font-bold text-red-600">{{ $occupiedTables }}</p>
+                </div>
+            </div>
+
+            {{-- Gráfica pedidos --}}
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border">
+                <h2 class="text-xl font-semibold mb-4">📊 Tus pedidos recientes</h2>
+                <canvas id="ordersChart" height="90"></canvas>
+            </div>
+
+            {{-- Accesos rápidos --}}
+            <div>
+                <h2 class="text-xl font-semibold mb-4">⚡ Accesos rápidos</h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <a href="{{ route('tables.index') }}"
+                       class="bg-blue-50 hover:bg-blue-100 dark:bg-gray-800 rounded-2xl p-6 shadow transition">
+                        <p class="font-semibold text-blue-600">🍽️ Reservar mesa</p>
+                        <p class="text-sm text-gray-500 mt-1">
+                            Consulta disponibilidad y haz tu reserva en segundos.
+                        </p>
+                    </a>
+
+                    <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl p-6 shadow opacity-80">
+                        <p class="font-semibold">🧾 Mis pedidos</p>
+                        <p class="text-sm text-gray-500 mt-1">
+                            Historial de pedidos realizados.
+                        </p>
+                    </div>
+
+                    <a  href="{{ route('review.create') }}"
+                       class="bg-yellow-50 hover:bg-yellow-100 dark:bg-gray-800 rounded-2xl p-6 shadow transition">
+                        <p class="font-semibold text-yellow-600">⭐ Escribir reseña</p>
+                        <p class="text-sm text-gray-500 mt-1">
+                            Valora tu experiencia con el restaurante.
+                        </p>
+                    </a>
+                </div>
+            </div>
+
+            {{-- Últimos pedidos --}}
+            <div>
+                <h2 class="text-xl font-semibold mb-4">🧾 Últimos pedidos</h2>
+
+                @forelse($recentOrders as $order)
+                    <div class="bg-white dark:bg-gray-800 border rounded-2xl p-5 shadow mb-3 flex justify-between">
+                        <div>
+                            <p class="font-semibold">Pedido #{{ $order->id }}</p>
+                            <p class="text-sm text-gray-500">
+                                Mesa: {{ $order->table->name ?? 'N/A' }}
+                            </p>
+                        </div>
+                        <p class="text-sm text-gray-400">
+                            {{ $order->created_at->format('d/m/Y H:i') }}
+                        </p>
+                    </div>
+                @empty
+                    <p class="text-gray-500">No has realizado pedidos aún.</p>
+                @endforelse
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold mb-4">⭐ Tus reseñas</h2>
+
+                @forelse($recentReviews as $review)
+                    <div class="bg-white dark:bg-gray-800 border rounded-2xl p-5 shadow mb-3">
+                        <div class="flex justify-between items-center mb-2">
+                            <p class="font-semibold">Reseña</p>
+                            <p class="text-sm text-gray-400">
+                                {{ $review->created_at->format('d/m/Y') }}
+                            </p>
+                        </div>
+
+                        {{-- Estrellas --}}
+                        <div class="flex gap-1 text-yellow-400 mb-2">
+                            @for($i = 0; $i < ($review->rating ?? 5); $i++)
+                                ⭐
+                            @endfor
+                        </div>
+
+                        <p class="text-gray-600 dark:text-gray-300 text-sm">
+                            {{ $review->comment ?? 'Sin comentario.' }}
+                        </p>
+                    </div>
+                @empty
+                    <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 text-center text-gray-500">
+                        Aún no has escrito ninguna reseña ✨
+                        <br>
+                        <span class="text-sm">¡Tu opinión ayuda mucho!</span>
+                    </div>
+                @endforelse
+            </div>
+
         </div>
     </div>
-</x-layouts.app>
+
+    {{-- Chart.js --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('ordersChart');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($ordersPerDay->pluck('day')) !!},
+                datasets: [{
+                    label: 'Pedidos',
+                    data: {!! json_encode($ordersPerDay->pluck('total')) !!},
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+@endsection

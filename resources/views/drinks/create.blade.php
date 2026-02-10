@@ -1,4 +1,4 @@
-<x-layouts.app title="Nueva bebida">
+<x-layouts.admin title="Nueva bebida">
     <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">
         Crear bebida
     </h1>
@@ -21,4 +21,4 @@
             </a>
         </div>
     </form>
-</x-layouts.app>
+</x-layouts.admin>

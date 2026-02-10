@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Nuevo Menú')">
+<x-layouts.admin :title="__('Nuevo Menú')">
 
     <div class="max-w-4xl">
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100 mb-6">
@@ -25,4 +25,4 @@
         </div>
     </div>
 
-</x-layouts.app>
+</x-layouts.admin>

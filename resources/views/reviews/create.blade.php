@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Nueva Reseña')">
+<x-layouts.admin :title="__('Nueva Reseña')">
     <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Crear Reseña</h1>
 
     @if(session('success'))
@@ -25,4 +25,4 @@
             <a href="{{ route('review.index') }}" class="ml-2 text-sm text-gray-600 dark:text-stone-300">Cancelar</a>
         </div>
     </form>
-</x-layouts.app>
+</x-layouts.admin>

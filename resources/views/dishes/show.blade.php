@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Detalle plato')">
+<x-layouts.admin :title="__('Detalle plato')">
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">{{ $dish->name }}</h1>
         <div>
@@ -27,4 +27,4 @@
             @endif
         </div>
     </div>
-</x-layouts.app>
+</x-layouts.admin>

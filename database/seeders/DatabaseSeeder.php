@@ -14,8 +14,8 @@ class DatabaseSeeder extends Seeder
     {
 
     $year = now()->year;
-    
-        // Crear roles y usuarios con roles (super-admin, admin, client)
+
+        // Crear roles y usuarios con roles
         $this->call([
             RolesSeeder::class,
             UsersWithRolesSeeder::class,

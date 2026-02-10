@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Crear factura')">
+<x-layouts.admin :title="__('Crear factura')">
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Crear factura</h1>
         <a href="{{ route('invoices.index') }}" class="rounded bg-gray-600 px-4 py-2 text-white">Volver</a>
@@ -45,4 +45,4 @@
             </div>
         </form>
     </div>
-</x-layouts.app>
+</x-layouts.admin>

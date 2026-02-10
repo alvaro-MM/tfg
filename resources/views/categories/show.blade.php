@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Detalle de Categoría')">
+<x-layouts.admin :title="__('Detalle de Categoría')">
     <div class="max-w-4xl">
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100 mb-6">{{ $category->name }}</h1>
 
@@ -23,4 +23,4 @@
             </div>
         </div>
     </div>
-</x-layouts.app>
+</x-layouts.admin>

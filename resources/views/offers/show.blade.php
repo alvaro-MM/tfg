@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Detalles de la oferta')">
+<x-layouts.admin :title="__('Detalles de la oferta')">
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">{{ $offer->name }}</h1>
         <div class="flex space-x-2">
@@ -73,4 +73,4 @@
             </div>
         </div>
     @endcan
-</x-layouts.app>
+</x-layouts.admin>

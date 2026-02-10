@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Categorías')">
+<x-layouts.admin :title="__('Categorías')">
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Categorías</h1>
         <a href="{{ route('categories.create') }}" class="rounded bg-blue-600 px-4 py-2 text-white">Crear nueva categoría</a>
@@ -42,4 +42,4 @@
             </tbody>
         </table>
     </div>
-</x-layouts.app>
+</x-layouts.admin>

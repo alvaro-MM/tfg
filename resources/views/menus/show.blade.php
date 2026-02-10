@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Detalles del menú')">
+<x-layouts.admin :title="__('Detalles del menú')">
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">{{ $menu->name }}</h1>
         <div class="flex space-x-2">
@@ -105,4 +105,4 @@
             </div>
         </div>
     @endcan
-</x-layouts.app>
+</x-layouts.admin>

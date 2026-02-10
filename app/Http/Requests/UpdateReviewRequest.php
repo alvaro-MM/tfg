@@ -27,6 +27,7 @@ class UpdateReviewRequest extends FormRequest
             'dish_id' => 'required|exists:dishes,id',
             'drink_id' => 'required|exists:drinks,id',
             'slug' => 'nullable|string|unique:reviews,slug,' . $this->review->id,
+            'rating' => ['nullable', 'integer', 'between:1,5'],
         ];
     }
 }

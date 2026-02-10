@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Editar Categoría')">
+<x-layouts.admin :title="__('Editar Categoría')">
     <div class="max-w-4xl">
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100 mb-6">Editar Categoría</h1>
 
@@ -39,4 +39,4 @@
             </form>
         </div>
     </div>
-</x-layouts.app>
+</x-layouts.admin>

@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Editar alérgeno')">
+<x-layouts.admin :title="__('Editar alérgeno')">
     <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Editar alérgeno</h1>
 
     @if(session('success'))
@@ -23,4 +23,4 @@
 
         @include('allergens._form', ['buttonText' => 'Actualizar'])
     </form>
-</x-layouts.app>
+</x-layouts.admin>

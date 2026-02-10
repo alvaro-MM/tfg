@@ -26,7 +26,8 @@ class StoreReviewRequest extends FormRequest
             'description' => 'required|string',
             'dish_id' => 'required|exists:dishes,id',
             'drink_id' => 'required|exists:drinks,id',
-            'slug' => 'nullable|string|unique:reviews,slug'
+            'slug' => 'nullable|string|unique:reviews,slug',
+            'rating' => ['nullable', 'integer', 'between:0,5']
         ];
     }
 }

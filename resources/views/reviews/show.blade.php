@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Detalle de Review')">
+<x-layouts.admin :title="__('Detalle de Review')">
     <div class="max-w-4xl">
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100 mb-6">{{ $review->name }}</h1>
 
@@ -18,6 +18,18 @@
                     <p class="text-stone-900 dark:text-stone-100">{{ $review->user->name }}</p>
                 </div>
                 @endif
+
+                @if($review->rating)
+                    <div class="flex items-center gap-1 text-yellow-400 mt-2">
+                        @for($i = 0; $i < $review->rating; $i++)
+                            ⭐
+                        @endfor
+                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">
+                            ({{ $review->rating }}/5)
+                        </span>
+                    </div>
+                @endif
+
             </div>
 
             <div class="mt-6">
@@ -25,4 +37,4 @@
             </div>
         </div>
     </div>
-</x-layouts.app>
+</x-layouts.admin>

@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Editar cliente')">
+<x-layouts.admin :title="__('Editar cliente')">
     <div class="py-8">
         <div class="mx-auto max-w-2xl">
             <div class="rounded-lg bg-white p-6 shadow-sm dark:bg-neutral-800">
@@ -46,4 +46,4 @@
             </div>
         </div>
     </div>
-</x-layouts.app>
+</x-layouts.admin>

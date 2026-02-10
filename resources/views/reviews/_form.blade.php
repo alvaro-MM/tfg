@@ -85,4 +85,33 @@
         @enderror
     </div>
 
+    {{-- Valoración --}}
+    <div>
+        <label class="block text-sm font-semibold text-gray-700 dark:text-stone-200">
+            Valoración
+        </label>
+
+        <select
+            name="rating"
+            class="mt-1 w-full rounded-lg border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800
+               text-gray-800 dark:text-stone-100 shadow
+               focus:ring-2 focus:ring-green-600 focus:border-transparent"
+        >
+            <option value="">-- Selecciona una valoración --</option>
+
+            @for ($i = 1; $i <= 5; $i++)
+                <option
+                    value="{{ $i }}"
+                    {{ old('rating', $review->rating ?? '') == $i ? 'selected' : '' }}
+                >
+                    {{ $i }} ⭐
+                </option>
+            @endfor
+        </select>
+
+        @error('rating')
+        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+        @enderror
+    </div>
+
 </div>
