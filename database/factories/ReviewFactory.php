@@ -2,28 +2,32 @@
 
 namespace Database\Factories;
 
+use App\Models\Review;
+use App\Models\User;
+use App\Models\Dish;
+use App\Models\Drink;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\review>
- */
 class ReviewFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = Review::class;
+
     public function definition(): array
     {
         $name = 'Reseña ' . $this->faker->unique()->numberBetween(1, 10000);
+
+        $isDishReview = $this->faker->boolean(60); // 60% platos, 40% bebidas
+
         return [
             'name' => $name,
             'slug' => str($name)->slug(),
             'description' => $this->faker->paragraph(),
-            'user_id' => \App\Models\User::factory(),
-            'dish_id' => \App\Models\Dish::factory(),
-            'drink_id' => \App\Models\drink::factory(),
+            'rating' => $this->faker->numberBetween(1, 5),
+
+            'user_id' => User::factory(),
+
+            'dish_id' => $isDishReview ? Dish::factory() : null,
+            'drink_id' => ! $isDishReview ? Drink::factory() : null,
         ];
     }
 }
