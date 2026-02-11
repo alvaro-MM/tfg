@@ -24,7 +24,7 @@ class DishFactory extends Factory
             'price' => $this->faker->randomFloat(2, 5, 25),
             'available' => $this->faker->boolean(90),
             'special' => $this->faker->boolean(20),
-            'image' => $this->faker->imageUrl(800, 600, 'food', true),
+            'image' => null, // Use null to display CSS placeholder
             'category_id' => \App\Models\category::query()->inRandomOrder()->value('id') ?? \App\Models\category::factory(),
         ];
     }

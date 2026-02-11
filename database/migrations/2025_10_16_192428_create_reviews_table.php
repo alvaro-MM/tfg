@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             $table->text('description');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');;
-            $table->foreignId('dish_id')->constrained('dishes')->onDelete('cascade');;
-            $table->foreignId('drink_id')->constrained('drinks')->onDelete('cascade');;
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('dish_id')->nullable()->constrained('dishes')->onDelete('cascade');
+            $table->foreignId('drink_id')->nullable()->constrained('drinks')->onDelete('cascade');
             $table->timestamps();
         });
     }

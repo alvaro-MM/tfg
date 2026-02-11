@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Table;
 use App\Models\Order;
 use App\Models\Invoice;
+use App\Http\Traits\ManagesBuffetLimit;
 use App\Models\User;
 use App\Models\Dish;
 use App\Models\Drink;
@@ -18,52 +19,7 @@ use Carbon\Carbon;
 
 class PublicOrderController extends Controller
 {
-    /**
-     * Validate buffet limit: 5 items per person in a sliding 10-minute window
-     * Uses orders.date (or orders.created_at if date is null) to determine when orders were placed
-     */
-    public function validateBuffetLimit(Table $table, int $newItemsCount): array
-    {
-        $limit = 5 * $table->capacity;
-        $tenMinutesAgo = Carbon::now()->subMinutes(10);
-
-        // Count items from orders in the last 10 minutes for this table
-        // Use orders.date (or orders.created_at as fallback) to filter recent orders
-        $recentDishes = DB::table('dish_order')
-            ->join('orders', 'dish_order.order_id', '=', 'orders.id')
-            ->where('orders.table_id', $table->id)
-            ->where(function ($query) use ($tenMinutesAgo) {
-                $query->where('orders.date', '>=', $tenMinutesAgo)
-                      ->orWhere(function ($q) use ($tenMinutesAgo) {
-                          $q->whereNull('orders.date')
-                            ->where('orders.created_at', '>=', $tenMinutesAgo);
-                      });
-            })
-            ->sum('dish_order.quantity');
-
-        $recentDrinks = DB::table('drink_order')
-            ->join('orders', 'drink_order.order_id', '=', 'orders.id')
-            ->where('orders.table_id', $table->id)
-            ->where(function ($query) use ($tenMinutesAgo) {
-                $query->where('orders.date', '>=', $tenMinutesAgo)
-                      ->orWhere(function ($q) use ($tenMinutesAgo) {
-                          $q->whereNull('orders.date')
-                            ->where('orders.created_at', '>=', $tenMinutesAgo);
-                      });
-            })
-            ->sum('drink_order.quantity');
-
-        $totalRecentItems = $recentDishes + $recentDrinks;
-        $availableSlots = max(0, $limit - $totalRecentItems);
-
-        return [
-            'valid' => $newItemsCount <= $availableSlots,
-            'total_recent' => $totalRecentItems,
-            'limit' => $limit,
-            'available' => $availableSlots,
-            'requested' => $newItemsCount,
-        ];
-    }
+    use ManagesBuffetLimit;
 
     /**
      * Send order to kitchen (create order without payment)
@@ -211,6 +167,24 @@ class PublicOrderController extends Controller
                 'type' => 'menu',
                 'order_id' => null,
             ];
+            // Add extras for special dishes attached to the menu
+            foreach ($orders as $order) {
+                foreach ($order->dishes as $dish) {
+                    $menuDish = $table->menu->dishes()->where('dish_id', $dish->id)->first();
+                    if ($menuDish && $menuDish->pivot->is_special) {
+                        $extra = $menuDish->pivot->custom_price ?? $dish->price;
+                        $extraTotal = $extra * $dish->pivot->quantity;
+                        $total += $extraTotal;
+                        $allItems[] = [
+                            'order_id' => $order->id,
+                            'name' => $dish->name . ' (extra)',
+                            'price' => $extra,
+                            'quantity' => $dish->pivot->quantity,
+                            'type' => 'dish',
+                        ];
+                    }
+                }
+            }
         }
         
         // Add beverages (first one free, pay from 2nd onwards)
@@ -299,7 +273,19 @@ class PublicOrderController extends Controller
         if ($table->menu) {
             $total += $table->menu->price * $orderCount;
         }
-        
+        // Add extras for special dishes attached to the menu
+        if ($table->menu) {
+            foreach ($orders as $order) {
+                foreach ($order->dishes as $dish) {
+                    $menuDish = $table->menu->dishes()->where('dish_id', $dish->id)->first();
+                    if ($menuDish && $menuDish->pivot->is_special) {
+                        $extra = $menuDish->pivot->custom_price ?? $dish->price;
+                        $total += $extra * $dish->pivot->quantity;
+                    }
+                }
+            }
+        }
+
         // Beverages (first one free per order, charge from 2nd onwards)
         foreach ($orders as $order) {
             $drinkCount = 0;
@@ -401,4 +387,3 @@ class PublicOrderController extends Controller
         ]);
     }
 }
-

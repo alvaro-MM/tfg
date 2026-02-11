@@ -26,8 +26,8 @@ class ReviewFactory extends Factory
 
             'user_id' => User::factory(),
 
-            'dish_id' => $isDishReview ? Dish::factory() : null,
-            'drink_id' => ! $isDishReview ? Drink::factory() : null,
+            'dish_id' => $isDishReview ? Dish::inRandomOrder()->first()?->id : null,
+            'drink_id' => ! $isDishReview ? Drink::inRandomOrder()->first()?->id : null,
         ];
     }
 }

@@ -77,33 +77,40 @@
         <!-- Category Tabs -->
         <div class="mb-6 overflow-x-auto pb-2">
             <div class="flex space-x-3 border-b-2 border-gray-200">
-                <button wire:click="selectCategory('all')" 
-                        class="px-5 py-3 text-sm font-semibold border-b-3 transition-all duration-200 whitespace-nowrap {{ $selectedCategory === 'all' ? 'border-indigo-600 text-indigo-600 bg-indigo-50' : 'border-transparent text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
-                    <span class="flex items-center">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-                        </svg>
-                        Todos
-                    </span>
-                </button>
-                @foreach($categories as $category)
-                    <button wire:click="selectCategory({{ $category['id'] }})" 
-                            class="px-5 py-3 text-sm font-semibold border-b-3 transition-all duration-200 whitespace-nowrap {{ $selectedCategory == $category['id'] ? 'border-indigo-600 text-indigo-600 bg-indigo-50' : 'border-transparent text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
-                        {{ $category['name'] }}
+                <form wire:submit.prevent="selectCategory" class="flex space-x-3">
+                    <button type="submit" name="category_id" value="all"
+                            class="px-5 py-3 text-sm font-semibold border-b-3 transition-all duration-200 whitespace-nowrap {{ $selectedCategory === 'all' ? 'border-indigo-600 text-indigo-600 bg-indigo-50' : 'border-transparent text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                        <span class="flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                            </svg>
+                            Todos
+                        </span>
                     </button>
-                @endforeach
+                    @foreach($categories as $category)
+                        <button type="submit" name="category_id" value="{{ $category['id'] }}"
+                                class="px-5 py-3 text-sm font-semibold border-b-3 transition-all duration-200 whitespace-nowrap {{ $selectedCategory == $category['id'] ? 'border-indigo-600 text-indigo-600 bg-indigo-50' : 'border-transparent text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                            {{ $category['name'] }}
+                        </button>
+                    @endforeach
+                </form>
             </div>
         </div>
 
         <!-- Products Grid -->
-        @if(count($products) > 0)
+        @if(count($filteredProducts) > 0)
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                @foreach($products as $product)
+                @foreach($filteredProducts as $product)
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 group">
                         <!-- Product Image -->
                         <div class="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
                             @if($product['image'])
-                                <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                @php
+                                    $imageUrl = str_starts_with($product['image'], 'http') ? 
+                                        $product['image'] : 
+                                        asset('storage/' . $product['image']);
+                                @endphp
+                                <img src="{{ $imageUrl }}" alt="{{ $product['name'] }} - {{ $product['type'] === 'dish' ? 'Plato del menú' : 'Bebida del menú' }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-gray-400">
                                     <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,15 +145,24 @@
                             
                             <div class="flex justify-between items-center pt-3 border-t border-gray-100">
                                 <div>
-                                    <span class="text-2xl font-extrabold text-indigo-600">€{{ number_format($product['price'], 2) }}</span>
+                                    @if(isset($product['price']) && $product['price'] !== null)
+                                        <span class="text-2xl font-extrabold text-indigo-600">€{{ number_format($product['price'], 2) }}</span>
+                                    @else
+                                        @if($product['type'] === 'dish')
+                                            <span class="text-sm text-gray-500">Incluido en menú</span>
+                                        @else
+                                            <span class="text-2xl font-extrabold text-indigo-600">€0.00</span>
+                                        @endif
+                                    @endif
                                 </div>
-                                <button wire:click="$dispatch('add-to-cart', {id: {{ $product['id'] }}, type: '{{ $product['type'] }}', quantity: 1})" 
-                                        class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                    </svg>
-                                    <span>Agregar</span>
-                                </button>
+                                <form wire:submit.prevent="addProductToCart({{ $product['id'] }}, '{{ $product['type'] }}')" class="flex">
+                                    <button type="submit" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                        </svg>
+                                        <span>Agregar</span>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>

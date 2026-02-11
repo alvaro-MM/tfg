@@ -64,30 +64,39 @@ class TestPricingLogic extends Command
             $this->info("Order #{$order->id}:");
             $orderTotal = 0;
 
-            foreach ($order->dishes as $dish) {
-                $price = $dish->price;
-                $source = 'Dish Price';
+            // Menu base + dish extras
+            if ($table->menu) {
+                $this->line("  - Menu base: €" . number_format($table->menu->price, 2));
+                $orderTotal += $table->menu->price;
 
-                if ($table->menu) {
-                    $menuPrice = $table->menu->getDishPrice($dish->id);
-                    if ($menuPrice !== null) {
-                        $price = $menuPrice;
-                        $source = 'Menu Price';
+                foreach ($order->dishes as $dish) {
+                    $menuDish = $table->menu->dishes()->where('dish_id', $dish->id)->first();
+                    if ($menuDish && $menuDish->pivot->is_special) {
+                        $extra = $menuDish->pivot->custom_price ?? $dish->price;
+                        $itemTotal = $extra * $dish->pivot->quantity;
+                        $orderTotal += $itemTotal;
+                        $this->line("  - {$dish->name} x{$dish->pivot->quantity} extra @ €" . number_format($extra, 2) . " = €" . number_format($itemTotal, 2));
+                    } else {
+                        $this->line("  - {$dish->name} x{$dish->pivot->quantity} included in menu");
                     }
                 }
-
-                $itemTotal = $price * $dish->pivot->quantity;
-                $orderTotal += $itemTotal;
-
-                $this->line("  - {$dish->name} x{$dish->pivot->quantity} @ €" . number_format($price, 2) . " ({$source}) = €" . number_format($itemTotal, 2));
+            } else {
+                foreach ($order->dishes as $dish) {
+                    $itemTotal = $dish->price * $dish->pivot->quantity;
+                    $orderTotal += $itemTotal;
+                    $this->line("  - {$dish->name} x{$dish->pivot->quantity} @ €" . number_format($dish->price, 2) . " = €" . number_format($itemTotal, 2));
+                }
             }
 
+            // Drinks: first one free
+            $drinkCount = 0;
             foreach ($order->drinks as $drink) {
-                $price = $drink->price;
-                $itemTotal = $price * $drink->pivot->quantity;
+                $prev = $drinkCount;
+                $drinkCount += $drink->pivot->quantity;
+                $chargeable = max(0, min($drink->pivot->quantity, $drinkCount - 1 - $prev));
+                $itemTotal = $drink->price * $chargeable;
                 $orderTotal += $itemTotal;
-
-                $this->line("  - {$drink->name} x{$drink->pivot->quantity} @ €" . number_format($price, 2) . " = €" . number_format($itemTotal, 2));
+                $this->line("  - {$drink->name} x{$drink->pivot->quantity} chargeable: {$chargeable} @ €" . number_format($drink->price, 2) . " = €" . number_format($itemTotal, 2));
             }
 
             $this->info("Order Total: €" . number_format($orderTotal, 2));

@@ -6,18 +6,24 @@ use App\Models\Dish;
 use App\Models\Drink;
 use App\Models\Table;
 use App\Models\Order;
+use App\Http\Traits\ManagesBuffetLimit;
 use App\Http\Controllers\PublicOrderController;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Livewire\Attributes\Computed;
 
 class PublicCart extends Component
 {
+    use ManagesBuffetLimit;
+
     public string $token;
     public array $items = [];
     public int $count = 0;
     public float $total = 0.00;
     public bool $showCart = false;
+    public bool $showConfirmModal = false;
 
     public function mount(string $token)
     {
@@ -30,10 +36,10 @@ class PublicCart extends Component
         $cart = session("cart_{$this->token}", ['items' => []]);
         $this->items = $cart['items'] ?? [];
         $this->calculateTotals();
+        $this->dispatch('cart-updated');
     }
 
-    protected $listeners = ['add-to-cart' => 'addItem'];
-
+    #[On('add-to-cart')]
     public function addItem(int $id, string $type, int $quantity = 1)
     {
         // Get product
@@ -79,13 +85,23 @@ class PublicCart extends Component
 
         // Add or update item
         if ($itemIndex !== null) {
-            $this->items[$itemIndex]['quantity'] += $quantity;
+            // Para asegurar la reactividad, es mejor reasignar el elemento del array
+            $item = $this->items[$itemIndex];
+            $item['quantity'] += $quantity;
+            $this->items[$itemIndex] = $item;
         } else {
+            // Determine item price: for dishes in a menu, use menu extra price (specials) or 0
+            if ($type === 'dish' && $table->menu) {
+                $price = $table->menu->getDishPrice($product->id) ?? 0.00;
+            } else {
+                $price = (float) $product->price;
+            }
+
             $this->items[] = [
                 'id' => $product->id,
                 'type' => $type,
                 'name' => $product->name,
-                'price' => (float) $product->price,
+                'price' => (float) $price,
                 'quantity' => $quantity,
                 'menu_id' => $table->menu_id,
             ];
@@ -93,51 +109,7 @@ class PublicCart extends Component
 
         $this->saveCart();
         session()->flash('notification', ['message' => 'Producto agregado al carrito', 'type' => 'success']);
-    }
-
-    /**
-     * Validate buffet limit: 5 items per person in a sliding 10-minute window
-     */
-    private function validateBuffetLimit(Table $table, int $newItemsCount): array
-    {
-        $limit = 5 * $table->capacity;
-        $tenMinutesAgo = Carbon::now()->subMinutes(10);
-
-        // Count items from orders in the last 10 minutes for this table
-        $recentDishes = DB::table('dish_order')
-            ->join('orders', 'dish_order.order_id', '=', 'orders.id')
-            ->where('orders.table_id', $table->id)
-            ->where(function ($query) use ($tenMinutesAgo) {
-                $query->where('orders.date', '>=', $tenMinutesAgo)
-                      ->orWhere(function ($q) use ($tenMinutesAgo) {
-                          $q->whereNull('orders.date')
-                            ->where('orders.created_at', '>=', $tenMinutesAgo);
-                      });
-            })
-            ->sum('dish_order.quantity');
-
-        $recentDrinks = DB::table('drink_order')
-            ->join('orders', 'drink_order.order_id', '=', 'orders.id')
-            ->where('orders.table_id', $table->id)
-            ->where(function ($query) use ($tenMinutesAgo) {
-                $query->where('orders.date', '>=', $tenMinutesAgo)
-                      ->orWhere(function ($q) use ($tenMinutesAgo) {
-                          $q->whereNull('orders.date')
-                            ->where('orders.created_at', '>=', $tenMinutesAgo);
-                      });
-            })
-            ->sum('drink_order.quantity');
-
-        $totalRecentItems = $recentDishes + $recentDrinks;
-        $availableSlots = max(0, $limit - $totalRecentItems);
-
-        return [
-            'valid' => $newItemsCount <= $availableSlots,
-            'total_recent' => $totalRecentItems,
-            'limit' => $limit,
-            'available' => $availableSlots,
-            'requested' => $newItemsCount,
-        ];
+        $this->dispatch('cart-updated');
     }
 
     public function removeItem(int $id, string $type)
@@ -148,6 +120,7 @@ class PublicCart extends Component
 
         $this->items = array_values($this->items);
         $this->saveCart();
+        $this->dispatch('cart-updated');
     }
 
     public function updateQuantity(int $id, string $type, int $quantity)
@@ -193,8 +166,12 @@ class PublicCart extends Component
         }
 
         // Update quantity
-        $this->items[$itemIndex]['quantity'] = $quantity;
+        $item = $this->items[$itemIndex];
+        $item['quantity'] = $quantity;
+        $this->items[$itemIndex] = $item;
+
         $this->saveCart();
+        $this->dispatch('cart-updated');
     }
 
     public function clearCart()
@@ -202,6 +179,7 @@ class PublicCart extends Component
         $this->items = [];
         session()->forget("cart_{$this->token}");
         $this->calculateTotals();
+        $this->dispatch('cart-updated');
     }
 
     public function toggleCart()
@@ -217,6 +195,22 @@ class PublicCart extends Component
     public function closeCart()
     {
         $this->showCart = false;
+    }
+
+    public function openConfirmModal()
+    {
+        $this->showConfirmModal = true;
+    }
+
+    public function closeConfirmModal()
+    {
+        $this->showConfirmModal = false;
+    }
+
+    public function confirmSendToKitchen()
+    {
+        $this->closeConfirmModal();
+        $this->sendToKitchen();
     }
 
     private function saveCart()
@@ -240,8 +234,10 @@ class PublicCart extends Component
             $itemPrice = $item['price'];
             
             // If we have a menu and this is a dish (not a drink), recalculate price
+            // Menu->getDishPrice now returns null for non-special dishes (covered by menu),
+            // so coalesce to 0 to avoid adding menu-covered items again.
             if ($menu && $item['type'] === 'dish') {
-                $itemPrice = $menu->getDishPrice($item['id']);
+                $itemPrice = $menu->getDishPrice($item['id']) ?? 0.00;
             }
             
             $this->total += ($itemPrice * $item['quantity']);
@@ -331,4 +327,3 @@ class PublicCart extends Component
         return view('livewire.public-cart');
     }
 }
-

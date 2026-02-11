@@ -83,13 +83,19 @@ class Menu extends Model
             return null;
         }
 
-        // If it's a special dish with custom price, use that
-        if ($dishMenu->pivot->is_special && $dishMenu->pivot->custom_price !== null) {
-            return (float) $dishMenu->pivot->custom_price;
+        // If it's a special dish, return its custom price if set,
+        // otherwise return the dish's own price as an extra.
+        // Non-special dishes do not have an individual price (covered by menu),
+        // so we return null for them.
+        if ($dishMenu->pivot->is_special) {
+            if ($dishMenu->pivot->custom_price !== null) {
+                return (float) $dishMenu->pivot->custom_price;
+            }
+            return (float) $dishMenu->price;
         }
 
-        // Otherwise, use the menu's price
-        return (float) $this->price;
+        // Non-special dishes: no per-dish price (covered by menu)
+        return null;
     }
 
     /**

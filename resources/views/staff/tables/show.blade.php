@@ -92,16 +92,32 @@
                         <p class="font-medium text-gray-700 mb-1">🍽️ Platos</p>
                         <ul class="text-sm mb-2 space-y-1">
                             @foreach($order->dishes as $dish)
+                                @php
+                                    $menu = $table->menu ?? null;
+                                    $menuDish = $menu ? $menu->dishes()->where('dish_id', $dish->id)->first() : null;
+                                    $isSpecial = $menuDish?->pivot->is_special ?? false;
+                                    $extraPrice = null;
+                                    if ($menu && $isSpecial) {
+                                        $extraPrice = $menuDish->pivot->custom_price ?? $dish->price;
+                                    }
+                                @endphp
+
                                 <li class="flex justify-between">
-                            <span>
-                                {{ $dish->name }}
-                                <span class="text-gray-500">
-                                    × {{ $dish->pivot->quantity }}
-                                </span>
-                            </span>
                                     <span>
-                                {{ number_format($dish->price * $dish->pivot->quantity, 2) }} €
-                            </span>
+                                        {{ $dish->name }}
+                                        <span class="text-gray-500">× {{ $dish->pivot->quantity }}</span>
+                                    </span>
+                                    <span>
+                                        @if($menu)
+                                            @if($isSpecial)
+                                                {{ number_format($extraPrice * $dish->pivot->quantity, 2) }} €
+                                            @else
+                                                <span class="text-sm text-gray-500">Incluido en menú</span>
+                                            @endif
+                                        @else
+                                            {{ number_format($dish->price * $dish->pivot->quantity, 2) }} €
+                                        @endif
+                                    </span>
                                 </li>
                             @endforeach
                         </ul>
@@ -111,17 +127,24 @@
                     @if($order->drinks->isNotEmpty())
                         <p class="font-medium text-gray-700 mb-1">🥤 Bebidas</p>
                         <ul class="text-sm mb-3 space-y-1">
+                            @php $drinkCount = 0; @endphp
                             @foreach($order->drinks as $drink)
+                                @php
+                                    $prev = $drinkCount;
+                                    $drinkCount += $drink->pivot->quantity;
+                                    $chargeable = max(0, min($drink->pivot->quantity, $drinkCount - 1 - $prev));
+                                @endphp
                                 <li class="flex justify-between">
-                            <span>
-                                {{ $drink->name }}
-                                <span class="text-gray-500">
-                                    × {{ $drink->pivot->quantity }}
-                                </span>
-                            </span>
                                     <span>
-                                {{ number_format($drink->price * $drink->pivot->quantity, 2) }} €
-                            </span>
+                                        {{ $drink->name }}
+                                        <span class="text-gray-500">× {{ $drink->pivot->quantity }}</span>
+                                    </span>
+                                    <span>
+                                        {{ number_format($drink->price * $chargeable, 2) }} €
+                                        @if($chargeable < $drink->pivot->quantity)
+                                            <span class="text-sm text-gray-500"> ({{ $chargeable }} cobradas)</span>
+                                        @endif
+                                    </span>
                                 </li>
                             @endforeach
                         </ul>

@@ -29,6 +29,21 @@ class PublicMenu extends Component
         $this->updateBuffetStatus();
     }
 
+    private function formatImageUrl($imagePath)
+    {
+        if (!$imagePath) {
+            return null;
+        }
+
+        // Si ya es una URL completa (http o https), retornarla tal cual
+        if (str_starts_with($imagePath, 'http://') || str_starts_with($imagePath, 'https://')) {
+            return $imagePath;
+        }
+
+        // Si no, prefijarlo con storage/
+        return asset('storage/' . $imagePath);
+    }
+
     public function loadMenuData()
     {
         $menu = $this->table->menu;
@@ -45,7 +60,7 @@ class PublicMenu extends Component
                         'name' => $dish->name,
                         'description' => $dish->description,
                         'price' => (float) $dish->price,
-                        'image' => $dish->image ? asset('storage/' . $dish->image) : null,
+                        'image' => $this->formatImageUrl($dish->image),
                         'category_id' => $dish->category_id,
                         'allergens' => $dish->allergens->pluck('name')->toArray(),
                         'type' => 'dish',
@@ -63,7 +78,7 @@ class PublicMenu extends Component
                         'name' => $drink->name,
                         'description' => $drink->description,
                         'price' => (float) $drink->price,
-                        'image' => $drink->image ? asset('storage/' . $drink->image) : null,
+                        'image' => $this->formatImageUrl($drink->image),
                         'category_id' => $drink->category_id,
                         'allergens' => method_exists($drink, 'allergens')
                             ? $drink->allergens->pluck('name')->toArray()
@@ -79,13 +94,15 @@ class PublicMenu extends Component
                 ->orderBy('name')
                 ->get()
                 ->map(function ($dish) use ($menu) {
+                    $extraPrice = $menu->getDishPrice($dish->id);
                     return [
                         'id' => $dish->id,
                         'name' => $dish->name,
                         'description' => $dish->description,
-                        'price' => $menu->getDishPrice($dish->id),
+                        // Only show a per-dish price when it's a special (extraPrice !== null)
+                        'price' => $extraPrice !== null ? (float) $extraPrice : null,
                         'is_special' => (bool) $dish->pivot->is_special,
-                        'image' => $dish->image ? asset('storage/' . $dish->image) : null,
+                        'image' => $this->formatImageUrl($dish->image),
                         'category_id' => $dish->category_id,
                         'allergens' => $dish->allergens->pluck('name')->toArray(),
                         'type' => 'dish',
@@ -103,7 +120,7 @@ class PublicMenu extends Component
                         'name' => $drink->name,
                         'description' => $drink->description,
                         'price' => (float) $drink->price,
-                        'image' => $drink->image ? asset('storage/' . $drink->image) : null,
+                        'image' => $this->formatImageUrl($drink->image),
                         'category_id' => $drink->category_id,
                         'allergens' => method_exists($drink, 'allergens')
                             ? $drink->allergens->pluck('name')->toArray()
@@ -125,12 +142,24 @@ class PublicMenu extends Component
         }
     }
 
-    public function selectCategory($categoryId)
+    public function selectCategory()
     {
+        $categoryId = request('category_id', 'all');
         $this->selectedCategory = $categoryId;
     }
 
-    public function getFilteredProductsProperty()
+    public function addProductToCart($product_id = null, $product_type = null)
+    {
+        if (!$product_id || !$product_type) {
+            session()->flash('notification', ['message' => 'Error al obtener el producto', 'type' => 'error']);
+            return;
+        }
+        
+        // Dispatch event that will be caught by the public-cart component
+        $this->dispatch('add-to-cart', id: (int)$product_id, type: $product_type, quantity: 1);
+    }
+
+    private function getFilteredProducts()
     {
         $allProducts = array_merge($this->dishes, $this->drinks);
 
@@ -180,7 +209,7 @@ class PublicMenu extends Component
     public function render()
     {
         return view('livewire.public-menu', [
-            'products' => $this->filteredProducts,
+            'filteredProducts' => $this->getFilteredProducts(),
         ]);
     }
 }

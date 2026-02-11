@@ -1,8 +1,5 @@
 import Alpine from 'alpinejs'
 
-window.Alpine = Alpine
-Alpine.start()
-
 // Función para mostrar/ocultar el menú desplegable
 window.toggleDropdown = function () {
     document.getElementById("dropdownMenu").classList.toggle("hidden");
@@ -15,3 +12,11 @@ document.addEventListener("click", function(event) {
     }
 });
 
+// Escucha eventos de Livewire para redirección después de que Livewire esté listo
+document.addEventListener('livewire:initialized', () => {
+    window.Livewire.on('redirect-to-confirm', (event) => {
+        if (event.url) {
+            window.location.href = event.url;
+        }
+    });
+});

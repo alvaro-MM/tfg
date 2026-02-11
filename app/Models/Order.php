@@ -69,12 +69,31 @@ class Order extends Model
             $total += $menu->price;
         }
 
+        // Add dish extras: only special dishes attached to the menu add extra price
+        foreach ($this->dishes as $dish) {
+            $quantity = $dish->pivot->quantity ?? 1;
+
+            // If there's a menu, check if this dish is marked special in that menu
+            if ($menu) {
+                $menuDish = $menu->dishes()->where('dish_id', $dish->id)->first();
+                if ($menuDish && $menuDish->pivot->is_special) {
+                    $extraPrice = $menuDish->pivot->custom_price ?? $dish->price;
+                    $total += $extraPrice * $quantity;
+                }
+                // otherwise: non-special dishes are covered by the menu price
+            } else {
+                // No menu context: use dish own price
+                $total += $dish->price * $quantity;
+            }
+        }
+
         // Add drinks (first one free, charge from 2nd onwards)
         $drinkCount = 0;
         foreach ($this->drinks as $drink) {
+            $prevCount = $drinkCount;
             $drinkCount += $drink->pivot->quantity;
-            // Only charge from 2nd beverage onwards
-            $chargeableQuantity = max(0, $drinkCount - 1);
+            // Calculate how many of this drink are chargeable (only those beyond the first overall)
+            $chargeableQuantity = max(0, min($drink->pivot->quantity, $drinkCount - 1 - $prevCount));
             $total += $drink->price * $chargeableQuantity;
         }
 

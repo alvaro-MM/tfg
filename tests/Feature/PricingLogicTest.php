@@ -73,8 +73,8 @@ class PricingLogicTest extends TestCase
         // Get price through menu
         $price = $this->menu->getDishPrice($dish->id);
 
-        // Should use menu price, not dish price
-        $this->assertEquals(15.00, $price);
+        // Non-special dishes do not have a per-dish price in menu context
+        $this->assertNull($price);
     }
 
     /**
@@ -170,10 +170,10 @@ class PricingLogicTest extends TestCase
         // 2x drink (2 x 2.50 = 5.00)
         $order->drinks()->attach($drink->id, ['quantity' => 2]);
 
-        // Calculate total: 30 + 20 + 5 = 55.00
+        // Calculate total: menu 15 + special 20 + drinks charge 2.5 = 37.5
         $total = $order->calculateTotal($this->menu);
 
-        $this->assertEquals(17.50, $total);
+        $this->assertEquals(37.50, $total);
     }
 
     /**
@@ -231,8 +231,8 @@ class PricingLogicTest extends TestCase
 
         $price = $this->menu->getDishPrice($dish->id);
 
-        // Should fall back to menu price
-        $this->assertEquals(15.00, $price);
+        // Special dish without custom_price should use the dish's own price (extra)
+        $this->assertEquals(10.00, $price);
     }
 
     /**

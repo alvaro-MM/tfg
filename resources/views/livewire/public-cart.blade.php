@@ -60,7 +60,15 @@
                         <div class="flex justify-between items-start mb-3">
                             <div class="flex-1">
                                 <p class="font-bold text-gray-900 text-lg">{{ $item['name'] }}</p>
-                                <p class="text-sm text-gray-600 mt-1">€{{ number_format($item['price'], 2) }} cada uno</p>
+                                @if(isset($item['price']) && $item['price'] > 0)
+                                    <p class="text-sm text-gray-600 mt-1">€{{ number_format($item['price'], 2) }} cada uno</p>
+                                @else
+                                    @if($item['type'] === 'dish')
+                                        <p class="text-sm text-gray-600 mt-1">Incluido en menú</p>
+                                    @else
+                                        <p class="text-sm text-gray-600 mt-1">€0.00 cada uno</p>
+                                    @endif
+                                @endif
                             </div>
                             <button wire:click="removeItem({{ $item['id'] }}, '{{ $item['type'] }}')" 
                                     class="text-red-500 hover:text-red-700 transition-colors p-1">
@@ -105,15 +113,13 @@
             
             <!-- Footer -->
             @if($count > 0)
-            <div class="border-t border-gray-200 p-6 bg-gray-50">
+            <div class="border-t border-gray-200 p-6 bg-gray-50" wire:key="footer-{{ $count }}">
                 <div class="flex justify-between items-center mb-4">
                     <span class="text-xl font-bold text-gray-900">Total:</span>
                     <span class="text-3xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">€{{ number_format($total, 2) }}</span>
                 </div>
-                <button wire:click="sendToKitchen" 
-                        wire:confirm="¿Enviar pedido de {{ $count }} {{ $count === 1 ? 'ítem' : 'ítems' }} a cocina?"
-                        class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-xl font-bold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"
-                        @if($count === 0) disabled @endif>
+                <button wire:click="openConfirmModal" 
+                        class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-xl font-bold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center space-x-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
@@ -124,6 +130,69 @@
                 </p>
             </div>
             @endif
+        </div>
+    </div>
+    @endif
+
+    <!-- Confirmation Modal -->
+    @if($showConfirmModal)
+    <div wire:transition
+         class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm z-50 flex items-center justify-center transition-opacity duration-300" 
+         wire:click="closeConfirmModal">
+        <div class="bg-white rounded-2xl w-full sm:max-w-md shadow-2xl flex flex-col transform transition-all duration-300" 
+             wire:click.stop>
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6">
+                <h2 class="text-2xl font-bold">Confirmar Pedido</h2>
+                <p class="text-sm text-indigo-100 mt-1">Revisa los items antes de enviar a cocina</p>
+            </div>
+            
+            <!-- Items List -->
+            <div class="max-h-64 overflow-y-auto p-6 border-b border-gray-200">
+                @foreach($items as $item)
+                    <div class="flex justify-between items-center mb-3 pb-3 border-b border-gray-100 last:border-0">
+                        <div>
+                            <p class="font-semibold text-gray-900">{{ $item['name'] }}</p>
+                            @if(isset($item['price']) && $item['price'] > 0)
+                                <p class="text-sm text-gray-600">€{{ number_format($item['price'], 2) }} × {{ $item['quantity'] }}</p>
+                            @else
+                                @if($item['type'] === 'dish')
+                                    <p class="text-sm text-gray-600">Incluido en menú × {{ $item['quantity'] }}</p>
+                                @else
+                                    <p class="text-sm text-gray-600">€0.00 × {{ $item['quantity'] }}</p>
+                                @endif
+                            @endif
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-indigo-600">€{{ number_format($item['price'] * $item['quantity'], 2) }}</p>
+                            <button wire:click="removeItem({{ $item['id'] }}, '{{ $item['type'] }}')" 
+                                    class="text-xs text-red-500 hover:text-red-700 mt-1">
+                                Quitar
+                            </button>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            
+            <!-- Total -->
+            <div class="p-6 bg-gray-50 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <span class="text-lg font-bold text-gray-900">Total:</span>
+                    <span class="text-2xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">€{{ number_format($total, 2) }}</span>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="p-6 flex gap-3">
+                <button wire:click="closeConfirmModal" 
+                        class="flex-1 bg-gray-200 text-gray-900 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors">
+                    Cancelar
+                </button>
+                <button wire:click="confirmSendToKitchen" 
+                        class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg">
+                    Confirmar y Enviar
+                </button>
+            </div>
         </div>
     </div>
     @endif
