@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\Review;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class PDFController extends Controller
 {
@@ -21,10 +22,23 @@ class PDFController extends Controller
 
         $openHours = array_merge(range(12, 16), range(19, 23));
 
-        $ordersPerHour = Order::selectRaw('HOUR(created_at) as hour, COUNT(*) as total')
-            ->whereDate('created_at', $today)
-            ->groupBy('hour')
-            ->get();
+        $driver = DB::getDriverName();
+
+        if ($driver === 'sqlite') {
+            $ordersPerHour = Order::selectRaw(
+                "CAST(strftime('%H', created_at) AS INTEGER) as hour, COUNT(*) as total"
+            )
+                ->whereDate('created_at', $today)
+                ->groupBy('hour')
+                ->get();
+        } else {
+            $ordersPerHour = Order::selectRaw(
+                "HOUR(created_at) as hour, COUNT(*) as total"
+            )
+                ->whereDate('created_at', $today)
+                ->groupBy('hour')
+                ->get();
+        }
 
         $ordersPerHourLabels = [];
         $ordersPerHourData   = [];

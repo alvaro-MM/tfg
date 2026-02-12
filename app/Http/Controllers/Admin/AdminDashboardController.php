@@ -40,11 +40,21 @@ class AdminDashboardController extends Controller
             ->take(5)
             ->get();
 
-        $ordersPerHour = Order::selectRaw('HOUR(created_at) as hour, COUNT(*) as total')
-            ->whereDate('created_at', $today)
-            ->groupBy('hour')
-            ->orderBy('hour')
-            ->get();
+        $driver = DB::getDriverName();
+
+        if ($driver === 'sqlite') {
+            $ordersPerHour = Order::selectRaw("CAST(strftime('%H', created_at) AS INTEGER) as hour, COUNT(*) as total")
+                ->whereDate('created_at', now())
+                ->groupBy('hour')
+                ->orderBy('hour')
+                ->get();
+        } else {
+            $ordersPerHour = Order::selectRaw("HOUR(created_at) as hour, COUNT(*) as total")
+                ->whereDate('created_at', now())
+                ->groupBy('hour')
+                ->orderBy('hour')
+                ->get();
+        }
 
         $openHours = array_merge(range(12, 16), range(19, 23));
 
@@ -171,14 +181,21 @@ class AdminDashboardController extends Controller
             $chartData[]   = (float) $row->total;
         }
 
-        $monthlyInvoices = Invoice::select(
-            DB::raw('MONTH(date) as month'),
-            DB::raw('SUM(total) as total')
-        )
-            ->whereYear('date', now()->year)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
+        $driver = DB::getDriverName();
+
+        if ($driver === 'sqlite') {
+            $monthlyInvoices = Invoice::selectRaw("CAST(strftime('%m', date) AS INTEGER) as month, SUM(total) as total")
+                ->whereYear('date', now()->year)
+                ->groupBy('month')
+                ->orderBy('month')
+                ->get();
+        } else {
+            $monthlyInvoices = Invoice::selectRaw("MONTH(date) as month, SUM(total) as total")
+                ->whereYear('date', now()->year)
+                ->groupBy('month')
+                ->orderBy('month')
+                ->get();
+        }
 
         $chartLabels = [
             'Ene',
