@@ -39,11 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Grafico de pedidos por hora
     const ordersHourCanvas = document.getElementById('ordersHourChart');
+
     if (ordersHourCanvas) {
         const labels = JSON.parse(ordersHourCanvas.dataset.labels);
         const data = JSON.parse(ordersHourCanvas.dataset.data);
 
-        new Chart(ordersHourCanvas, {
+        // Guardamos la instancia del chart
+        window.ordersHourChart = new Chart(ordersHourCanvas, {
             type: 'line',
             data: {
                 labels: labels,
@@ -59,10 +61,32 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             options: {
                 responsive: true,
-                plugins: { legend: { display: false } },
-                scales: { y: { beginAtZero: true, precision: 0 } }
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        precision: 0
+                    }
+                }
             }
         });
+
+        // Exportar la grafica como imagen para el PDF
+        setTimeout(() => {
+            const image = window.ordersHourChart.toBase64Image();
+
+            fetch('/admin/pdf/save-chart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document
+                        .querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ image })
+            });
+        }, 800);
     }
 
     // Grafico de pedidos ultimos 7 dias

@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\Review;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PDFController extends Controller
 {
@@ -17,55 +18,125 @@ class PDFController extends Controller
         $today = Carbon::today();
 
         $usersToday   = User::whereDate('created_at', $today)->count();
-        $ordersToday  = Order::whereDate('created_at', $today)->count();
         $reviewsToday = Review::whereDate('created_at', $today)->count();
 
         $openHours = array_merge(range(12, 16), range(19, 23));
 
-        $driver = DB::getDriverName();
-
-        if ($driver === 'sqlite') {
-            $ordersPerHour = Order::selectRaw(
-                "CAST(strftime('%H', created_at) AS INTEGER) as hour, COUNT(*) as total"
-            )
-                ->whereDate('created_at', $today)
-                ->groupBy('hour')
-                ->get();
-        } else {
-            $ordersPerHour = Order::selectRaw(
-                "HOUR(created_at) as hour, COUNT(*) as total"
-            )
-                ->whereDate('created_at', $today)
-                ->groupBy('hour')
-                ->get();
-        }
-
+        $ordersPerHour = $this->getOrdersPerHour($today);
         $ordersPerHourLabels = [];
-        $ordersPerHourData   = [];
+        $ordersPerHourData = [];
 
         foreach ($openHours as $hour) {
             $ordersPerHourLabels[] = sprintf('%02d:00', $hour);
-            $ordersPerHourData[$hour] = 0;
-        }
-
-        foreach ($ordersPerHour as $row) {
-            if (isset($ordersPerHourData[$row->hour])) {
-                $ordersPerHourData[$row->hour] = $row->total;
-            }
+            $ordersPerHourData[$hour] = $ordersPerHour[$hour] ?? 0;
         }
 
         $ordersPerHourData = array_values($ordersPerHourData);
+
+        $this->generateOrdersHourChart($ordersPerHourLabels, $ordersPerHourData);
+
+        $ordersToday = array_sum($ordersPerHourData);
+
+        $topDishesToday = Review::selectRaw('dish_id, COUNT(*) as total')
+            ->whereDate('created_at', $today)
+            ->whereNotNull('dish_id')
+            ->groupBy('dish_id')
+            ->orderByDesc('total')
+            ->with('dish')
+            ->take(3)
+            ->get();
+
+        $topDrinksToday = Review::selectRaw('drink_id, COUNT(*) as total')
+            ->whereDate('created_at', $today)
+            ->whereNotNull('drink_id')
+            ->groupBy('drink_id')
+            ->orderByDesc('total')
+            ->with('drink')
+            ->take(3)
+            ->get();
 
         $pdf = Pdf::loadView('admin.pdf.daily-performance', compact(
             'usersToday',
             'ordersToday',
             'reviewsToday',
             'ordersPerHourLabels',
-            'ordersPerHourData'
+            'ordersPerHourData',
+            'topDishesToday',
+            'topDrinksToday'
         ))->setPaper('a4', 'portrait');
 
         return $pdf->download(
             'rendimiento_diario_' . now()->format('d-m-Y') . '.pdf'
         );
+    }
+
+    private function getOrdersPerHour($date)
+    {
+        $driver = DB::getDriverName();
+
+        if ($driver === 'sqlite') {
+            $orders = Order::selectRaw(
+                "CAST(strftime('%H', created_at) AS INTEGER) as hour, COUNT(*) as total"
+            )
+                ->whereDate('created_at', $date)
+                ->groupBy('hour')
+                ->get();
+        } else {
+            $orders = Order::selectRaw(
+                "HOUR(created_at) as hour, COUNT(*) as total"
+            )
+                ->whereDate('created_at', $date)
+                ->groupBy('hour')
+                ->get();
+        }
+
+        $result = [];
+        foreach ($orders as $row) {
+            $result[$row->hour] = $row->total;
+        }
+
+        return $result;
+    }
+
+    private function generateOrdersHourChart(array $labels, array $data)
+    {
+     
+        Storage::disk('public')->makeDirectory('charts');
+
+        $oldPath = 'charts/orders_hour.png';
+        if (Storage::disk('public')->exists($oldPath)) {
+            Storage::disk('public')->delete($oldPath);
+        }
+
+        $chartConfig = [
+            'type' => 'line',
+            'data' => [
+                'labels' => $labels,
+                'datasets' => [
+                    [
+                        'label' => 'Pedidos por hora',
+                        'data' => $data,
+                        'borderColor' => '#4F46E5',
+                        'backgroundColor' => 'rgba(79,70,229,0.2)',
+                        'fill' => true,
+                        'tension' => 0.3,
+                        'pointRadius' => 3
+                    ]
+                ]
+            ],
+            'options' => [
+                'plugins' => [
+                    'legend' => ['display' => false]
+                ],
+                'scales' => [
+                    'y' => ['beginAtZero' => true]
+                ]
+            ]
+        ];
+
+        $url = 'https://quickchart.io/chart?c=' . urlencode(json_encode($chartConfig));
+        $imageData = file_get_contents($url);
+
+        Storage::disk('public')->put('charts/orders_hour.png', $imageData);
     }
 }

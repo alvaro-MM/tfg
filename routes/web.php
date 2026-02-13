@@ -70,6 +70,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/facturacion', [AdminDashboardController::class, 'billing'])->name('admin.billing');
         Route::get('/performance', [AdminDashboardController::class, 'performance'])->name('performance');
         Route::get('/admin/pdf/daily-performance', [PDFController::class, 'dailyPerformance'])->name('admin.pdf.daily-performance');
+        Route::post('/admin/pdf/save-chart', [PDFController::class, 'saveChartImage'])->name('admin.pdf.saveChart');
     });
 
     Route::middleware('role:staff')->group(function () {
