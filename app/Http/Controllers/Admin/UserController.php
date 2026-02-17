@@ -8,10 +8,19 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::orderBy('created_at', 'desc')->get();
-        return view('admin.users.index', compact('users'));
+        $search = $request->query('search');
+
+        $users = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(30);
+
+        return view('admin.users.index', compact('users', 'search'));
     }
 
     public function edit(User $user)
@@ -29,7 +38,7 @@ class UserController extends Controller
         $user->update($request->only('name', 'email'));
 
         return redirect()
-            ->route('admin.users.index')
+            ->route('users.index')
             ->with('success', 'Cliente actualizado correctamente');
     }
 
@@ -38,7 +47,7 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()
-            ->route('admin.users.index')
+            ->route('users.index')
             ->with('success', 'Cliente eliminado correctamente');
     }
 }
