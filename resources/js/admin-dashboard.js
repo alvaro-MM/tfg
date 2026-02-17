@@ -2,7 +2,6 @@ import Chart from 'chart.js/auto';
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Grafico de usuarios
     const usersCanvas = document.getElementById('usersChart');
     if (usersCanvas) {
         const labels = JSON.parse(usersCanvas.dataset.labels);
@@ -37,14 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Grafico de pedidos por hora
     const ordersHourCanvas = document.getElementById('ordersHourChart');
 
     if (ordersHourCanvas) {
         const labels = JSON.parse(ordersHourCanvas.dataset.labels);
         const data = JSON.parse(ordersHourCanvas.dataset.data);
 
-        // Guardamos la instancia del chart
         window.ordersHourChart = new Chart(ordersHourCanvas, {
             type: 'line',
             data: {
@@ -67,13 +64,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 scales: {
                     y: {
                         beginAtZero: true,
-                        precision: 0
+                        ticks: {
+                            stepSize: 1,
+                            precision: 0,
+                            callback: value => Number.isInteger(value) ? value : null
+                        }
                     }
                 }
+
             }
         });
 
-        // Exportar la grafica como imagen para el PDF
         setTimeout(() => {
             const image = window.ordersHourChart.toBase64Image();
 
@@ -89,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 800);
     }
 
-    // Grafico de pedidos ultimos 7 dias
     const ordersCanvas = document.getElementById('ordersChart');
     if (ordersCanvas) {
         const labels = JSON.parse(ordersCanvas.dataset.labels);
@@ -128,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // grafico de facturacion
     const billingCanvas = document.getElementById('billingChart');
 
     if (billingCanvas) {

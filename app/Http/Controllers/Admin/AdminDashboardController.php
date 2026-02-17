@@ -104,18 +104,6 @@ class AdminDashboardController extends Controller
 
         $alerts = collect();
 
-        if ($tablesOccupationPercent >= 90) {
-            $alerts->push('Ocupación de mesas superior al 90%');
-        }
-
-        if ($reviewsToday >= 10) {
-            $alerts->push('Muchas reseñas publicadas hoy');
-        }
-
-        if ($ordersToday >= 20) {
-            $alerts->push('Alto volumen de pedidos hoy');
-        }
-
         return view('admin.dashboard', compact(
             'usersToday',
             'latestUsers',
@@ -229,7 +217,7 @@ class AdminDashboardController extends Controller
     public function performance()
     {
         $today = Carbon::today();
-        $startDate = Carbon::today()->subDays(6); // últimos 7 días
+        $startDate = Carbon::today()->subDays(6);
         $endDate = $today;
 
         $period = CarbonPeriod::create($startDate, $endDate);
@@ -238,6 +226,23 @@ class AdminDashboardController extends Controller
         $chartData = [];
         $ordersChartLabels = [];
         $ordersChartData = [];
+
+        $lastWeekStart = Carbon::today()->subDays(13);
+        $lastWeekEnd   = Carbon::today()->subDays(7);
+        $thisWeekStart = Carbon::today()->subDays(6);
+        $thisWeekEnd   = Carbon::today();
+
+        $usersThisWeek = User::whereBetween('created_at', [$thisWeekStart, $thisWeekEnd])->count();
+        $usersLastWeek = User::whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])->count();
+        $userGrowth = $usersLastWeek > 0 ? round((($usersThisWeek - $usersLastWeek) / $usersLastWeek) * 100, 2) : null;
+
+        $ordersThisWeek = Order::whereBetween('created_at', [$thisWeekStart, $thisWeekEnd])->count();
+        $ordersLastWeek = Order::whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])->count();
+        $ordersGrowth = $ordersLastWeek > 0 ? round((($ordersThisWeek - $ordersLastWeek) / $ordersLastWeek) * 100, 2) : null;
+
+        $reviewsThisWeek = Review::whereBetween('created_at', [$thisWeekStart, $thisWeekEnd])->count();
+        $reviewsLastWeek = Review::whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])->count();
+        $reviewsGrowth = $reviewsLastWeek > 0 ? round((($reviewsThisWeek - $reviewsLastWeek) / $reviewsLastWeek) * 100, 2) : null;
 
         foreach ($period as $date) {
             $label = $date->format('d/m');
@@ -270,6 +275,24 @@ class AdminDashboardController extends Controller
         $chartData = array_values($chartData);
         $ordersChartData = array_values($ordersChartData);
 
+        $topDishes = Review::selectRaw('dish_id, COUNT(*) as total')
+            ->whereDate('created_at', $today)
+            ->whereNotNull('dish_id')
+            ->groupBy('dish_id')
+            ->with('dish')
+            ->orderByDesc('total')
+            ->take(5)
+            ->get();
+
+        $topDrinks = Review::selectRaw('drink_id, COUNT(*) as total')
+            ->whereDate('created_at', $today)
+            ->whereNotNull('drink_id')
+            ->groupBy('drink_id')
+            ->with('drink')
+            ->orderByDesc('total')
+            ->take(5)
+            ->get();
+
         $totalUsers = User::count();
         $totalOrders = Order::count();
         $totalReviews = Review::count();
@@ -281,7 +304,12 @@ class AdminDashboardController extends Controller
             'chartLabels',
             'chartData',
             'ordersChartLabels',
-            'ordersChartData'
+            'ordersChartData',
+            'topDishes',
+            'topDrinks',
+            'userGrowth',
+            'ordersGrowth',
+            'reviewsGrowth'
         ));
     }
 }

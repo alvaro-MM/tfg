@@ -100,36 +100,40 @@ class PDFController extends Controller
 
     private function generateOrdersHourChart(array $labels, array $data)
     {
-     
         Storage::disk('public')->makeDirectory('charts');
 
-        $oldPath = 'charts/orders_hour.png';
-        if (Storage::disk('public')->exists($oldPath)) {
-            Storage::disk('public')->delete($oldPath);
+        $path = 'charts/orders_hour.png';
+        if (Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
         }
+
+        $maxValue = max($data);
+        $suggestedMax = max(5, $maxValue + 1);
 
         $chartConfig = [
             'type' => 'line',
             'data' => [
                 'labels' => $labels,
-                'datasets' => [
-                    [
-                        'label' => 'Pedidos por hora',
-                        'data' => $data,
-                        'borderColor' => '#4F46E5',
-                        'backgroundColor' => 'rgba(79,70,229,0.2)',
-                        'fill' => true,
-                        'tension' => 0.3,
-                        'pointRadius' => 3
-                    ]
-                ]
+                'datasets' => [[
+                    'label' => 'Pedidos por hora',
+                    'data' => $data,
+                    'borderColor' => '#4F46E5',
+                    'backgroundColor' => 'rgba(79,70,229,0.2)',
+                    'fill' => true,
+                    'tension' => 0.3,
+                    'pointRadius' => 3
+                ]]
             ],
             'options' => [
-                'plugins' => [
-                    'legend' => ['display' => false]
-                ],
+                'legend' => ['display' => false],
                 'scales' => [
-                    'y' => ['beginAtZero' => true]
+                    'yAxes' => [[
+                        'ticks' => [
+                            'beginAtZero' => true,
+                            'stepSize' => 1,
+                            'suggestedMax' => $suggestedMax
+                        ]
+                    ]]
                 ]
             ]
         ];
@@ -137,6 +141,6 @@ class PDFController extends Controller
         $url = 'https://quickchart.io/chart?c=' . urlencode(json_encode($chartConfig));
         $imageData = file_get_contents($url);
 
-        Storage::disk('public')->put('charts/orders_hour.png', $imageData);
+        Storage::disk('public')->put($path, $imageData);
     }
 }
