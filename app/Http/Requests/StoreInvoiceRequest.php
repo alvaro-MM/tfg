@@ -25,6 +25,7 @@ class StoreInvoiceRequest extends FormRequest
             'table_id' => 'required|exists:tables,id',
             'total' => 'required|numeric|min:0',
             'date' => 'required|date|before_or_equal:today',
+            'order_id' => 'required|exists:orders,id',
         ];
     }
 

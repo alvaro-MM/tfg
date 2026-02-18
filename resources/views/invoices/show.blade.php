@@ -1,81 +1,120 @@
 <x-layouts.admin :title="__('Detalles de la factura')">
-    <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Factura #{{ $invoice->id }}</h1>
-        <div class="flex space-x-2">
+
+    <div class="mb-6 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">
+                Factura #{{ $invoice->id }}
+            </h1>
+            <p class="text-sm text-stone-500 dark:text-stone-400">
+                Detalle completo de la factura
+            </p>
+        </div>
+
+        <div class="flex items-center gap-2">
             @can('update', $invoice)
-                <a href="{{ route('invoices.edit', $invoice) }}" class="rounded bg-indigo-600 px-4 py-2 text-white">Editar</a>
+            <a href="{{ route('invoices.edit', $invoice) }}"
+                class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+                Editar
+            </a>
             @endcan
-            <a href="{{ route('invoices.index') }}" class="rounded bg-gray-600 px-4 py-2 text-white">Volver</a>
+
+            <a href="{{ route('invoices.index') }}"
+                class="rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600">
+                Volver
+            </a>
         </div>
     </div>
 
-    <div class="mt-6 bg-white dark:bg-zinc-800 overflow-hidden shadow rounded-lg">
-        <div class="px-4 py-5 sm:p-6">
-            <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+    <div class="mb-6 rounded-lg border border-gray-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
+        <div class="p-6">
+            <dl class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
+
                 <div>
-                    <dt class="text-sm font-medium text-stone-500 dark:text-stone-400">ID de Factura</dt>
-                    <dd class="mt-1 text-sm text-stone-900 dark:text-stone-100">#{{ $invoice->id }}</dd>
+                    <dt class="text-sm font-medium text-stone-500 dark:text-stone-400">ID de factura</dt>
+                    <dd class="mt-1 text-sm font-semibold text-stone-900 dark:text-stone-100">
+                        #{{ $invoice->id }}
+                    </dd>
+                </div>
+
+                <div>
+                    <dt class="text-sm font-medium text-stone-500 dark:text-stone-400">Fecha</dt>
+                    <dd class="mt-1 text-sm text-stone-900 dark:text-stone-100">
+                        {{ $invoice->date->format('d/m/Y') }}
+                    </dd>
                 </div>
 
                 <div>
                     <dt class="text-sm font-medium text-stone-500 dark:text-stone-400">Mesa</dt>
-                    <dd class="mt-1 text-sm text-stone-900 dark:text-stone-100">
+                    <dd class="mt-1">
                         @if($invoice->table)
-                            <a href="{{ route('tables.show', $invoice->table) }}" class="text-blue-600 dark:text-blue-400 hover:underline">
-                                Mesa {{ $invoice->table->number }}
-                            </a>
-                            <p class="text-xs text-stone-600 dark:text-stone-400">Capacidad: {{ $invoice->table->capacity }} personas</p>
+                        <span class="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
+                            Mesa {{ $invoice->table->number }}
+                        </span>
+                        <p class="mt-1 text-xs text-stone-500 dark:text-stone-400">
+                            Capacidad: {{ $invoice->table->capacity }} personas
+                        </p>
                         @else
-                            No asignada
+                        <span class="text-sm text-gray-400">Sin mesa asignada</span>
                         @endif
                     </dd>
                 </div>
 
                 <div>
                     <dt class="text-sm font-medium text-stone-500 dark:text-stone-400">Total</dt>
-                    <dd class="mt-1 text-sm text-stone-900 dark:text-stone-100 font-semibold">{{ number_format($invoice->total, 2) }}€</dd>
-                </div>
-
-                <div>
-                    <dt class="text-sm font-medium text-stone-500 dark:text-stone-400">Fecha</dt>
-                    <dd class="mt-1 text-sm text-stone-900 dark:text-stone-100">{{ $invoice->date->format('d/m/Y') }}</dd>
+                    <dd class="mt-1 text-lg font-semibold text-stone-900 dark:text-stone-100">
+                        {{ number_format($invoice->total, 2) }} €
+                    </dd>
                 </div>
 
                 <div class="sm:col-span-2">
                     <dt class="text-sm font-medium text-stone-500 dark:text-stone-400">Pedido asociado</dt>
-                    <dd class="mt-1 text-sm text-stone-900 dark:text-stone-100">
+                    <dd class="mt-1">
                         @if($invoice->order)
-                            <a href="{{ route('orders.show', $invoice->order) }}" class="text-blue-600 dark:text-blue-400 hover:underline">
+                        <div class="flex items-center gap-3">
+                            <span class="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
                                 Pedido #{{ $invoice->order->id }}
-                            </a>
-                            <p class="text-xs text-stone-600 dark:text-stone-400">
-                                Tipo: {{ $invoice->order->type }} |
-                                Fecha: {{ $invoice->order->date->format('d/m/Y') }}
-                            </p>
+                            </span>
+
+                            <span class="text-xs text-stone-500 dark:text-stone-400">
+                                Tipo: {{ ucfirst($invoice->order->type) }} ·
+                                {{ $invoice->order->date->format('d/m/Y') }}
+                            </span>
+                        </div>
                         @else
-                            No hay pedido asociado
+                        <span class="text-sm text-gray-400">No hay pedido asociado</span>
                         @endif
                     </dd>
                 </div>
+
             </dl>
         </div>
     </div>
 
     @can('delete', $invoice)
-        <div class="mt-6 bg-white dark:bg-zinc-800 overflow-hidden shadow rounded-lg">
-            <div class="px-4 py-5 sm:p-6">
-                <h3 class="text-lg font-medium text-stone-900 dark:text-stone-100">Eliminar factura</h3>
-                <div class="mt-2 max-w-xl text-sm text-stone-500 dark:text-stone-400">
-                    <p>Esta acción no se puede deshacer. Eliminará permanentemente la factura.</p>
-                </div>
-                <div class="mt-5">
-                    <form action="{{ route('invoices.destroy', $invoice) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta factura?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700">Eliminar factura</button>
-                    </form>
-                </div>
-            </div>
+    <div class="rounded-lg border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
+        <div class="p-6">
+            <h3 class="text-sm font-semibold text-red-800 dark:text-red-300">
+                Zona de peligro
+            </h3>
+
+            <p class="mt-1 text-sm text-red-700 dark:text-red-400">
+                Eliminar esta factura es una acción permanente y no se puede deshacer.
+            </p>
+
+            <form action="{{ route('invoices.destroy', $invoice) }}"
+                method="POST"
+                class="mt-4"
+                onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta factura?');">
+                @csrf
+                @method('DELETE')
+
+                <button type="submit"
+                    class="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700">
+                    Eliminar factura
+                </button>
+            </form>
         </div>
+    </div>
     @endcan
+
 </x-layouts.admin>
