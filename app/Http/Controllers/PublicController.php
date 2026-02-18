@@ -9,11 +9,7 @@ class PublicController extends Controller
 {
     public function dishes()
     {
-        $dishes = Dish::with(['category', 'allergens'])
-            ->where('available', true)
-            ->get();
-
-        return view('public.dishes', compact('dishes'));
+        return view('public.dishes');
     }
 
     public function prices()

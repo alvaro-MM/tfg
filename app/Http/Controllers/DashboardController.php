@@ -22,6 +22,10 @@ class DashboardController extends Controller
             return redirect()->route('staff-dashboard.index');
         }
 
+        if ($user->hasRole('owner')) {
+            return redirect()->route('owner-dashboard.index');
+        }
+
         // --- Lógica para clientes ---
         $totalTables = Table::count();
         $availableTables = Table::where('status', 'available')->count();

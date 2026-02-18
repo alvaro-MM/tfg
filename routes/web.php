@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\Owner\OwnerDashboardController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Staff\StaffDashboardController;
@@ -71,6 +72,29 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/performance', [AdminDashboardController::class, 'performance'])->name('performance');
         Route::get('/admin/pdf/daily-performance', [PDFController::class, 'dailyPerformance'])->name('admin.pdf.daily-performance');
         Route::post('/admin/pdf/save-chart', [PDFController::class, 'saveChartImage'])->name('admin.pdf.saveChart');
+    });
+
+    Route::middleware( 'role:owner')->group(function () {
+
+        Route::get('/owner-dashboard', OwnerDashboardController::class)
+            ->name('owner-dashboard.index');
+
+        Route::post('/owner/users/{user}/make-staff',
+            [\App\Http\Controllers\Owner\OwnerManagementController::class, 'makeStaff']
+        )->name('owner.make-staff');
+
+        Route::delete('/owner/users/{user}/remove-staff',
+            [\App\Http\Controllers\Owner\OwnerManagementController::class, 'removeStaff']
+        )->name('owner.remove-staff');
+
+        Route::post('/owner/tables',
+            [\App\Http\Controllers\Owner\OwnerManagementController::class, 'storeTable']
+        )->name('owner.tables.store');
+
+        Route::delete('/owner/tables/{table}',
+            [\App\Http\Controllers\Owner\OwnerManagementController::class, 'destroyTable']
+        )->name('owner.tables.destroy');
+
     });
 
     Route::middleware('role:staff')->group(function () {
