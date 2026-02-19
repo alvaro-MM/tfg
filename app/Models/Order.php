@@ -43,10 +43,15 @@ class Order extends Model
             ->withTimestamps();
     }
 
+    public function menu()
+    {
+        return $this->belongsTo(Menu::class, 'menu_id');
+    }
+
+
     /**
      * Calculate the total price of a single order
-     * Each order = 1 client pays the menu price
-     * First beverage included, charge from 2nd onwards
+     * Adjusted to account for the number of people at the table
      */
     public function calculateTotal(?\App\Models\Menu $menu = null): float
     {
@@ -54,49 +59,52 @@ class Order extends Model
 
         // Get the menu if not provided
         if (!$menu) {
-            if ($this->relationLoaded('table')) {
-                $menu = $this->table?->menu;
-            } else {
-                $tableMenu = $this->table()->with('menu')->first()?->menu;
-                if ($tableMenu) {
-                    $menu = $tableMenu;
-                }
-            }
+            $menu = $this->table?->menu;
         }
 
-        // Menu price (fixed per client/order)
+        // Ensure the table relationship is loaded
+        $table = $this->table;
+
+        // Use the table's getPeopleCount method to determine the number of people
+        $peopleCount = $table->getPeopleCount();
+        \Log::debug('People count: ' . $peopleCount);
+
+        // Ensure menu price is multiplied by the number of people
         if ($menu) {
-            $total += $menu->price;
+            $menuPrice = $menu->price;
+            $total += $menuPrice * $peopleCount;
+            \Log::debug('Total after menu price calculation: ' . $total);
         }
 
         // Add dish extras: only special dishes attached to the menu add extra price
         foreach ($this->dishes as $dish) {
             $quantity = $dish->pivot->quantity ?? 1;
 
-            // If there's a menu, check if this dish is marked special in that menu
             if ($menu) {
                 $menuDish = $menu->dishes()->where('dish_id', $dish->id)->first();
                 if ($menuDish && $menuDish->pivot->is_special) {
                     $extraPrice = $menuDish->pivot->custom_price ?? $dish->price;
                     $total += $extraPrice * $quantity;
                 }
-                // otherwise: non-special dishes are covered by the menu price
             } else {
-                // No menu context: use dish own price
                 $total += $dish->price * $quantity;
             }
         }
 
-        // Add drinks (first one free, charge from 2nd onwards)
-        $drinkCount = 0;
-        foreach ($this->drinks as $drink) {
-            $prevCount = $drinkCount;
-            $drinkCount += $drink->pivot->quantity;
-            // Calculate how many of this drink are chargeable (only those beyond the first overall)
-            $chargeableQuantity = max(0, min($drink->pivot->quantity, $drinkCount - 1 - $prevCount));
-            $total += $drink->price * $chargeableQuantity;
-        }
+        // Refine drink calculation logic
+        $totalDrinks = $this->drinks->sum(fn($drink) => $drink->pivot->quantity ?? 0);
+        $chargeableDrinks = max(0, $totalDrinks - $peopleCount);
+        $total += $chargeableDrinks * ($this->drinks->first()->price ?? 0);
 
+        \Log::debug('Final total: ' . $total);
         return round($total, 2);
+    }
+
+    /**
+     * Get the table associated with the order.
+     */
+    public function getTableInstance(): ?Table
+    {
+        return $this->table ?? $this->table()->first();
     }
 }

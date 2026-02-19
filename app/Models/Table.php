@@ -16,7 +16,8 @@ class Table extends Model
         'notes',
         'user_id',
         'menu_id',
-        'qr_token'
+        'qr_token',
+        'people_count'
     ];
 
     /**
@@ -77,5 +78,13 @@ class Table extends Model
     public function returnedDishes()
     {
         return $this->hasMany(ReturnedDish::class, 'table_id');
+    }
+
+    /**
+     * Get the number of people at the table.
+     */
+    public function getPeopleCount(): int
+    {
+        return $this->people_count ?: 1;
     }
 }

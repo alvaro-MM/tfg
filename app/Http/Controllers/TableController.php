@@ -29,16 +29,10 @@ class TableController extends Controller
     {
         $data = $request->validated();
 
-        // Si la mesa está libre → user_id debe ser null
+        // Lógica de negocio: si la mesa se marca como libre, desasignar usuario y comensales
         if ($data['status'] === 'available') {
             $data['user_id'] = null;
-        }
-
-        // Si la mesa NO está libre → user_id es obligatorio
-        if (in_array($data['status'], ['occupied', 'reserved']) && empty($data['user_id'])) {
-            return back()
-                ->withErrors(['user_id' => 'Debe asignar un usuario si la mesa está ocupada o reservada.'])
-                ->withInput();
+            $data['people_count'] = 0;
         }
 
         $table = Table::create($data);
@@ -71,15 +65,10 @@ class TableController extends Controller
     {
         $data = $request->validated();
 
-        // Regla de negocio igual que en store
+        // Lógica de negocio: si la mesa se marca como libre, desasignar usuario y comensales
         if ($data['status'] === 'available') {
             $data['user_id'] = null;
-        }
-
-        if (in_array($data['status'], ['occupied', 'reserved']) && empty($data['user_id'])) {
-            return back()
-                ->withErrors(['user_id' => 'Debe asignar un usuario si la mesa está ocupada o reservada.'])
-                ->withInput();
+            $data['people_count'] = 0;
         }
 
         $table->update($data);

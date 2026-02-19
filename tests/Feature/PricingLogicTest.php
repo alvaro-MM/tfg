@@ -192,20 +192,27 @@ class PricingLogicTest extends TestCase
             'category_id' => $this->category->id,
         ]);
 
+        // Create a table without a menu to test "a la carte" pricing
+        $tableWithoutMenu = Table::factory()->create([
+            'menu_id' => null,
+            'user_id' => $this->user->id,
+            'name' => 'A la carte table',
+        ]);
+
         // Create order without menu context
         $order = Order::create([
             'user_id' => $this->user->id,
-            'table_id' => $this->table->id,
-            'type' => 'buffet',
+            'table_id' => $tableWithoutMenu->id,
+            'type' => 'a_la_carte',
             'date' => now(),
         ]);
 
         $order->dishes()->attach($standaloneDish->id, ['quantity' => 1]);
 
         // Calculate total without menu (should use dish price)
-        $total = $order->calculateTotal(null);
+        $total = $order->calculateTotal();
 
-        $this->assertEquals(15.00, $total);
+        $this->assertEquals(12.00, $total);
     }
 
     /**
@@ -270,5 +277,83 @@ class PricingLogicTest extends TestCase
         // Should be properly rounded to 2 decimals
         $this->assertEquals(15.00, $total);
         $this->assertIsFloat($total);
+    }
+
+    /**
+     * Test order total calculation with multiple people at the table
+     */
+    public function test_order_total_with_multiple_people(): void
+    {
+        $dish = Dish::create([
+            'name' => 'Ensalada',
+            'slug' => 'ensalada',
+            'description' => 'Ensalada mixta',
+            'price' => 7.00,
+            'available' => true,
+            'special' => false,
+            'category_id' => $this->category->id,
+        ]);
+
+        $this->menu->dishes()->attach($dish->id, [
+            'is_special' => false,
+            'custom_price' => null,
+        ]);
+
+        $table = Table::create([
+            'menu_id' => $this->menu->id,
+            'user_id' => $this->user->id,
+            'name' => 'Mesa 1', // Added name to avoid null constraint
+            'people_count' => 4, // 4 people at the table
+        ]);
+
+        $order = Order::create([
+            'user_id' => $this->user->id,
+            'table_id' => $table->id,
+            'type' => 'buffet',
+            'date' => now(),
+        ]);
+
+        $total = $order->calculateTotal($this->menu);
+
+        // Menu price (15.00) x 4 people = 60.00
+        $this->assertEquals(60.00, $total);
+    }
+
+    /**
+     * Test drink calculation with multiple people
+     */
+    public function test_drink_calculation_with_multiple_people(): void
+    {
+        $drink = Drink::create([
+            'name' => 'Agua',
+            'slug' => 'agua',
+            'description' => 'Botella de agua',
+            'price' => 1.50,
+            'available' => true,
+            'category_id' => $this->category->id,
+        ]);
+
+        $table = Table::create([
+            'menu_id' => $this->menu->id,
+            'user_id' => $this->user->id,
+            'name' => 'Mesa 2', // Added name to avoid null constraint
+            'people_count' => 3, // 3 people at the table
+        ]);
+
+        $order = Order::create([
+            'user_id' => $this->user->id,
+            'table_id' => $table->id,
+            'type' => 'buffet',
+            'date' => now(),
+        ]);
+
+        // 5 drinks ordered
+        $order->drinks()->attach($drink->id, ['quantity' => 5]);
+
+        $total = $order->calculateTotal($this->menu);
+
+        // First 3 drinks are free (1 per person), 2 drinks charged at 1.50 each = 3.00
+        // Total = (Menu price * people) + (chargeable drinks * price) = (15 * 3) + ((5-3) * 1.50) = 45 + 3 = 48.00
+        $this->assertEquals(48.00, $total);
     }
 }

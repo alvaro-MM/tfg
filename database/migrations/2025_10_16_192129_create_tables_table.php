@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->unsignedInteger('capacity')->default(1);
+            $table->unsignedInteger('people_count')->default(0);
             $table->enum('status', ['available', 'occupied', 'reserved'])->default('available');
             $table->text('notes')->nullable();
 
