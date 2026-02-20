@@ -8,7 +8,7 @@ use Spatie\Permission\Models\Role;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-  
+
     Role::firstOrCreate(['name' => 'staff', 'guard_name' => 'web']);
 
     $this->user = User::factory()->create();
