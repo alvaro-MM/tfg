@@ -1,4 +1,9 @@
-<x-layouts.admin :title="__('Reviews')">
+@extends('layout.tfg')
+
+@section('title', 'Reviews')
+
+@section('content')
+
     <div class="max-w-5xl mx-auto py-8">
 
         {{-- Header --}}
@@ -104,5 +109,7 @@
          <div class="mt-6">
             {{ $reviews->links() }}
         </div>
+
     </div>
-</x-layouts.admin>
+
+@endsection

@@ -1,28 +1,28 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\PDFController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AllergenController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DishController;
+use App\Http\Controllers\DrinkController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\Owner\OwnerDashboardController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\PublicMenuController;
+use App\Http\Controllers\PublicOrderController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Staff\StaffDashboardController;
 use App\Http\Controllers\Staff\StaffOrderController;
 use App\Http\Controllers\Staff\StaffTableController;
 use App\Http\Controllers\TableController;
-use App\Http\Controllers\PublicMenuController;
-use App\Http\Controllers\PublicOrderController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\DishController;
-use App\Http\Controllers\DrinkController;
-use App\Http\Controllers\AllergenController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Admin\PDFController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -54,7 +54,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('dishes', DishController::class);
     Route::resource('drinks', DrinkController::class);
     Route::resource('allergens', AllergenController::class);
-    Route::resource('review', ReviewController::class);
+    Route::resource('review', ReviewController::class)->except( 'store', 'update');
     Route::resource('tables', TableController::class);
     Route::post('tables/{table}/generate-qr', [TableController::class, 'generateQr'])->name('tables.generate-qr');
     Route::resource('menus', MenuController::class);

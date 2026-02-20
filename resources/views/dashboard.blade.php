@@ -98,7 +98,7 @@
                 @forelse($recentReviews as $review)
                     <div class="bg-white dark:bg-gray-800 border rounded-2xl p-5 shadow mb-3">
                         <div class="flex justify-between items-center mb-2">
-                            <p class="font-semibold">Reseña</p>
+                            <p class="font-semibold">{{$review->name}}</p>
                             <p class="text-sm text-gray-400">
                                 {{ $review->created_at->format('d/m/Y') }}
                             </p>
@@ -112,7 +112,7 @@
                         </div>
 
                         <p class="text-gray-600 dark:text-gray-300 text-sm">
-                            {{ $review->comment ?? 'Sin comentario.' }}
+                            {{ $review->description ?? 'Sin descripcion.' }}
                         </p>
                     </div>
                 @empty

@@ -11,6 +11,8 @@
     'resources/js/app.js',
     'resources/js/admin-dashboard.js'
     ])
+    @livewireStyles
+    @livewireScripts
 </head>
 
 <body class="flex h-screen bg-gray-100">
