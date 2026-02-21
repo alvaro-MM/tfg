@@ -3,13 +3,21 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreDishRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // Adjust authorization as needed (policies / gates can be used)
         return true;
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'available' => $this->boolean('available'),
+            'special' => $this->boolean('special'),
+        ]);
     }
 
     public function rules(): array
@@ -19,14 +27,12 @@ class StoreDishRequest extends FormRequest
             'description' => ['required', 'string'],
             'ingredients' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'max:2048'],
-            'slug' => ['sometimes', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
-            'available' => ['sometimes', 'boolean'],
-            'special' => ['sometimes', 'boolean'],
-            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
-            'allergen_ids' => ['nullable', 'array'],
-            'allergen_ids.*' => ['integer', 'exists:allergens,id'],
+            'available' => ['boolean'],
+            'special' => ['boolean'],
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'allergens' => ['nullable', 'array'],
+            'allergens.*' => ['integer', 'exists:allergens,id'],
         ];
     }
-
 }

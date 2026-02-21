@@ -28,10 +28,7 @@ class DishController extends Controller
      */
     public function create()
     {
-        $categories = Category::orderBy('name')->get();
-        $allergens = Allergen::orderBy('name')->get();
-
-        return view('dishes.create', compact('categories', 'allergens'));
+        return view('dishes.create');
     }
 
     /**
@@ -77,10 +74,8 @@ class DishController extends Controller
      */
     public function edit(Dish $dish)
     {
-        $categories = Category::orderBy('name')->get();
-        $allergens = Allergen::orderBy('name')->get();
 
-        return view('dishes.edit', compact('dish', 'categories', 'allergens'));
+        return view('dishes.edit', compact('dish'));
     }
 
     /**

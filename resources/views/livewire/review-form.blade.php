@@ -58,9 +58,27 @@
             Seleccionar Plato
         </label>
 
-        <select
-            wire:model="dish_id"
-            class="mt-1 w-full rounded-lg border-2
+        @if($dish_id && request()->has('dish_id'))
+            {{-- Modo bloqueado si viene desde plato --}}
+            <div class="mt-1">
+                <input
+                    type="text"
+                    value="{{ $dishes->firstWhere('id', $dish_id)?->name }}"
+                    disabled
+                    class="w-full rounded-lg border-2 border-gray-300
+                       bg-gray-100 dark:bg-zinc-700
+                       text-gray-700 dark:text-white
+                       shadow-sm"
+                />
+
+                {{-- Campo oculto para que Livewire lo mantenga --}}
+                <input type="hidden" wire:model="dish_id">
+            </div>
+        @else
+            {{-- Select normal --}}
+            <select
+                wire:model="dish_id"
+                class="mt-1 w-full rounded-lg border-2
                 @error('dish_id') border-red-500 focus:ring-red-500
                 @else border-gray-400 dark:border-zinc-600 focus:border-green-600 focus:ring-green-600
                 @enderror
@@ -68,12 +86,15 @@
                 text-gray-800 dark:text-stone-100
                 shadow-sm focus:ring-2 focus:outline-none
                 transition"
-        >
-            <option value="">-- Selecciona un plato --</option>
-            @foreach($dishes as $dish)
-                <option value="{{ $dish->id }}">🍽️ {{ $dish->name }}</option>
-            @endforeach
-        </select>
+            >
+                <option value="">-- Selecciona un plato --</option>
+                @foreach($dishes as $dish)
+                    <option value="{{ $dish->id }}">
+                        🍽️ {{ $dish->name }}
+                    </option>
+                @endforeach
+            </select>
+        @endif
 
         @error('dish_id')
         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>

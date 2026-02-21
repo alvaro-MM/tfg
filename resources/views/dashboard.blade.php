@@ -114,6 +114,22 @@
                         <p class="text-gray-600 dark:text-gray-300 text-sm">
                             {{ $review->description ?? 'Sin descripcion.' }}
                         </p>
+
+                        @if($review->image)
+                            <img
+                                src="{{ asset('storage/' . $review->image) }}"
+                                alt="Imagen review"
+                                class="rounded-xl w-full h-64 object-cover shadow-md p-4"
+                            >
+                        @endif
+
+                        <div class="flex justify-end">
+                            <a href="{{ route('review.show', $review) }}"
+                               class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700
+                              text-white text-sm font-medium rounded-lg shadow transition duration-200">
+                                Ver detalle →
+                            </a>
+                        </div>
                     </div>
                 @empty
                     <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 text-center text-gray-500">

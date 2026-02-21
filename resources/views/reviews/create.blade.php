@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <livewire:review-form />
+    <livewire:review-form :dish_id="$dish_id" />
 
 @endsection
 

@@ -51,7 +51,7 @@ Route::prefix('checkout')->group(function () {
 Route::middleware(['auth'])->group(function () {
 
     Route::resource('categories', CategoryController::class);
-    Route::resource('dishes', DishController::class);
+    Route::resource('dishes', DishController::class)->except( 'store', 'update');
     Route::resource('drinks', DrinkController::class);
     Route::resource('allergens', AllergenController::class);
     Route::resource('review', ReviewController::class)->except( 'store', 'update');

@@ -13,15 +13,22 @@ class DishesList extends Component
 
     public $search = '';
     public $category = '';
+    public $availability = 'available';
 
     protected $paginationTheme = 'tailwind';
 
     protected $updatesQueryString = [
         'search',
-        'category'
+        'category',
+         'availability'
     ];
 
     public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingAvailability()
     {
         $this->resetPage();
     }
@@ -34,7 +41,14 @@ class DishesList extends Component
     public function render()
     {
         $dishes = Dish::with(['category', 'allergens'])
-            ->where('available', true)
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->when($this->availability === 'available', function ($query) {
+                $query->where('available', true);
+            })
+            ->when($this->availability === 'unavailable', function ($query) {
+                $query->where('available', false);
+            })
             ->when($this->search, function ($query) {
                 $query->where('name', 'like', '%' . $this->search . '%');
             })

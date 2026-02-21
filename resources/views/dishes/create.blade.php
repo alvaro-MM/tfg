@@ -1,28 +1,29 @@
 <x-layouts.admin :title="__('Nuevo plato')">
-    <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Crear plato</h1>
+{{--    <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-100">Crear plato</h1>--}}
 
-    @if(session('success'))
-        <div class="mb-4 rounded bg-green-100 p-3 text-green-800 dark:bg-green-900 dark:text-green-200">{{ session('success') }}</div>
-    @endif
+{{--    @if(session('success'))--}}
+{{--        <div class="mb-4 rounded bg-green-100 p-3 text-green-800 dark:bg-green-900 dark:text-green-200">{{ session('success') }}</div>--}}
+{{--    @endif--}}
 
-    @if($errors->any())
-        <div class="mb-4 rounded bg-red-50 p-3 text-red-800 dark:bg-red-900 dark:text-red-200">
-            <ul class="list-disc pl-5">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+{{--    @if($errors->any())--}}
+{{--        <div class="mb-4 rounded bg-red-50 p-3 text-red-800 dark:bg-red-900 dark:text-red-200">--}}
+{{--            <ul class="list-disc pl-5">--}}
+{{--                @foreach($errors->all() as $error)--}}
+{{--                    <li>{{ $error }}</li>--}}
+{{--                @endforeach--}}
+{{--            </ul>--}}
+{{--        </div>--}}
+{{--    @endif--}}
 
-    <form action="{{ route('dishes.store') }}" method="POST" enctype="multipart/form-data" class="mt-4 space-y-4">
-        @csrf
+{{--    <form action="{{ route('dishes.store') }}" method="POST" enctype="multipart/form-data" class="mt-4 space-y-4">--}}
+{{--        @csrf--}}
 
-        @include('dishes._form')
+{{--        @include('dishes._form')--}}
 
-        <div>
-            <button type="submit" class="rounded bg-green-600 px-4 py-2 text-white">Crear</button>
-            <a href="{{ route('dishes.index') }}" class="ml-2 text-sm text-gray-600 dark:text-stone-300">Cancelar</a>
-        </div>
-    </form>
+{{--        <div>--}}
+{{--            <button type="submit" class="rounded bg-green-600 px-4 py-2 text-white">Crear</button>--}}
+{{--            <a href="{{ route('dishes.index') }}" class="ml-2 text-sm text-gray-600 dark:text-stone-300">Cancelar</a>--}}
+{{--        </div>--}}
+{{--    </form>--}}
+    <livewire:dish-form />
 </x-layouts.admin>
