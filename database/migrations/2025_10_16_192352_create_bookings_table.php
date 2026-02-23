@@ -15,10 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
-            $table->text('description');
+            $table->text('description')->nullable(); 
             $table->foreignId('table_id')->constrained('tables')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('offer_id')->constrained('offers')->cascadeOnDelete();
+            $table->foreignId('offer_id')->nullable()->constrained('offers')->nullOnDelete();
+            $table->date('booking_date');
+            $table->time('booking_time');
+            $table->enum('status', ['active', 'cancelled', 'finished'])->default('active');
             $table->timestamps();
         });
     }

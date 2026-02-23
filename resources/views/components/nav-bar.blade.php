@@ -21,6 +21,7 @@
                 <a href="{{ route('drinks.public') }}" class="nav-link">Bebidas</a>
                 <a href="{{ route('prices') }}" class="nav-link">Precios</a>
                 <a href="{{ route('about') }}" class="nav-link">Sobre nosotros</a>
+                <a href="{{ route('bookings.create') }}" class="nav-link">Reservas</a>
             </div>
 
             {{-- AUTH --}}

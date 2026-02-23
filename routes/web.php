@@ -16,6 +16,7 @@ use App\Http\Controllers\Owner\OwnerManagementController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\PublicMenuController;
 use App\Http\Controllers\PublicOrderController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Staff\StaffDashboardController;
 use App\Http\Controllers\Staff\StaffOrderController;
@@ -62,6 +63,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('menus', MenuController::class);
     Route::resource('offers', OfferController::class);
     Route::resource('invoices', InvoiceController::class);
+    Route::resource('bookings', BookingController::class);
 
     // DASHBOARD
 

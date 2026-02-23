@@ -118,6 +118,11 @@
                     Ofertas
                 </a>
 
+                <a href="{{ route('bookings.index') }}"
+                    class="sidebar-sub {{ request()->routeIs('bookings.*') ? 'sidebar-sub-active' : '' }}">
+                    Reservas
+                </a>
+
             </div>
 
             <a href="{{ route('admin.billing') }}"
