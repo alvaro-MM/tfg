@@ -18,6 +18,7 @@
             <div class="hidden md:flex items-center gap-6 text-white hover:text-white">
                 <a href="{{ route('home') }}" class="nav-link">Inicio</a>
                 <a href="{{ route('dishes.public') }}" class="nav-link">Platos</a>
+                <a href="{{ route('drinks.public') }}" class="nav-link">Bebidas</a>
                 <a href="{{ route('prices') }}" class="nav-link">Precios</a>
                 <a href="{{ route('about') }}" class="nav-link">Sobre nosotros</a>
             </div>

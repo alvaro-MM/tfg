@@ -41,14 +41,17 @@ class ReviewForm extends Component
         return (new StoreReviewRequest())->rules();
     }
 
-    public function mount($review = null, $dish_id = null)
+    public function mount($review = null, $dish_id = null, $drink_id = null)
     {
         $this->dishes = Dish::all();
         $this->drinks = Drink::all();
 
-        // Si viene un dish_id desde la URL
         if ($dish_id) {
             $this->dish_id = $dish_id;
+        }
+
+        if ($drink_id) {
+            $this->drink_id = $drink_id;
         }
 
         if ($review) {

@@ -11,6 +11,10 @@ class PublicController extends Controller
     {
         return view('public.dishes');
     }
+    public function drinks()
+    {
+        return view('public.drinks');
+    }
 
     public function prices()
     {

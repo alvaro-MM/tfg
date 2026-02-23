@@ -5,27 +5,37 @@
 @section('content')
 
     {{-- HERO --}}
-    <div class="relative overflow-hidden bg-gradient-to-br from-red-600 via-red-500 to-orange-400">
-        <div class="absolute inset-0 bg-black/30"></div>
+    <div class="relative overflow-hidden bg-gradient-to-br from-red-700 via-red-600 to-orange-500">
 
-        <div class="relative max-w-7xl mx-auto px-6 py-24 text-center text-white">
-            <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight drop-shadow">
+        {{-- textura sutil --}}
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/food.png')]"></div>
+
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <div class="relative max-w-7xl mx-auto px-6 py-32 text-center text-white">
+
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight drop-shadow-lg animate-fadeIn">
                 Sushi Buffet 🍣
             </h1>
 
-            <p class="mt-6 max-w-2xl mx-auto text-lg text-white/90">
-                Buffet japonés ilimitado con gestión moderna de mesas, pedidos y menú.
+            <p class="mt-6 max-w-2xl mx-auto text-lg text-white/90 leading-relaxed animate-fadeIn delay-200">
+                Una experiencia japonesa ilimitada donde tradición y tecnología
+                se fusionan para ofrecer el mejor buffet de la ciudad.
             </p>
 
-            <div class="mt-10 flex justify-center gap-4">
+            <p class="mt-4 text-sm italic text-white/80 animate-fadeIn delay-300">
+                “Itadakimasu” — agradecemos cada comida.
+            </p>
+
+            <div class="mt-10 flex justify-center gap-4 animate-fadeIn delay-500">
                 @auth
                     <a href="{{ route('dashboard') }}"
-                       class="rounded-xl bg-white px-6 py-3 font-semibold text-red-600 shadow-lg hover:scale-105 transition">
+                       class="rounded-xl bg-white px-6 py-3 font-semibold text-red-600 shadow-xl hover:scale-105 hover:shadow-2xl transition duration-300">
                         Ir al Dashboard
                     </a>
                 @else
                     <a href="{{ route('login') }}"
-                       class="rounded-xl bg-white px-6 py-3 font-semibold text-red-600 shadow-lg hover:scale-105 transition">
+                       class="rounded-xl bg-white px-6 py-3 font-semibold text-red-600 shadow-xl hover:scale-105 transition">
                         Iniciar sesión
                     </a>
 
@@ -35,6 +45,30 @@
                     </a>
                 @endauth
             </div>
+
+        </div>
+    </div>
+
+    {{-- NUESTRA HISTORIA --}}
+    <div class="max-w-4xl mx-auto py-24 px-6 text-center">
+        <h2 class="text-4xl font-bold text-gray-900 dark:text-white">
+            Nuestra Filosofía
+        </h2>
+
+        <p class="mt-8 text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+            En Sushi Buffet creemos que la comida japonesa no es solo un plato,
+            es una experiencia. Desde el primer corte del salmón hasta el último
+            detalle en el servicio, buscamos equilibrio, precisión y armonía.
+        </p>
+
+        <p class="mt-6 text-gray-600 dark:text-gray-400 leading-relaxed">
+            Inspirados en la cultura japonesa y apoyados en tecnología moderna,
+            gestionamos cada mesa, pedido y plato con la misma filosofía:
+            calidad constante, servicio eficiente y clientes satisfechos.
+        </p>
+
+        <div class="mt-10 text-5xl opacity-20">
+            🍣 🥢 🍱
         </div>
     </div>
 
@@ -84,7 +118,7 @@
         <div class="bg-gray-100 dark:bg-neutral-900 py-16">
             <div class="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
 
-                <div class="rounded-xl bg-white dark:bg-neutral-800 p-6 shadow">
+                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300"">
                     <div class="text-3xl">🍣</div>
                     <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
                         {{ \App\Models\Dish::count() }}
@@ -92,7 +126,15 @@
                     <p class="text-sm text-gray-500">Platos</p>
                 </div>
 
-                <div class="rounded-xl bg-white dark:bg-neutral-800 p-6 shadow">
+                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300"">
+                    <div class="text-3xl">🥂</div>
+                    <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+                        {{ \App\Models\Drink::count() }}
+                    </p>
+                    <p class="text-sm text-gray-500">Bebidas</p>
+                </div>
+
+                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300"">
                     <div class="text-3xl">🪑</div>
                     <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
                         {{ \App\Models\Table::count() }}
@@ -100,15 +142,15 @@
                     <p class="text-sm text-gray-500">Mesas</p>
                 </div>
 
-{{--                <div class="rounded-xl bg-white dark:bg-neutral-800 p-6 shadow">--}}
-{{--                    <div class="text-3xl">⭐</div>--}}
-{{--                    <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">--}}
-{{--                        {{ number_format(\App\Models\Review::avg('rating'), 1) ?? '—' }}--}}
-{{--                    </p>--}}
-{{--                    <p class="text-sm text-gray-500">Valoración media</p>--}}
-{{--                </div>--}}
+                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300"">
+                    <div class="text-3xl">⭐</div>
+                    <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+                        {{ number_format(\App\Models\Review::avg('rating'), 1) ?? '—' }}
+                    </p>
+                    <p class="text-sm text-gray-500">Valoración media</p>
+                </div>
 
-                <div class="rounded-xl bg-white dark:bg-neutral-800 p-6 shadow">
+                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300"">
                     <div class="text-3xl">⭐</div>
                     <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
                         {{ \App\Models\Review::count() }}
@@ -119,7 +161,7 @@
                 </div>
 
 
-                <div class="rounded-xl bg-white dark:bg-neutral-800 p-6 shadow">
+                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300"">
                     <div class="text-3xl">📄</div>
                     <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
                         {{ \App\Models\Invoice::count() }}
@@ -148,6 +190,17 @@
                     </h3>
                     <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
                         Crear, editar y gestionar platos.
+                    </p>
+                </a>
+
+                <a href="{{ route('drinks.index') }}"
+                   class="group rounded-2xl bg-white dark:bg-neutral-800 p-6 shadow hover:shadow-xl hover:-translate-y-1 transition">
+                    <div class="text-4xl">🥂</div>
+                    <h3 class="mt-3 text-lg font-semibold text-gray-900 dark:text-white group-hover:text-green-600">
+                        Bebidas
+                    </h3>
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        Crear, editar y gestionar bebidas.
                     </p>
                 </a>
 

@@ -24,7 +24,8 @@ class ReviewController extends Controller
     public function create(Request $request)
     {
         return view('reviews.create', [
-            'dish_id' => $request->dish_id
+            'dish_id' => $request->dish_id,
+            'drink_id' => $request->drink_id,
         ]);
     }
 

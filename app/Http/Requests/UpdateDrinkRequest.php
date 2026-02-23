@@ -24,23 +24,11 @@ class UpdateDrinkRequest extends FormRequest
     {
         return [
             'name'        => ['required', 'string', 'max:255'],
-
-            'slug'        => [
-                'nullable',
-                'string',
-                'max:255',
-                Rule::unique('drinks', 'slug')->ignore($this->drink),
-            ],
-
             'description' => ['required', 'string'],
-
             'price'       => ['required', 'numeric', 'min:0'],
-            'available'   => ['sometimes', 'boolean'],
-
+            'available'   => ['boolean'],
             'image'       => ['nullable', 'image', 'max:2048'],
-
             'category_id' => ['required', 'exists:categories,id'],
-
             'allergen_ids'   => ['nullable', 'array'],
             'allergen_ids.*' => ['exists:allergens,id'],
         ];

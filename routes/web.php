@@ -28,6 +28,7 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 Route::get('/platos', [PublicController::class, 'dishes'])->name('dishes.public');
+Route::get('/bebidas', [PublicController::class, 'drinks'])->name('drinks.public');
 Route::get('/precios', [PublicController::class, 'prices'])->name('prices');
 Route::get('/sobre-nosotros', [PublicController::class, 'about'])->name('about');
 
@@ -52,7 +53,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('categories', CategoryController::class);
     Route::resource('dishes', DishController::class)->except( 'store', 'update');
-    Route::resource('drinks', DrinkController::class);
+    Route::resource('drinks', DrinkController::class)->except( 'store', 'update');
     Route::resource('allergens', AllergenController::class);
     Route::resource('review', ReviewController::class)->except( 'store', 'update');
     Route::resource('tables', TableController::class);
