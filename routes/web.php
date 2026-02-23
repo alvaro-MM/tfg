@@ -12,6 +12,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\Owner\OwnerDashboardController;
+use App\Http\Controllers\Owner\OwnerManagementController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\PublicMenuController;
 use App\Http\Controllers\PublicOrderController;
@@ -81,19 +82,19 @@ Route::middleware(['auth'])->group(function () {
             ->name('owner-dashboard.index');
 
         Route::post('/owner/users/{user}/make-staff',
-            [\App\Http\Controllers\Owner\OwnerManagementController::class, 'makeStaff']
+            [OwnerManagementController::class, 'makeStaff']
         )->name('owner.make-staff');
 
         Route::delete('/owner/users/{user}/remove-staff',
-            [\App\Http\Controllers\Owner\OwnerManagementController::class, 'removeStaff']
+            [OwnerManagementController::class, 'removeStaff']
         )->name('owner.remove-staff');
 
         Route::post('/owner/tables',
-            [\App\Http\Controllers\Owner\OwnerManagementController::class, 'storeTable']
+            [OwnerManagementController::class, 'storeTable']
         )->name('owner.tables.store');
 
         Route::delete('/owner/tables/{table}',
-            [\App\Http\Controllers\Owner\OwnerManagementController::class, 'destroyTable']
+            [OwnerManagementController::class, 'destroyTable']
         )->name('owner.tables.destroy');
 
     });
@@ -101,6 +102,12 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:staff')->group(function () {
         Route::get('/staff-dashboard', [StaffDashboardController::class, 'index'])
             ->name('staff-dashboard.index');
+
+        Route::patch('/dishes/{dish}/toggle', [StaffDashboardController::class, 'toggleDish'])
+            ->name('staff.dishes.toggle');
+
+        Route::patch('/drinks/{drink}/toggle', [StaffDashboardController::class, 'toggleDrink'])
+            ->name('staff.drinks.toggle');
 
         Route::get('/staff-tables', [StaffTableController::class, 'index'])
             ->name('staff-tables.index');

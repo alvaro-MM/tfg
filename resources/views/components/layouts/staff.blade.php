@@ -12,7 +12,7 @@
     ])
 </head>
 
-<body class="flex h-screen bg-gray-100">
+<body class="flex h-screen bg-gradient-to-br from-gray-100 to-gray-200">
 
 {{-- Sidebar --}}
 <aside
@@ -24,10 +24,12 @@
                 localStorage.setItem('openTables', this.openTables)
             }
         }"
-    class="hidden md:flex flex-col w-64 bg-gray-900 text-gray-300">
+    class="hidden md:flex flex-col w-64 bg-gray-950 text-gray-300 shadow-2xl">
 
-    <div class="flex items-center justify-center h-16 border-b border-gray-800">
-        <span class="text-white font-semibold tracking-wide">Panel Staff</span>
+    <div class="flex items-center justify-center h-16 border-b border-gray-800 bg-gray-900">
+        <span class="text-white font-bold tracking-wider text-lg">
+            🍣 Staff Panel
+        </span>
     </div>
 
     <nav class="flex-1 px-3 py-4 text-sm space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
