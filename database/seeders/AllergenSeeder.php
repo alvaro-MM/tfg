@@ -2,36 +2,79 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\allergen;
+use App\Models\Allergen;
 
 class AllergenSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Crear todos los alérgenos conocidos (o al menos varios)
-        $names = [
-            'Cereales con gluten (Trigo, centeno, cebada, avena, espelta, kamut y sus productos)',
-            'Crustáceos (cangrejos, langostas, gambas, etc.)',
-            'Huevos',
-            'Pescado',
-            'Cacahuetes',
-            'Soja',
-            'Leche (incluidos productos lácteos y lactosa)',
-            'Frutos de cáscara (almendras, avellanas, nueces, anacardos, pacanas, nueces de Brasil, pistachos, nueces de macadamia)',
-            'Apio (en condimentos, sopas, cremas y productos cárnicos)',
-            'Mostaza (presente en panes, salsas, marinados y productos cárnicos)',
-            'Granos de sésamo (semillas, pasta tahine y aceites)',
-            'Dióxido de azufre y sulfitos (como conservantes en frutas desecadas, vino y cerveza, >10 mg/kg o >10 mg/L)',
-            'Altramuces (semillas y harinas, a veces presentes en pan y pasteles)',
-            'Moluscos (mejillones, almejas, caracoles, pulpos, etc.)'
+        $allergens = [
+            [
+                'name' => 'Cereales con gluten',
+                'image' => 'images/allergens/gluten.jpg',
+            ],
+            [
+                'name' => 'Crustáceos',
+                'image' => 'images/allergens/crustaceos.jpg',
+            ],
+            [
+                'name' => 'Huevos',
+                'image' => 'images/allergens/huevos.jpg',
+            ],
+            [
+                'name' => 'Pescado',
+                'image' => 'images/allergens/pescado.jpg',
+            ],
+            [
+                'name' => 'Cacahuetes',
+                'image' => 'images/allergens/cacahuetes.jpg',
+            ],
+            [
+                'name' => 'Soja',
+                'image' => 'images/allergens/soja.jpg',
+            ],
+            [
+                'name' => 'Leche',
+                'image' => 'images/allergens/leche.jpg',
+            ],
+            [
+                'name' => 'Frutos de cáscara',
+                'image' => 'images/allergens/frutos_cascara.jpg',
+            ],
+            [
+                'name' => 'Apio',
+                'image' => 'images/allergens/apio.jpg',
+            ],
+            [
+                'name' => 'Mostaza',
+                'image' => 'images/allergens/mostaza.jpg',
+            ],
+            [
+                'name' => 'Sésamo',
+                'image' => 'images/allergens/sesamo.jpg',
+            ],
+            [
+                'name' => 'Sulfitos',
+                'image' => 'images/allergens/sulfitos.jpg',
+            ],
+            [
+                'name' => 'Altramuces',
+                'image' => 'images/allergens/altramuces.jpg',
+            ],
+            [
+                'name' => 'Moluscos',
+                'image' => 'images/allergens/moluscos.jpg',
+            ],
         ];
-        foreach ($names as $name) {
-            allergen::factory()->create(['name' => $name, 'slug' => str($name)->slug()]);
+
+        foreach ($allergens as $data) {
+            Allergen::create([
+                'name' => $data['name'],
+                'slug' => str($data['name'])->slug(),
+                'description' => fake()->sentence(12),
+                'image' => $data['image'],
+            ]);
         }
     }
 }
