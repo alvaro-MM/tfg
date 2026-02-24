@@ -30,39 +30,60 @@ class MenuSeeder extends Seeder
             ->pluck('id')
             ->toArray();
 
-        Menu::factory()->count(5)->create()->each(function (Menu $menu) use ($outOfMenuDishIds) {
-            // Platos candidatos para este menú (excluyendo los "fuera de menú" globales)
-            $menuDishes = Dish::query()
-                ->whereNotIn('id', $outOfMenuDishIds)
-                ->inRandomOrder()
-                ->limit(rand(12, 20)) // más platos por menú
-                ->get();
+        // Platos disponibles para asignar a menús
+        $availableForMenus = Dish::query()
+            ->whereNotIn('id', $outOfMenuDishIds)
+            ->pluck('id')
+            ->toArray();
 
-            // Adjuntamos platos al menú con info de pricing coherente con la lógica de buffet
-            foreach ($menuDishes as $dish) {
-                // 25% de probabilidad de ser un plato especial con precio custom (extra de menú)
-                $isSpecial = rand(1, 100) <= 25;
+        $availableCount = count($availableForMenus);
 
-                // Si es especial, fijamos un precio custom alrededor del precio del plato
-                $customPrice = null;
-                if ($isSpecial) {
-                    $base = (float) $dish->price;
-                    // Entre +20% y +80% del precio base
-                    $factor = rand(120, 180) / 100;
-                    $customPrice = round($base * $factor, 2);
+        if ($availableCount === 0) {
+            return;
+        }
+
+        // Cada menú debe tener entre 10 y 20 platos.
+        // Calculamos cuántos menús como máximo podemos crear sin quedarnos sin platos.
+        $maxMenusByDishes = intdiv($availableCount, 10); // mínimo 10 platos por menú
+        $menusToCreate = min(4, max(1, $maxMenusByDishes)); // como mucho 4 menús
+
+        // Creamos los menús (hasta 4) y les asignamos entre 10 y 20 platos cada uno
+        Menu::factory()
+            ->count($menusToCreate)
+            ->create()
+            ->each(function (Menu $menu) use ($availableForMenus) {
+                // Elegimos entre 10 y 20 platos distintos para este menú
+                $dishIdsForMenu = collect($availableForMenus)
+                    ->shuffle()
+                    ->take(rand(10, 20))
+                    ->values();
+
+                $dishes = Dish::whereIn('id', $dishIdsForMenu)->get();
+
+                foreach ($dishes as $dish) {
+                    // 25% de probabilidad de ser un plato especial con precio custom (extra de menú)
+                    $isSpecial = rand(1, 100) <= 25;
+
+                    // Si es especial, fijamos un precio custom alrededor del precio del plato
+                    $customPrice = null;
+                    if ($isSpecial) {
+                        $base = (float) $dish->price;
+                        // Entre +20% y +80% del precio base
+                        $factor = rand(120, 180) / 100;
+                        $customPrice = round($base * $factor, 2);
+                    }
+
+                    $menu->dishes()->attach($dish->id, [
+                        'is_special' => $isSpecial,
+                        'custom_price' => $customPrice,
+                    ]);
                 }
 
-                $menu->dishes()->attach($dish->id, [
-                    'is_special' => $isSpecial,
-                    'custom_price' => $customPrice,
+                // Crear un par de ofertas asociadas al menú
+                Offer::factory()->count(2)->create([
+                    'menu_id' => $menu->id,
                 ]);
-            }
-
-            // Crear un par de ofertas asociadas al menú
-            Offer::factory()->count(2)->create([
-                'menu_id' => $menu->id,
-            ]);
-        });
+            });
 
         // Asignar menús a mesas que todavía no tengan uno
         $menus = Menu::all();
