@@ -190,42 +190,19 @@
                         <p class="text-sm text-gray-600 mt-1">Pago con tarjeta de crédito o débito</p>
                     </div>
                 </label>
+            </div>
 
-                <!-- Mobile Payment -->
-                <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-indigo-500 transition-colors payment-method">
-                    <input type="radio" 
-                           name="payment_method" 
-                           value="mobile" 
-                           required
-                           class="mr-3 w-5 h-5 text-indigo-600 focus:ring-indigo-500">
-                    <div class="flex-1">
-                        <div class="flex items-center">
-                            <svg class="w-6 h-6 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                            </svg>
-                            <span class="font-semibold text-gray-900">Pago Móvil</span>
-                        </div>
-                        <p class="text-sm text-gray-600 mt-1">Bizum, Apple Pay, Google Pay u otros métodos móviles</p>
-                    </div>
-                </label>
-
-                <!-- Bank Transfer -->
-                <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-indigo-500 transition-colors payment-method">
-                    <input type="radio" 
-                           name="payment_method" 
-                           value="transfer" 
-                           required
-                           class="mr-3 w-5 h-5 text-indigo-600 focus:ring-indigo-500">
-                    <div class="flex-1">
-                        <div class="flex items-center">
-                            <svg class="w-6 h-6 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
-                            </svg>
-                            <span class="font-semibold text-gray-900">Transferencia Bancaria</span>
-                        </div>
-                        <p class="text-sm text-gray-600 mt-1">Transferencia bancaria (se enviarán los datos por email)</p>
-                    </div>
-                </label>
+            <!-- Cash instructions / cuenta completa -->
+            <div id="cash-instructions" class="mt-4 bg-green-50 border border-green-200 rounded-lg p-4">
+                <h3 class="text-lg font-semibold text-green-900 mb-2">Cuenta para pago en efectivo</h3>
+                <p class="text-sm text-green-800 mb-1">
+                    Total de tu cuenta: 
+                    <span class="font-bold">€{{ number_format($total, 2) }}</span>
+                </p>
+                <p class="text-sm text-green-800">
+                    Indica al personal que deseas <strong>pagar en efectivo</strong>. 
+                    Te traerán la cuenta completa a la mesa para realizar el pago.
+                </p>
             </div>
             
             @error('payment_method')
@@ -271,23 +248,43 @@
 
 @push('scripts')
 <script>
-    // Highlight selected payment method
-    document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+    const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
+    const cashInstructions = document.getElementById('cash-instructions');
+
+    function updatePaymentUI(selected) {
+        document.querySelectorAll('.payment-method').forEach(label => {
+            label.classList.remove('border-indigo-500', 'bg-indigo-50');
+            label.classList.add('border-gray-200');
+        });
+
+        if (selected) {
+            selected.closest('.payment-method')?.classList.remove('border-gray-200');
+            selected.closest('.payment-method')?.classList.add('border-indigo-500', 'bg-indigo-50');
+        }
+
+        if (cashInstructions) {
+            if (selected && selected.value === 'cash') {
+                cashInstructions.classList.remove('hidden');
+            } else {
+                cashInstructions.classList.add('hidden');
+            }
+        }
+    }
+
+    // Highlight selected payment method & toggle instructions
+    paymentRadios.forEach(radio => {
         radio.addEventListener('change', function() {
-            document.querySelectorAll('.payment-method').forEach(label => {
-                label.classList.remove('border-indigo-500', 'bg-indigo-50');
-                label.classList.add('border-gray-200');
-            });
-            
             if (this.checked) {
-                this.closest('.payment-method').classList.remove('border-gray-200');
-                this.closest('.payment-method').classList.add('border-indigo-500', 'bg-indigo-50');
+                updatePaymentUI(this);
             }
         });
     });
 
     // Initialize first payment method as selected
-    document.querySelector('input[name="payment_method"]:checked')?.closest('.payment-method')?.classList.add('border-indigo-500', 'bg-indigo-50');
+    const initiallySelected = document.querySelector('input[name="payment_method"]:checked');
+    if (initiallySelected) {
+        updatePaymentUI(initiallySelected);
+    }
 </script>
 @endpush
 @endsection

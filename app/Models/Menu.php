@@ -59,6 +59,8 @@ class Menu extends Model
     public function getTypeLabelAttribute(): string
     {
         return match($this->type) {
+            'buffet' => 'Buffet',
+            'a_la_carta' => 'A la carta',
             'daily' => 'Diario',
             'special' => 'Especial',
             'seasonal' => 'Estacional',

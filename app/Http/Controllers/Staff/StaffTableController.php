@@ -49,6 +49,7 @@ class StaffTableController extends Controller
         $table->update([
             'status' => 'available',
             'user_id' => null,
+            'people_count' => $table->capacity,
         ]);
 
         return back()->with('success', 'Mesa liberada');

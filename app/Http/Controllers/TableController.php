@@ -29,10 +29,12 @@ class TableController extends Controller
     {
         $data = $request->validated();
 
-        // Lógica de negocio: si la mesa se marca como libre, desasignar usuario y comensales
+        // Sincronizar siempre people_count con capacity
+        $data['people_count'] = $data['capacity'];
+
+        // Lógica de negocio: si la mesa se marca como libre, desasignar usuario
         if ($data['status'] === 'available') {
             $data['user_id'] = null;
-            $data['people_count'] = 0;
         }
 
         $table = Table::create($data);
@@ -65,10 +67,12 @@ class TableController extends Controller
     {
         $data = $request->validated();
 
-        // Lógica de negocio: si la mesa se marca como libre, desasignar usuario y comensales
+        // Sincronizar siempre people_count con capacity
+        $data['people_count'] = $data['capacity'];
+
+        // Lógica de negocio: si la mesa se marca como libre, desasignar usuario
         if ($data['status'] === 'available') {
             $data['user_id'] = null;
-            $data['people_count'] = 0;
         }
 
         $table->update($data);

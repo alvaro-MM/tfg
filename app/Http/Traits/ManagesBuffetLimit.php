@@ -14,7 +14,9 @@ trait ManagesBuffetLimit
      */
     public function validateBuffetLimit(Table $table, int $newItemsCount): array
     {
-        $limit = 5 * $table->capacity;
+        // Usar número real de comensales si está definido; en caso contrario, la capacidad de la mesa
+        $people = $table->people_count > 0 ? $table->people_count : $table->capacity;
+        $limit = 5 * $people;
         $tenMinutesAgo = Carbon::now()->subMinutes(10);
 
         // Step 1: Get IDs of all orders placed for this table in the last 10 minutes.

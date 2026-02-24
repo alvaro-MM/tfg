@@ -18,10 +18,11 @@ class TableFactory extends Factory
      */
     public function definition(): array
     {
-        $name = 'Mesa ' . $this->faker->unique()->numberBetween(1, 50);
+        $capacity = $this->faker->numberBetween(1, 12);
         return [
             'name' => 'Mesa ' . $this->faker->unique()->bothify('??-##'),
-            'capacity' => $this->faker->numberBetween(1, 12),
+            'capacity' => $capacity,
+            'people_count' => $capacity,
             'status' => $this->faker->randomElement(['available', 'occupied', 'reserved']),
             'notes' => $this->faker->optional()->sentence(),
             'user_id' => User::inRandomOrder()->value('id') ?? User::factory(),

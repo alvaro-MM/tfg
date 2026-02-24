@@ -69,7 +69,8 @@ class PublicCart extends Component
         $validation = $this->validateBuffetLimit($table, $newTotalCount);
         
         if (!$validation['valid']) {
-            $message = "No puedes agregar más productos. Has intentado agregar {$quantity} ítem(s), pero solo puedes pedir {$validation['available']} más en los próximos 10 minutos (límite: {$validation['limit']} por {$table->capacity} personas).";
+            $people = $table->people_count > 0 ? $table->people_count : $table->capacity;
+            $message = "No puedes agregar más productos. Has intentado agregar {$quantity} ítem(s), pero solo puedes pedir {$validation['available']} más en los próximos 10 minutos (límite: {$validation['limit']} por {$people} personas).";
             session()->flash('notification', ['message' => $message, 'type' => 'error']);
             return;
         }
@@ -180,7 +181,8 @@ class PublicCart extends Component
         $validation = $this->validateBuffetLimit($table, $newTotalCount);
         
         if (!$validation['valid']) {
-            $message = "No puedes aumentar la cantidad. Solo puedes pedir {$validation['available']} más ítems en los próximos 10 minutos (límite: {$validation['limit']} por {$table->capacity} personas).";
+            $people = $table->people_count > 0 ? $table->people_count : $table->capacity;
+            $message = "No puedes aumentar la cantidad. Solo puedes pedir {$validation['available']} más ítems en los próximos 10 minutos (límite: {$validation['limit']} por {$people} personas).";
             session()->flash('notification', ['message' => $message, 'type' => 'error']);
             return;
         }
@@ -270,7 +272,8 @@ class PublicCart extends Component
         $validation = $this->validateBuffetLimit($table, $this->count);
         
         if (!$validation['valid']) {
-            $message = "No puedes enviar el pedido. Has intentado pedir {$validation['requested']} ítems, pero solo puedes pedir {$validation['available']} más en los próximos 10 minutos (límite: {$validation['limit']} por {$table->capacity} personas).";
+            $people = $table->people_count > 0 ? $table->people_count : $table->capacity;
+            $message = "No puedes enviar el pedido. Has intentado pedir {$validation['requested']} ítems, pero solo puedes pedir {$validation['available']} más en los próximos 10 minutos (límite: {$validation['limit']} por {$people} personas).";
             session()->flash('notification', ['message' => $message, 'type' => 'error']);
             return;
         }

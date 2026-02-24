@@ -18,7 +18,7 @@ class UpdateMenuRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'type' => 'required|in:daily,special,seasonal,themed',
+            'type' => 'required|in:buffet,a_la_carta',
             'price' => 'required|numeric|min:0|max:999.99',
             'offer_id' => 'nullable|exists:offers,id',
             'dish_ids' => 'nullable|array',
@@ -33,7 +33,7 @@ class UpdateMenuRequest extends FormRequest
             'name.string' => 'El nombre debe ser una cadena de texto.',
             'name.max' => 'El nombre no puede tener más de 255 caracteres.',
             'type.required' => 'El tipo de menú es obligatorio.',
-            'type.in' => 'El tipo de menú debe ser uno de los siguientes: diario, especial, estacional, temático.',
+            'type.in' => 'El tipo de menú debe ser uno de los siguientes: buffet, a la carta.',
             'price.required' => 'El precio del menú es obligatorio.',
             'price.numeric' => 'El precio debe ser un número.',
             'price.min' => 'El precio debe ser mayor o igual a 0.',

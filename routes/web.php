@@ -58,9 +58,15 @@ Route::prefix('order')->group(function () {
 });
 
 Route::prefix('checkout')->group(function () {
+    // Callbacks Redsys (deben ir antes de /{token} para evitar colisión)
+    Route::match(['GET', 'POST'], '/redsys/ok', [PublicOrderController::class, 'redsysOk'])->name('public.redsys.ok');
+    Route::match(['GET', 'POST'], '/redsys/ko', [PublicOrderController::class, 'redsysKo'])->name('public.redsys.ko');
+    Route::post('/redsys/notify', [PublicOrderController::class, 'redsysNotify'])->name('public.redsys.notify');
+
     Route::get('/{token}', [PublicOrderController::class, 'showPayment'])->name('public.payment');
     Route::post('/{token}', [PublicOrderController::class, 'checkout'])->name('public.checkout');
     Route::get('/{token}/status', [PublicOrderController::class, 'getBuffetStatus'])->name('public.buffet.status');
+    Route::get('/{token}/thank-you', [PublicOrderController::class, 'thankYou'])->name('public.thankyou');
 });
 
 /*

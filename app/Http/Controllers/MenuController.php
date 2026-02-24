@@ -57,7 +57,7 @@ class MenuController extends Controller
      */
     public function show(Menu $menu): View
     {
-        $menu->load(['offer', 'dishes', 'tables']);
+        $menu->load(['dishes', 'tables']);
 
         return view('menus.show', compact('menu'));
     }
@@ -80,6 +80,12 @@ class MenuController extends Controller
     public function update(UpdateMenuRequest $request, Menu $menu): RedirectResponse
     {
         $data = $request->validated();
+
+        // Remove 'offer_id' if it does not exist in the menus table to prevent SQL error
+        if (!\Schema::hasColumn('menus', 'offer_id')) {
+            unset($data['offer_id']);
+        }
+
         $menu->update($data);
 
         // Sync dishes

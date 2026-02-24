@@ -21,7 +21,7 @@ class MenuFactory extends Factory
 
         return [
             'name' => 'Menú ' . ucfirst($this->faker->word()),
-            'type' => $this->faker->randomElement(['daily', 'special', 'seasonal', 'themed']),
+            'type' => $this->faker->randomElement(['buffet', 'a_la_carta']),
             'price' => $this->faker->randomFloat(2, 10, 30),
         ];
     }
