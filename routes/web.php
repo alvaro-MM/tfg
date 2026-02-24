@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\PDFController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AllergenController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DishController;
@@ -16,7 +17,6 @@ use App\Http\Controllers\Owner\OwnerManagementController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\PublicMenuController;
 use App\Http\Controllers\PublicOrderController;
-use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Staff\StaffDashboardController;
 use App\Http\Controllers\Staff\StaffOrderController;
@@ -26,15 +26,27 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 
+/*
+|--------------------------------------------------------------------------
+| Rutas públicas (sin autenticación)
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
+
 Route::get('/platos', [PublicController::class, 'dishes'])->name('dishes.public');
 Route::get('/bebidas', [PublicController::class, 'drinks'])->name('drinks.public');
 Route::get('/precios', [PublicController::class, 'prices'])->name('prices');
 Route::get('/sobre-nosotros', [PublicController::class, 'about'])->name('about');
 
-// Public routes for QR menu access
+/*
+|--------------------------------------------------------------------------
+| Rutas públicas para acceso por QR (menú, pedidos y pago)
+|--------------------------------------------------------------------------
+*/
+
 Route::prefix('menu')->group(function () {
     Route::get('/{token}', [PublicMenuController::class, 'show'])->name('public.menu');
     Route::get('/{token}/data', [PublicMenuController::class, 'getMenuData'])->name('public.menu.data');
@@ -51,89 +63,22 @@ Route::prefix('checkout')->group(function () {
     Route::get('/{token}/status', [PublicOrderController::class, 'getBuffetStatus'])->name('public.buffet.status');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Rutas autenticadas genéricas (cualquier usuario logueado)
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware(['auth'])->group(function () {
 
-    Route::resource('categories', CategoryController::class);
-    Route::resource('dishes', DishController::class)->except( 'store', 'update');
-    Route::resource('drinks', DrinkController::class)->except( 'store', 'update');
-    Route::resource('allergens', AllergenController::class);
-    Route::resource('review', ReviewController::class)->except( 'store', 'update');
-    Route::resource('tables', TableController::class);
-    Route::post('tables/{table}/generate-qr', [TableController::class, 'generateQr'])->name('tables.generate-qr');
-    Route::resource('menus', MenuController::class);
-    Route::resource('offers', OfferController::class);
-    Route::resource('invoices', InvoiceController::class);
-    Route::resource('bookings', BookingController::class);
-
-    // DASHBOARD
-
+    // Dashboard genérico (si aplica a cualquier rol autenticado)
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
-    Route::middleware('role:admin')->group(function () {
-        Route::get('/admin-dashboard', [AdminDashboardController::class, 'index'])->name('admin-dashboard.index');
-        Route::resource('admin-dashboard/users', UserController::class)->except(['show', 'create', 'store']);
-        Route::get('/admin/facturacion', [AdminDashboardController::class, 'billing'])->name('admin.billing');
-        Route::get('/performance', [AdminDashboardController::class, 'performance'])->name('performance');
-        Route::get('/admin/pdf/daily-performance', [PDFController::class, 'dailyPerformance'])->name('admin.pdf.daily-performance');
-        Route::post('/admin/pdf/save-chart', [PDFController::class, 'saveChartImage'])->name('admin.pdf.saveChart');
-    });
-
-    Route::middleware( 'role:owner')->group(function () {
-
-        Route::get('/owner-dashboard', OwnerDashboardController::class)
-            ->name('owner-dashboard.index');
-
-        Route::post('/owner/users/{user}/make-staff',
-            [OwnerManagementController::class, 'makeStaff']
-        )->name('owner.make-staff');
-
-        Route::delete('/owner/users/{user}/remove-staff',
-            [OwnerManagementController::class, 'removeStaff']
-        )->name('owner.remove-staff');
-
-        Route::post('/owner/tables',
-            [OwnerManagementController::class, 'storeTable']
-        )->name('owner.tables.store');
-
-        Route::delete('/owner/tables/{table}',
-            [OwnerManagementController::class, 'destroyTable']
-        )->name('owner.tables.destroy');
-
-    });
-
-    Route::middleware('role:staff')->group(function () {
-        Route::get('/staff-dashboard', [StaffDashboardController::class, 'index'])
-            ->name('staff-dashboard.index');
-
-        Route::patch('/dishes/{dish}/toggle', [StaffDashboardController::class, 'toggleDish'])
-            ->name('staff.dishes.toggle');
-
-        Route::patch('/drinks/{drink}/toggle', [StaffDashboardController::class, 'toggleDrink'])
-            ->name('staff.drinks.toggle');
-
-        Route::get('/staff-tables', [StaffTableController::class, 'index'])
-            ->name('staff-tables.index');
-
-        Route::get('/staff-tables/{table}', [StaffTableController::class, 'show'])
-            ->name('staff-tables.show');
-
-        Route::post('/staff-tables/{table}/occupy', [StaffTableController::class, 'occupy'])
-            ->name('staff-tables.occupy');
-
-        Route::post('/staff-tables/{table}/free', [StaffTableController::class, 'free'])
-            ->name('staff-tables.free');
-
-        Route::post('/tables/{table}/reserve', [StaffTableController::class, 'reserve'])
-            ->name('staff-tables.reserve');
-
-        Route::post('/tables/{table}/cancel-reserve', [StaffTableController::class, 'cancelReserve'])
-            ->name('staff-tables.cancel-reserve');
-
-        Route::get('/staff-orders', [StaffOrderController::class, 'index'])
-            ->name('staff-orders.index');
-    });
-
-    // No hechos por nosotros
+    /*
+    |--------------------------------------------------------------------------
+    | Rutas de configuración / perfil (accesibles a cualquier usuario autenticado)
+    |--------------------------------------------------------------------------
+    */
 
     Route::redirect('settings', 'settings/profile');
 
@@ -151,6 +96,111 @@ Route::middleware(['auth'])->group(function () {
             ),
         )
         ->name('two-factor.show');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Rutas de gestión de negocio (owner + admin)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:owner|admin'])->group(function () {
+    Route::resource('categories', CategoryController::class);
+    Route::resource('dishes', DishController::class)->except('store', 'update');
+    Route::resource('drinks', DrinkController::class)->except('store', 'update');
+    Route::resource('allergens', AllergenController::class);
+    Route::resource('review', ReviewController::class)->except('store', 'update');
+    Route::resource('tables', TableController::class);
+    Route::post('tables/{table}/generate-qr', [TableController::class, 'generateQr'])->name('tables.generate-qr');
+    Route::resource('menus', MenuController::class);
+    Route::resource('offers', OfferController::class);
+    Route::resource('invoices', InvoiceController::class);
+    Route::resource('bookings', BookingController::class);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Rutas de administrador
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin-dashboard', [AdminDashboardController::class, 'index'])->name('admin-dashboard.index');
+    Route::resource('admin-dashboard/users', UserController::class)->except(['show', 'create', 'store']);
+    Route::get('/admin/facturacion', [AdminDashboardController::class, 'billing'])->name('admin.billing');
+    Route::get('/performance', [AdminDashboardController::class, 'performance'])->name('performance');
+    Route::get('/admin/pdf/daily-performance', [PDFController::class, 'dailyPerformance'])->name('admin.pdf.daily-performance');
+    Route::post('/admin/pdf/save-chart', [PDFController::class, 'saveChartImage'])->name('admin.pdf.saveChart');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Rutas de dueño
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:owner'])->group(function () {
+
+    Route::get('/owner-dashboard', OwnerDashboardController::class)
+        ->name('owner-dashboard.index');
+
+    Route::post(
+        '/owner/users/{user}/make-staff',
+        [OwnerManagementController::class, 'makeStaff']
+    )->name('owner.make-staff');
+
+    Route::delete(
+        '/owner/users/{user}/remove-staff',
+        [OwnerManagementController::class, 'removeStaff']
+    )->name('owner.remove-staff');
+
+    Route::post(
+        '/owner/tables',
+        [OwnerManagementController::class, 'storeTable']
+    )->name('owner.tables.store');
+
+    Route::delete(
+        '/owner/tables/{table}',
+        [OwnerManagementController::class, 'destroyTable']
+    )->name('owner.tables.destroy');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Rutas de staff
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:staff'])->group(function () {
+    Route::get('/staff-dashboard', [StaffDashboardController::class, 'index'])
+        ->name('staff-dashboard.index');
+
+    Route::patch('/dishes/{dish}/toggle', [StaffDashboardController::class, 'toggleDish'])
+        ->name('staff.dishes.toggle');
+
+    Route::patch('/drinks/{drink}/toggle', [StaffDashboardController::class, 'toggleDrink'])
+        ->name('staff.drinks.toggle');
+
+    Route::get('/staff-tables', [StaffTableController::class, 'index'])
+        ->name('staff-tables.index');
+
+    Route::get('/staff-tables/{table}', [StaffTableController::class, 'show'])
+        ->name('staff-tables.show');
+
+    Route::post('/staff-tables/{table}/occupy', [StaffTableController::class, 'occupy'])
+        ->name('staff-tables.occupy');
+
+    Route::post('/staff-tables/{table}/free', [StaffTableController::class, 'free'])
+        ->name('staff-tables.free');
+
+    Route::post('/tables/{table}/reserve', [StaffTableController::class, 'reserve'])
+        ->name('staff-tables.reserve');
+
+    Route::post('/tables/{table}/cancel-reserve', [StaffTableController::class, 'cancelReserve'])
+        ->name('staff-tables.cancel-reserve');
+
+    Route::get('/staff-orders', [StaffOrderController::class, 'index'])
+        ->name('staff-orders.index');
 });
 
 require __DIR__ . '/auth.php';
