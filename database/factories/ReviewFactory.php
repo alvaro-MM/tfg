@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Dish;
 use App\Models\Drink;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ReviewFactory extends Factory
 {
@@ -30,9 +32,27 @@ class ReviewFactory extends Factory
             'dish_id' => $isDishReview ? Dish::inRandomOrder()->first()?->id : null,
             'drink_id' => ! $isDishReview ? Drink::inRandomOrder()->first()?->id : null,
 
-            'image' => $hasImage
-                ? 'reviews/review.jpg'
-                : null,
+            'image' => function () {
+                // Ruta de origen (donde tienes las imágenes base)
+                $sourceDir = public_path('images');
+
+                // Imágenes disponibles
+                $filename = 'review.jpg';
+                $originalPath = $sourceDir . '/' . $filename;
+
+                // Crear nombre único
+                $extension = pathinfo($filename, PATHINFO_EXTENSION);
+                $newFilename = Str::random(40) . '.' . $extension;
+
+                // Ruta de destino en el disco 'public'
+                $targetPath = 'reviews/' . $newFilename;
+
+                // Copiar imagen al storage/app/public/*
+                Storage::disk('public')->put($targetPath, file_get_contents($originalPath));
+
+                // Guardar en la base de datos la ruta accesible públicamente
+                return $targetPath;
+            }
         ];
     }
 }
