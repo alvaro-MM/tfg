@@ -17,6 +17,7 @@ class ReviewFactory extends Factory
         $name = 'Reseña ' . $this->faker->unique()->numberBetween(1, 10000);
 
         $isDishReview = $this->faker->boolean(60); // 60% platos, 40% bebidas
+        $hasImage = $this->faker->boolean(50); // 50% tendrán imagen
 
         return [
             'name' => $name,
@@ -28,6 +29,10 @@ class ReviewFactory extends Factory
 
             'dish_id' => $isDishReview ? Dish::inRandomOrder()->first()?->id : null,
             'drink_id' => ! $isDishReview ? Drink::inRandomOrder()->first()?->id : null,
+
+            'image' => $hasImage
+                ? 'reviews/review.jpg'
+                : null,
         ];
     }
 }

@@ -18,6 +18,8 @@ class DrinkFactory extends Factory
     public function definition(): array
     {
         $name = $this->faker->unique()->words(2, true);
+        $hasImage = $this->faker->boolean(50); // 50% tendrán imagen
+
         return [
             'name' => ucfirst($name),
             'slug' => str($name)->slug(),
@@ -25,6 +27,9 @@ class DrinkFactory extends Factory
             'price' => $this->faker->randomFloat(2, 2, 8),
             'available' => $this->faker->boolean(80),
             'category_id' => Category::query()->inRandomOrder()->value('id') ?? Category::factory(),
+            'image' => $hasImage
+                ? 'drinks/bebida.jpg'
+                : null,
         ];
     }
 }

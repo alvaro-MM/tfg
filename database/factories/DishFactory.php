@@ -17,6 +17,8 @@ class DishFactory extends Factory
     public function definition(): array
     {
         $name = $this->faker->unique()->words(3, true);
+        $hasImage = $this->faker->boolean(50); // 50% tendrán imagen
+
         return [
             'name' => ucfirst($name),
             'slug' => str($name)->slug(),
@@ -24,7 +26,9 @@ class DishFactory extends Factory
             'price' => $this->faker->randomFloat(2, 5, 25),
             'available' => $this->faker->boolean(90),
             'special' => $this->faker->boolean(20),
-            'image' => null, // Use null to display CSS placeholder
+            'image' => $hasImage
+                ? 'dishes/plato.jpg'
+                : null,
             'category_id' => \App\Models\category::query()->inRandomOrder()->value('id') ?? \App\Models\category::factory(),
         ];
     }
