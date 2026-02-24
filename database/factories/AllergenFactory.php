@@ -18,11 +18,11 @@ class AllergenFactory extends Factory
     {
 
         $name = $this->faker->unique()->word();
-        
+
         return [
             'name' => $this->faker->word,
             'description' => $this->faker->sentence(12),
-            'image' => $this->faker->imageUrl(640, 480, 'food', true),
+            'image' => 'images/allergens/default.jpg',
         ];
     }
 }
