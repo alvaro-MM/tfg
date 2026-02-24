@@ -57,17 +57,18 @@ class Order extends Model
     {
         $total = 0.00;
 
-        // Get the menu if not provided
-        if (!$menu) {
-            $menu = $this->table?->menu;
-        }
+        // Obtain the associated table model instance (never use $this->table which is the table name)
+        /** @var \App\Models\Table|null $table */
+        $table = $this->getTableInstance();
 
-        // Ensure the table relationship is loaded
-        $table = $this->table;
-
-        // Use the table's getPeopleCount method to determine the number of people
-        $peopleCount = $table->getPeopleCount();
+        // Determine people count (fallback to 1 if no table or method unavailable)
+        $peopleCount = $table ? $table->getPeopleCount() : 1;
         \Log::debug('People count: ' . $peopleCount);
+
+        // Get the menu if not provided, using the table relationship when available
+        if (!$menu && $table) {
+            $menu = $table->menu;
+        }
 
         // Ensure menu price is multiplied by the number of people
         if ($menu) {
@@ -105,6 +106,7 @@ class Order extends Model
      */
     public function getTableInstance(): ?Table
     {
-        return $this->table ?? $this->table()->first();
+        // Use the relationship explicitly; do not access $this->table directly
+        return $this->table()->first();
     }
 }
