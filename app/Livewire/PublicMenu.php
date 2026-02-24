@@ -49,6 +49,7 @@ class PublicMenu extends Component
         $menu = $this->table->menu;
 
         if (!$menu) {
+            // Sin menú asignado: mostrar todos los platos y bebidas disponibles
             $this->categories = Category::orderBy('name')->get()->toArray();
             $this->dishes = Dish::with(['category', 'allergens'])
                 ->where('available', true)
@@ -88,20 +89,46 @@ class PublicMenu extends Component
                 })
                 ->toArray();
         } else {
-            $this->dishes = $menu->dishes()
+            // Con menú asignado:
+            //  - Platos que SÍ están en el menú -> se tratan como ahora (incluidos o con precio especial)
+            //  - Platos que NO están en el menú -> se pueden pedir con su precio original
+
+            // Platos del menú (para saber cuáles están incluidos y sus pivots)
+            $menuDishes = $menu->dishes()
                 ->with(['category', 'allergens'])
                 ->where('available', true)
-                ->orderBy('name')
                 ->get()
-                ->map(function ($dish) use ($menu) {
-                    $extraPrice = $menu->getDishPrice($dish->id);
+                ->keyBy('id');
+
+            // Todos los platos disponibles del restaurante
+            $allAvailableDishes = Dish::with(['category', 'allergens'])
+                ->where('available', true)
+                ->orderBy('name')
+                ->get();
+
+            $this->dishes = $allAvailableDishes
+                ->map(function ($dish) use ($menu, $menuDishes) {
+                    $isInMenu = $menuDishes->has($dish->id);
+
+                    if ($isInMenu) {
+                        // Plato está en el menú: aplicar lógica de menú (incluido / precio especial)
+                        $extraPrice = $menu->getDishPrice($dish->id);
+                        $pivot = $menuDishes[$dish->id]->pivot;
+
+                        $price = $extraPrice !== null ? (float) $extraPrice : null; // null = incluido en menú
+                        $isSpecial = (bool) $pivot->is_special;
+                    } else {
+                        // Plato NO está en el menú: se cobra a su precio normal
+                        $price = (float) $dish->price;
+                        $isSpecial = false;
+                    }
+
                     return [
                         'id' => $dish->id,
                         'name' => $dish->name,
                         'description' => $dish->description,
-                        // Only show a per-dish price when it's a special (extraPrice !== null)
-                        'price' => $extraPrice !== null ? (float) $extraPrice : null,
-                        'is_special' => (bool) $dish->pivot->is_special,
+                        'price' => $price,
+                        'is_special' => $isSpecial,
                         'image' => $this->formatImageUrl($dish->image),
                         'category_id' => $dish->category_id,
                         'allergens' => $dish->allergens->pluck('name')->toArray(),
@@ -142,10 +169,12 @@ class PublicMenu extends Component
         }
     }
 
-    public function selectCategory()
+    public function selectCategory($categoryId)
     {
-        $categoryId = request('category_id', 'all');
-        $this->selectedCategory = $categoryId;
+        // Permitir seleccionar "todas" las categorías o una concreta
+        $this->selectedCategory = $categoryId === 'all'
+            ? 'all'
+            : (int) $categoryId;
     }
 
     public function addProductToCart($product_id = null, $product_type = null)

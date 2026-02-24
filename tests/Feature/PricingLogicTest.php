@@ -280,7 +280,7 @@ class PricingLogicTest extends TestCase
     }
 
     /**
-     * Test order total calculation with multiple people at the table
+     * Test order total calculation ignores people_count and charges per order (per client)
      */
     public function test_order_total_with_multiple_people(): void
     {
@@ -315,12 +315,13 @@ class PricingLogicTest extends TestCase
 
         $total = $order->calculateTotal($this->menu);
 
-        // Menu price (15.00) x 4 people = 60.00
-        $this->assertEquals(60.00, $total);
+        // Con la lógica actual: un pedido = un cliente
+        // Total = precio del menú (15.00) independientemente de people_count
+        $this->assertEquals(15.00, $total);
     }
 
     /**
-     * Test drink calculation with multiple people
+     * Test drink calculation with multiple people (primer bebida gratis por pedido)
      */
     public function test_drink_calculation_with_multiple_people(): void
     {
@@ -352,8 +353,10 @@ class PricingLogicTest extends TestCase
 
         $total = $order->calculateTotal($this->menu);
 
-        // First 3 drinks are free (1 per person), 2 drinks charged at 1.50 each = 3.00
-        // Total = (Menu price * people) + (chargeable drinks * price) = (15 * 3) + ((5-3) * 1.50) = 45 + 3 = 48.00
-        $this->assertEquals(48.00, $total);
+        // Lógica actual: un pedido = un cliente
+        // - Precio menú: 15.00
+        // - Bebidas: primera gratis, 4 de pago a 1.50 = 6.00
+        // Total esperado = 21.00
+        $this->assertEquals(21.00, $total);
     }
 }

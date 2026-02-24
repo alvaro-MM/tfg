@@ -72,6 +72,41 @@
                 </h5>
                 <div class="space-y-3">
                     @foreach($order->dishes as $dish)
+                    @php
+                        // Determinar cómo mostrar el precio del plato según el menú (si lo hay)
+                        $displayPrice = $dish->price;
+                        $lineTotal = $dish->price * $dish->pivot->quantity;
+                        $priceLabel = '€' . number_format($dish->price, 2) . ' c/u';
+                        $isIncludedInMenu = false;
+                        $isMenuExtra = false;
+
+                        $menu = $table->menu ?? null;
+
+                        if ($order->type === 'buffet' && $menu) {
+                            $menuDish = $menu->dishes()->where('dish_id', $dish->id)->first();
+
+                            if ($menuDish) {
+                                if ($menuDish->pivot->is_special) {
+                                    // Plato especial del menú: extra (custom o precio del plato)
+                                    $displayPrice = $menu->getDishPrice($dish->id) ?? $dish->price;
+                                    $lineTotal = $displayPrice * $dish->pivot->quantity;
+                                    $priceLabel = 'Extra de menú - €' . number_format($displayPrice, 2) . ' c/u';
+                                    $isMenuExtra = true;
+                                } else {
+                                    // Plato normal del menú: incluido en el buffet (0€)
+                                    $displayPrice = 0.00;
+                                    $lineTotal = 0.00;
+                                    $priceLabel = 'Incluido en menú';
+                                    $isIncludedInMenu = true;
+                                }
+                            } else {
+                                // Plato fuera del menú: se cobra a precio normal
+                                $displayPrice = $dish->price;
+                                $lineTotal = $dish->price * $dish->pivot->quantity;
+                                $priceLabel = 'Fuera de menú - €' . number_format($dish->price, 2) . ' c/u';
+                            }
+                        }
+                    @endphp
                     <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-orange-300 transition-colors">
                         <div class="flex justify-between items-center">
                             <div class="flex-1">
@@ -79,8 +114,12 @@
                                 <p class="text-sm text-gray-600 mt-1">Cantidad: {{ $dish->pivot->quantity }}</p>
                             </div>
                             <div class="text-right">
-                                <p class="text-xl font-bold text-gray-900">€{{ number_format($dish->price * $dish->pivot->quantity, 2) }}</p>
-                                <p class="text-xs text-gray-500">€{{ number_format($dish->price, 2) }} c/u</p>
+                                <p class="text-xl font-bold text-gray-900">
+                                    €{{ number_format($lineTotal, 2) }}
+                                </p>
+                                <p class="text-xs text-gray-500">
+                                    {{ $priceLabel }}
+                                </p>
                             </div>
                         </div>
                     </div>

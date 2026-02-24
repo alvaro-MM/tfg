@@ -150,65 +150,24 @@ class PublicOrderController extends Controller
                 ->with('info', 'No hay pedidos pendientes de pago.');
         }
 
-        // Calculate total: each order (client) pays menu price
-        // First beverage included, pay for 2nd onwards
+        // Cálculo de total delegando en la lógica central de Order::calculateTotal
+        // para cada pedido pendiente, evitando duplicar reglas.
         $total = 0.00;
         $allItems = [];
-        
-        // Add menu price per client (each order = 1 client)
-        $orderCount = $orders->count();
-        if ($table->menu) {
-            $menuPrice = $table->menu->price;
-            $total += $menuPrice * $orderCount;
-            $allItems[] = [
-                'name' => "Menú {$table->menu->name} ({$orderCount} cliente" . ($orderCount > 1 ? 's' : '') . ") - 1ª bebida incluida",
-                'price' => $menuPrice,
-                'quantity' => $orderCount,
-                'type' => 'menu',
-                'order_id' => null,
-            ];
-            // Add extras for special dishes attached to the menu
-            foreach ($orders as $order) {
-                foreach ($order->dishes as $dish) {
-                    $menuDish = $table->menu->dishes()->where('dish_id', $dish->id)->first();
-                    if ($menuDish && $menuDish->pivot->is_special) {
-                        $extra = $menuDish->pivot->custom_price ?? $dish->price;
-                        $extraTotal = $extra * $dish->pivot->quantity;
-                        $total += $extraTotal;
-                        $allItems[] = [
-                            'order_id' => $order->id,
-                            'name' => $dish->name . ' (extra)',
-                            'price' => $extra,
-                            'quantity' => $dish->pivot->quantity,
-                            'type' => 'dish',
-                        ];
-                    }
-                }
-            }
-        }
-        
-        // Add beverages (first one free, pay from 2nd onwards)
+
         foreach ($orders as $order) {
-            $drinkCount = 0;
-            foreach ($order->drinks as $drink) {
-                $drinkCount += $drink->pivot->quantity;
-                
-                // Only charge drinks beyond the first one
-                $chargeableQuantity = max(0, $drinkCount - 1);
-                if ($chargeableQuantity > 0) {
-                    $drinkCost = $drink->price * $chargeableQuantity;
-                    $total += $drinkCost;
-                    $allItems[] = [
-                        'order_id' => $order->id,
-                        'name' => $drink->name . ' (a partir de 2ª)',
-                        'price' => $drink->price,
-                        'quantity' => $chargeableQuantity,
-                        'type' => 'drink',
-                    ];
-                }
-            }
+            $orderTotal = $order->calculateTotal($table->menu);
+            $total += $orderTotal;
+
+            $allItems[] = [
+                'order_id' => $order->id,
+                'name' => "Pedido #{$order->id}",
+                'price' => $orderTotal,
+                'quantity' => 1,
+                'type' => 'order',
+            ];
         }
-        
+
         $total = round($total, 2);
 
         return view('public.payment', [
@@ -264,36 +223,23 @@ class PublicOrderController extends Controller
                 ->with('error', 'No hay pedidos pendientes de pago');
         }
 
-        // Calculate total: each order (client) pays menu price
-        // First beverage included, pay for 2nd onwards
+        // Calcular total delegando en Order::calculateTotal por pedido
         $total = 0.00;
-        $orderCount = $orders->count();
-        
-        // Menu price per client
-        if ($table->menu) {
-            $total += $table->menu->price * $orderCount;
-        }
-        // Add extras for special dishes attached to the menu
-        if ($table->menu) {
-            foreach ($orders as $order) {
-                foreach ($order->dishes as $dish) {
-                    $menuDish = $table->menu->dishes()->where('dish_id', $dish->id)->first();
-                    if ($menuDish && $menuDish->pivot->is_special) {
-                        $extra = $menuDish->pivot->custom_price ?? $dish->price;
-                        $total += $extra * $dish->pivot->quantity;
-                    }
-                }
-            }
+
+        foreach ($orders as $order) {
+            $total += $order->calculateTotal($table->menu);
         }
 
-        // Beverages (first one free per order, charge from 2nd onwards)
+        // Beverages: la lógica específica de bebidas (primera gratis, resto de pago)
+        // ya está incluida dentro de Order::calculateTotal, pero se deja aquí
+        // en caso de futuras extensiones; por ahora no sumamos nada extra.
         foreach ($orders as $order) {
             $drinkCount = 0;
             foreach ($order->drinks as $drink) {
                 $drinkCount += $drink->pivot->quantity;
                 // Only charge from 2nd beverage onwards
                 $chargeableQuantity = max(0, $drinkCount - 1);
-                $total += $drink->price * $chargeableQuantity;
+                // El total de bebidas ya se computa en calculateTotal, no repetir aquí
             }
         }
         $total = round($total, 2);

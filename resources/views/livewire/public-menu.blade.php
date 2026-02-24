@@ -77,9 +77,12 @@
         <!-- Category Tabs -->
         <div class="mb-6 overflow-x-auto pb-2">
             <div class="flex space-x-3 border-b-2 border-gray-200">
-                <form wire:submit.prevent="selectCategory" class="flex space-x-3">
-                    <button type="submit" name="category_id" value="all"
-                            class="px-5 py-3 text-sm font-semibold border-b-3 transition-all duration-200 whitespace-nowrap {{ $selectedCategory === 'all' ? 'border-indigo-600 text-indigo-600 bg-indigo-50' : 'border-transparent text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                <div class="flex space-x-3">
+                    <button
+                        type="button"
+                        wire:click="selectCategory('all')"
+                        class="px-5 py-3 text-sm font-semibold border-b-3 transition-all duration-200 whitespace-nowrap {{ $selectedCategory === 'all' ? 'border-indigo-600 text-indigo-600 bg-indigo-50' : 'border-transparent text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}"
+                    >
                         <span class="flex items-center">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
@@ -88,12 +91,15 @@
                         </span>
                     </button>
                     @foreach($categories as $category)
-                        <button type="submit" name="category_id" value="{{ $category['id'] }}"
-                                class="px-5 py-3 text-sm font-semibold border-b-3 transition-all duration-200 whitespace-nowrap {{ $selectedCategory == $category['id'] ? 'border-indigo-600 text-indigo-600 bg-indigo-50' : 'border-transparent text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                        <button
+                            type="button"
+                            wire:click="selectCategory('{{ $category['id'] }}')"
+                            class="px-5 py-3 text-sm font-semibold border-b-3 transition-all duration-200 whitespace-nowrap {{ $selectedCategory == $category['id'] ? 'border-indigo-600 text-indigo-600 bg-indigo-50' : 'border-transparent text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}"
+                        >
                             {{ $category['name'] }}
                         </button>
                     @endforeach
-                </form>
+                </div>
             </div>
         </div>
 

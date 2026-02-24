@@ -13,6 +13,7 @@ class DishSeeder extends Seeder
      */
     public function run(): void
     {
-        Dish::factory()->count(30)->create();
+        // Creamos más platos para tener variedad suficiente en menús y platos fuera de menú
+        Dish::factory()->count(60)->create();
     }
 }

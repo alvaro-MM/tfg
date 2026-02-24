@@ -50,54 +50,64 @@ class Order extends Model
 
 
     /**
-     * Calculate the total price of a single order
-     * Adjusted to account for the number of people at the table
+     * Calcula el total de un pedido aplicando la misma lógica que el comando
+     * de consola TestPricingLogic (menú buffet + extras + bebidas).
      */
     public function calculateTotal(?\App\Models\Menu $menu = null): float
     {
         $total = 0.00;
 
-        // Obtain the associated table model instance (never use $this->table which is the table name)
         /** @var \App\Models\Table|null $table */
         $table = $this->getTableInstance();
 
-        // Determine people count (fallback to 1 if no table or method unavailable)
-        $peopleCount = $table ? $table->getPeopleCount() : 1;
-        \Log::debug('People count: ' . $peopleCount);
-
-        // Get the menu if not provided, using the table relationship when available
+        // Obtener menú desde la mesa si no se pasa explícito
         if (!$menu && $table) {
             $menu = $table->menu;
         }
 
-        // Ensure menu price is multiplied by the number of people
+        // 1) Precio base del menú (una vez por pedido/cliente)
         if ($menu) {
-            $menuPrice = $menu->price;
-            $total += $menuPrice * $peopleCount;
-            \Log::debug('Total after menu price calculation: ' . $total);
+            $total += (float) $menu->price;
         }
 
-        // Add dish extras: only special dishes attached to the menu add extra price
+        // 2) Platos:
+        //    - Normales del menú: incluidos (0€)
+        //    - Especiales del menú: extra (custom o precio plato)
+        //    - Fuera de menú: extra a precio normal
         foreach ($this->dishes as $dish) {
             $quantity = $dish->pivot->quantity ?? 1;
 
             if ($menu) {
                 $menuDish = $menu->dishes()->where('dish_id', $dish->id)->first();
-                if ($menuDish && $menuDish->pivot->is_special) {
-                    $extraPrice = $menuDish->pivot->custom_price ?? $dish->price;
-                    $total += $extraPrice * $quantity;
+
+                if ($menuDish) {
+                    if ($menuDish->pivot->is_special) {
+                        $extra = $menuDish->pivot->custom_price ?? $dish->price;
+                        $total += $extra * $quantity;
+                    }
+                    // Platos normales del menú no suman nada extra
+                } else {
+                    // Plato fuera de menú
+                    $total += $dish->price * $quantity;
                 }
             } else {
+                // Sin menú: siempre se cobra el plato
                 $total += $dish->price * $quantity;
             }
         }
 
-        // Refine drink calculation logic
-        $totalDrinks = $this->drinks->sum(fn($drink) => $drink->pivot->quantity ?? 0);
-        $chargeableDrinks = max(0, $totalDrinks - $peopleCount);
-        $total += $chargeableDrinks * ($this->drinks->first()->price ?? 0);
+        // 3) Bebidas: primera gratis, resto de pago (por pedido)
+        $drinkCount = 0;
+        foreach ($this->drinks as $drink) {
+            $prev = $drinkCount;
+            $qty = $drink->pivot->quantity ?? 0;
+            $drinkCount += $qty;
 
-        \Log::debug('Final total: ' . $total);
+            // Cuántas de este drink son de pago (después de la primera global)
+            $chargeable = max(0, min($qty, $drinkCount - 1 - $prev));
+            $total += $chargeable * $drink->price;
+        }
+
         return round($total, 2);
     }
 

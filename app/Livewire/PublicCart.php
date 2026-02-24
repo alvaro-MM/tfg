@@ -90,11 +90,31 @@ class PublicCart extends Component
             $item['quantity'] += $quantity;
             $this->items[$itemIndex] = $item;
         } else {
-            // Determine item price: for dishes in a menu, use menu extra price (specials) or 0
+            // Determinar precio del ítem en función del menú:
+            //  - Mesa SIN menú: todos los productos usan su precio normal.
+            //  - Mesa CON menú:
+            //      - Plato incluido en el menú y no especial -> incluido (0€).
+            //      - Plato especial del menú -> precio extra (custom o propio).
+            //      - Plato que NO está en el menú -> se cobra a su precio normal.
+            //      - Bebidas -> usan su precio normal (la lógica de "bebidas incluidas" se aplica al facturar).
+            $price = (float) $product->price;
+
             if ($type === 'dish' && $table->menu) {
-                $price = $table->menu->getDishPrice($product->id) ?? 0.00;
-            } else {
-                $price = (float) $product->price;
+                $menu = $table->menu;
+                $menuDish = $menu->dishes()->where('dish_id', $product->id)->first();
+
+                if ($menuDish) {
+                    if ($menuDish->pivot->is_special) {
+                        // Plato especial: usar lógica de menú (custom_price o precio del plato)
+                        $price = $menu->getDishPrice($product->id) ?? (float) $product->price;
+                    } else {
+                        // Plato normal del menú: incluido, sin coste extra
+                        $price = 0.00;
+                    }
+                } else {
+                    // Plato fuera del menú: se cobra a su precio normal
+                    $price = (float) $product->price;
+                }
             }
 
             $this->items[] = [
@@ -224,23 +244,9 @@ class PublicCart extends Component
         $this->count = 0;
         $this->total = 0.00;
 
-        // Get table to access menu
-        $table = Table::byQrToken($this->token)->with(['menu'])->first();
-        $menu = $table?->menu;
-
         foreach ($this->items as $item) {
             $this->count += $item['quantity'];
-            
-            $itemPrice = $item['price'];
-            
-            // If we have a menu and this is a dish (not a drink), recalculate price
-            // Menu->getDishPrice now returns null for non-special dishes (covered by menu),
-            // so coalesce to 0 to avoid adding menu-covered items again.
-            if ($menu && $item['type'] === 'dish') {
-                $itemPrice = $menu->getDishPrice($item['id']) ?? 0.00;
-            }
-            
-            $this->total += ($itemPrice * $item['quantity']);
+            $this->total += ($item['price'] * $item['quantity']);
         }
 
         $this->total = round($this->total, 2);

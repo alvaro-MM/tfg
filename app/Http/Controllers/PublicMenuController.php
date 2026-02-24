@@ -49,20 +49,30 @@ class PublicMenuController extends Controller
                 ->orderBy('name')
                 ->get();
         } else {
-            // Obtener platos del menú asignado
-            $dishes = $menu->dishes()
+            // Opción B: con menú asignado, se pueden pedir:
+            //  - Platos que están en el menú (con posible precio especial/incluido)
+            //  - Platos que no están en el menú, con su precio original
+
+            // Platos del menú para conocer qué platos están incluidos
+            $menuDishes = $menu->dishes()
                 ->with(['category', 'allergens'])
+                ->where('available', true)
+                ->get()
+                ->keyBy('id');
+
+            // Todos los platos disponibles
+            $dishes = \App\Models\Dish::with(['category', 'allergens'])
                 ->where('available', true)
                 ->orderBy('name')
                 ->get();
 
-            // Obtener todas las bebidas disponibles
+            // Todas las bebidas disponibles
             $drinks = \App\Models\Drink::with(['category', 'allergens'])
                 ->where('available', true)
                 ->orderBy('name')
                 ->get();
 
-            // Obtener categorías de los platos del menú y de las bebidas
+            // Categorías de todos los platos y bebidas disponibles
             $categoryIds = $dishes->pluck('category_id')
                 ->merge($drinks->pluck('category_id'))
                 ->filter()
