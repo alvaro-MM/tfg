@@ -45,11 +45,11 @@ new #[Layout('layouts.blank')] class extends Component {
                 class="h-20 w-auto">
 
             <h1 class="text-2xl font-semibold text-zinc-900">
-                {{ __('Create account') }}
+                {{ __('auth.Create account') }}
             </h1>
 
             <p class="text-sm text-zinc-500">
-                {{ __('Sign up to start your experience') }}
+                {{ __('auth.Sign up to start your experience') }}
             </p>
         </div>
 
@@ -61,16 +61,16 @@ new #[Layout('layouts.blank')] class extends Component {
 
             <flux:input
                 wire:model="name"
-                :label="__('Full name')"
+                :label="__('auth.Full name')"
                 type="text"
                 required
                 autofocus
                 autocomplete="name"
-                :placeholder="__('Your name')" />
+                :placeholder="__('auth.Your name')" />
 
             <flux:input
                 wire:model="email"
-                :label="__('Email address')"
+                :label="__('auth.Email address')"
                 type="email"
                 required
                 autocomplete="email"
@@ -79,21 +79,21 @@ new #[Layout('layouts.blank')] class extends Component {
             <!-- Password -->
             <flux:input
                 wire:model="password"
-                :label="__('Password')"
+                :label="__('auth.Password')"
                 type="password"
                 required
                 autocomplete="new-password"
-                :placeholder="__('Password')"
+                :placeholder="__('auth.Password')"
                 viewable />
 
             <!-- Confirm Password -->
             <flux:input
                 wire:model="password_confirmation"
-                :label="__('Confirm password')"
+                :label="__('auth.Confirm password')"
                 type="password"
                 required
                 autocomplete="new-password"
-                :placeholder="__('Confirm password')"
+                :placeholder="__('auth.Confirm password')"
                 viewable />
 
             <flux:button
@@ -101,17 +101,17 @@ new #[Layout('layouts.blank')] class extends Component {
                 variant="primary"
                 class="w-full mt-2"
                 data-test="register-user-button">
-                {{ __('Create account') }}
+                {{ __('auth.Create account') }}
             </flux:button>
         </form>
 
         <div class="text-center text-sm text-zinc-600">
-            {{ __('Already have an account?') }}
+            {{ __('auth.Already have an account?') }}
             <flux:link
                 :href="route('login')"
                 wire:navigate
                 class="font-medium text-red-600 hover:underline">
-                {{ __('Sign in') }}
+                {{ __('auth.Sign in') }}
             </flux:link>
         </div>
 

@@ -103,11 +103,11 @@ new #[Layout('layouts.blank')] class extends Component {
                 class="h-20 w-auto">
 
             <h1 class="text-2xl font-semibold text-zinc-900">
-                {{ __('Log in to your account') }}
+                {{ __('auth.Log in to your account') }}
             </h1>
 
             <p class="text-sm text-zinc-500">
-                {{ __('Enter your email and password to continue') }}
+                {{ __('auth.Enter your email and password to continue') }}
             </p>
         </div>
 
@@ -121,7 +121,7 @@ new #[Layout('layouts.blank')] class extends Component {
 
             <flux:input
                 wire:model="email"
-                :label="__('Email address')"
+                :label="__('auth.Email address')"
                 type="email"
                 required
                 autofocus
@@ -132,11 +132,11 @@ new #[Layout('layouts.blank')] class extends Component {
                 <!-- Password con solo el ojo de Flux (viewable) -->
                 <flux:input
                     wire:model="password"
-                    :label="__('Password')"
+                    :label="__('auth.Password')"
                     type="password"
                     required
                     autocomplete="current-password"
-                    :placeholder="__('Password')"
+                    :placeholder="__('auth.Password')"
                     viewable />
 
                 @if (Route::has('password.request'))
@@ -144,33 +144,33 @@ new #[Layout('layouts.blank')] class extends Component {
                     class="absolute end-0 top-0 text-sm font-medium text-red-600 hover:underline"
                     :href="route('password.request')"
                     wire:navigate>
-                    {{ __('Forgot your password?') }}
+                    {{ __('auth.Forgot your password?') }}
                 </flux:link>
                 @endif
             </div>
 
             <flux:checkbox
                 wire:model="remember"
-                :label="__('Remember me')" />
+                :label="__('auth.Remember me')" />
 
             <flux:button
                 type="submit"
                 variant="primary"
                 class="w-full mt-2"
                 data-test="login-button">
-                {{ __('Log in') }}
+                {{ __('auth.Log in') }}
             </flux:button>
         </form>
 
         <!-- Register -->
         @if (Route::has('register'))
         <div class="text-center text-sm text-zinc-600">
-            {{ __('Don\'t have an account?') }}
+            {{ __('auth.Don\'t have an account?') }}
             <flux:link
                 :href="route('register')"
                 wire:navigate
                 class="font-medium text-red-600 hover:underline">
-                {{ __('Sign up') }}
+                {{ __('auth.Sign up') }}
             </flux:link>
         </div>
         @endif
