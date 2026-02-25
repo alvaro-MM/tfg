@@ -30,8 +30,8 @@ class UpdateDishRequest extends FormRequest
             'available' => ['boolean'],
             'special' => ['boolean'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
-            'allergen_ids' => ['nullable', 'array'],
-            'allergen_ids.*' => ['integer', 'exists:allergens,id'],
+            'allergens' => ['nullable', 'array'],
+            'allergens.*' => ['integer', 'exists:allergens,id'],
         ];
     }
 }
