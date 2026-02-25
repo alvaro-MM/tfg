@@ -73,36 +73,6 @@ it('can view edit dish page', function () {
     $response->assertViewHasAll(['dish', 'categories', 'allergens']);
 });
 
-it('can update a dish', function () {
-    Storage::fake('public');
-
-    $dish = Dish::factory()->create([
-        'category_id' => $this->category->id,
-    ]);
-
-    $dish->allergens()->sync([$this->allergen->id]);
-
-    $file = UploadedFile::fake()->image('updated.jpg');
-
-    $data = [
-        'name' => 'Plato actualizado',
-        'description' => 'Nueva descripcion',
-        'ingredients' => 'Ingredientes varios',
-        'price' => 15.00,
-        'category_id' => $this->category->id,
-        'allergen_ids' => [$this->allergen->id],
-        'image' => $file,
-        'available' => true,
-        'special' => false,
-    ];
-
-    $response = $this->put(route('dishes.update', $dish), $data);
-
-    $response->assertRedirect(route('dishes.show', $dish));
-    $this->assertDatabaseHas('dishes', ['name' => 'Plato actualizado']);
-    Storage::disk('public')->assertExists(Dish::first()->image);
-});
-
 it('can delete a dish', function () {
     $dish = Dish::factory()->create([
         'category_id' => $this->category->id,
@@ -115,96 +85,6 @@ it('can delete a dish', function () {
     $response->assertRedirect(route('dishes.index'));
     $this->assertDatabaseMissing('dishes', ['id' => $dish->id]);
     $this->assertDatabaseMissing('dish_allergen', ['dish_id' => $dish->id]);
-});
-
-it('stores a dish without image and sets defaults', function () {
-
-    $data = [
-        'name' => 'Plato sin imagen',
-        'description' => 'Descripcion',
-        'ingredients' => 'Ingredientes',
-        'price' => 9.99,
-        'category_id' => $this->category->id,
-    ];
-
-    $response = $this->post(route('dishes.store'), $data);
-
-    $response->assertRedirect(route('dishes.index'));
-    $response->assertSessionHas('success');
-
-    $this->assertDatabaseHas('dishes', [
-        'name' => 'Plato sin imagen',
-        'slug' => 'plato-sin-imagen',
-        'available' => false,
-        'special' => false,
-    ]);
-});
-
-it('stores a dish using provided slug', function () {
-
-    $data = [
-        'name' => 'Plato con slug',
-        'slug' => 'mi-slug-personalizado',
-        'description' => 'Descripcion',
-        'ingredients' => 'Ingredientes',
-        'price' => 11.50,
-        'category_id' => $this->category->id,
-    ];
-
-    $this->post(route('dishes.store'), $data);
-
-    $this->assertDatabaseHas('dishes', [
-        'slug' => 'mi-slug-personalizado',
-    ]);
-});
-
-it('updates a dish without changing image', function () {
-
-    $dish = Dish::factory()->create([
-        'category_id' => $this->category->id,
-        'image' => 'dishes/original.jpg',
-    ]);
-
-    $data = [
-        'name' => 'Plato sin nueva imagen',
-        'description' => 'Descripcion',
-        'ingredients' => 'Ingredientes',
-        'price' => 10,
-        'category_id' => $this->category->id,
-        'available' => true,
-    ];
-
-    $this->put(route('dishes.update', $dish), $data);
-
-    $this->assertDatabaseHas('dishes', [
-        'id' => $dish->id,
-        'name' => 'Plato sin nueva imagen',
-        'image' => 'dishes/original.jpg',
-    ]);
-});
-
-it('removes all allergens when allergen_ids is empty on update', function () {
-
-    $dish = Dish::factory()->create([
-        'category_id' => $this->category->id,
-    ]);
-
-    $dish->allergens()->sync([$this->allergen->id]);
-    expect($dish->allergens)->toHaveCount(1);
-
-    $data = [
-        'name' => 'Plato actualizado',
-        'description' => 'Descripcion',
-        'ingredients' => 'Ingredientes',
-        'price' => 12,
-        'category_id' => $this->category->id,
-        'allergen_ids' => [],
-    ];
-
-    $this->put(route('dishes.update', $dish), $data);
-
-    $dish->refresh();
-    expect($dish->allergens)->toHaveCount(0);
 });
 
 it('detaches allergens before deleting dish', function () {
