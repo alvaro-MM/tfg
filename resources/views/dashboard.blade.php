@@ -46,7 +46,7 @@
                 <h2 class="text-xl font-semibold mb-4">⚡ Accesos rápidos</h2>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <a href="{{ route('tables.index') }}"
+                    <a href="{{ route('bookings.create') }}"
                        class="bg-blue-50 hover:bg-blue-100 dark:bg-gray-800 rounded-2xl p-6 shadow transition">
                         <p class="font-semibold text-blue-600">🍽️ Reservar mesa</p>
                         <p class="text-sm text-gray-500 mt-1">

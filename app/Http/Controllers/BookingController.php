@@ -58,7 +58,7 @@ class BookingController extends Controller
             ->update(['status' => 'reserved']);
 
         return redirect()
-            ->route('bookings.index')
+            ->route('home')
             ->with('success', 'Reserva creada correctamente');
     }
 
@@ -122,10 +122,10 @@ class BookingController extends Controller
             ->route('bookings.index')
             ->with('success', 'Reserva actualizada correctamente');
     }
- 
+
     public function destroy(Booking $booking)
     {
-      
+
         $booking->delete();
 
         $hasActive = $booking->table
