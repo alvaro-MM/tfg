@@ -28,6 +28,11 @@
                 📊 Dashboard
             </a>
 
+            <a href="{{ route('categories.index') }}"
+               class="block px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-700">
+                🗂️ Categorías
+            </a>
+
             <a href="{{ route('dishes.index') }}"
                class="block px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-700">
                 🍽️ Platos
@@ -36,6 +41,31 @@
             <a href="{{ route('drinks.index') }}"
                class="block px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-700">
                 🥤 Bebidas
+            </a>
+
+            <a href="{{ route('allergens.index') }}"
+               class="block px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-700">
+                ⚠️ Alérgenos
+            </a>
+
+            <a href="{{ route('tables.index') }}"
+               class="block px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-700">
+                🪑 Mesas
+            </a>
+
+            <a href="{{ route('menus.index') }}"
+               class="block px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-700">
+                📖 Menús
+            </a>
+
+            <a href="{{ route('offers.index') }}"
+               class="block px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-700">
+                🎁 Ofertas
+            </a>
+
+            <a href="{{ route('invoices.index') }}"
+               class="block px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-700">
+                🧾 Facturas
             </a>
 
             <a href="{{ route('review.index') }}"
