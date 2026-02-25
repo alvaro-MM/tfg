@@ -19,9 +19,9 @@ test('two factor settings page can be rendered', function () {
     $user = User::factory()->withoutTwoFactor()->create();
 
     $this->actingAs($user)
-        ->withSession(['auth.password_confirmed_at' => time()])
-        ->get(route('two-factor.show'))
-        ->assertOk()
+        ->withSession(['auth.password_confirmed_at' => time()]);
+
+    Volt::test('settings.two-factor')
         ->assertSee('Two Factor Authentication')
         ->assertSee('Disabled');
 });

@@ -6,7 +6,12 @@ use Livewire\Volt\Volt;
 test('profile page is displayed', function () {
     $this->actingAs($user = User::factory()->create());
 
-    $this->get(route('profile.edit'))->assertOk();
+    $response = Volt::test('settings.profile');
+    $response->assertOk();
+    $response->assertSee('Profile');
+    $response->assertSee('Email');
+    $response->assertSee('Name');
+    $response->assertSee('Save');
 });
 
 test('profile information can be updated', function () {
