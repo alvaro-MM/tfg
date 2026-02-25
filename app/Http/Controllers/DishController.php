@@ -37,32 +37,32 @@ class DishController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreDishRequest $request)
-    {
-        $data = $request->validated();
-
-        // Handle image upload: store in public disk under 'dishes' directory
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('dishes', 'public');
-            $data['image'] = $path;
-        }
-
-        // ensure slug exists (migration requires slug)
-        $data['slug'] = $data['slug'] ?? Str::slug($data['name']);
-
-        // ensure booleans/defaults
-        $data['available'] = $data['available'] ?? false;
-        $data['special'] = $data['special'] ?? false;
-
-        $dish = Dish::create($data);
-
-        // Sync multiple allergens if provided (pivot table)
-        if (!empty($data['allergen_ids'])) {
-            $dish->allergens()->sync($data['allergen_ids']);
-        }
-
-        return redirect()->route('dishes.index')->with('success', 'Plato creado.');
-    }
+//    public function store(StoreDishRequest $request)
+//    {
+//        $data = $request->validated();
+//
+//        // Handle image upload: store in public disk under 'dishes' directory
+//        if ($request->hasFile('image')) {
+//            $path = $request->file('image')->store('dishes', 'public');
+//            $data['image'] = $path;
+//        }
+//
+//        // ensure slug exists (migration requires slug)
+//        $data['slug'] = $data['slug'] ?? Str::slug($data['name']);
+//
+//        // ensure booleans/defaults
+//        $data['available'] = $data['available'] ?? false;
+//        $data['special'] = $data['special'] ?? false;
+//
+//        $dish = Dish::create($data);
+//
+//        // Sync multiple allergens if provided (pivot table)
+//        if (!empty($data['allergen_ids'])) {
+//            $dish->allergens()->sync($data['allergen_ids']);
+//        }
+//
+//        return redirect()->route('dishes.index')->with('success', 'Plato creado.');
+//    }
 
     /**
      * Display the specified resource.
@@ -86,28 +86,28 @@ class DishController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateDishRequest $request, Dish $dish)
-    {
-        $data = $request->validated();
-        $data['slug'] = $data['slug'] ?? Str::slug($data['name']);
-
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('dishes', 'public');
-            $data['image'] = $path;
-        }
-
-        $data['available'] = $data['available'] ?? false;
-        $data['special'] = $data['special'] ?? false;
-
-        $dish->update($data);
-
-        // Sync pivot table for multiple allergens when present
-        if (array_key_exists('allergen_ids', $data)) {
-            $dish->allergens()->sync($data['allergen_ids'] ?? []);
-        }
-
-        return redirect()->route('dishes.show', $dish)->with('success', 'Plato actualizado.');
-    }
+//    public function update(UpdateDishRequest $request, Dish $dish)
+//    {
+//        $data = $request->validated();
+//        $data['slug'] = $data['slug'] ?? Str::slug($data['name']);
+//
+//        if ($request->hasFile('image')) {
+//            $path = $request->file('image')->store('dishes', 'public');
+//            $data['image'] = $path;
+//        }
+//
+//        $data['available'] = $data['available'] ?? false;
+//        $data['special'] = $data['special'] ?? false;
+//
+//        $dish->update($data);
+//
+//        // Sync pivot table for multiple allergens when present
+//        if (array_key_exists('allergen_ids', $data)) {
+//            $dish->allergens()->sync($data['allergen_ids'] ?? []);
+//        }
+//
+//        return redirect()->route('dishes.show', $dish)->with('success', 'Plato actualizado.');
+//    }
 
     /**
      * Remove the specified resource from storage.
