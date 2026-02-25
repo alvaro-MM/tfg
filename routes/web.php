@@ -82,7 +82,8 @@ Route::middleware(['auth'])->group(function () {
 
     //Rutas a las que puede acceder cualquier usuario
     Route::resource('review', ReviewController::class)->except('store', 'update');
-    Route::resource('bookings', BookingController::class);
+    Route::resource('bookings', BookingController::class)->only('create', 'store');
+
 
     /*
     |--------------------------------------------------------------------------
@@ -118,6 +119,7 @@ Route::middleware(['auth', 'role:owner|admin'])->group(function () {
     Route::resource('categories', CategoryController::class);
     Route::resource('dishes', DishController::class);
     Route::resource('drinks', DrinkController::class);
+    Route::resource('bookings', BookingController::class)->except('create', 'store');
     Route::resource('allergens', AllergenController::class);
     Route::resource('tables', TableController::class);
     Route::post('tables/{table}/generate-qr', [TableController::class, 'generateQr'])->name('tables.generate-qr');
