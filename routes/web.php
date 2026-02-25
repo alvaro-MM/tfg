@@ -152,24 +152,16 @@ Route::middleware(['auth', 'role:owner'])->group(function () {
     Route::get('/owner-dashboard', OwnerDashboardController::class)
         ->name('owner-dashboard.index');
 
-    Route::post(
-        '/owner/users/{user}/make-staff',
-        [OwnerManagementController::class, 'makeStaff']
+    Route::post('/owner/users/{user}/make-staff', [OwnerManagementController::class, 'makeStaff']
     )->name('owner.make-staff');
 
-    Route::delete(
-        '/owner/users/{user}/remove-staff',
-        [OwnerManagementController::class, 'removeStaff']
+    Route::delete('/owner/users/{user}/remove-staff', [OwnerManagementController::class, 'removeStaff']
     )->name('owner.remove-staff');
 
-    Route::post(
-        '/owner/tables',
-        [OwnerManagementController::class, 'storeTable']
+    Route::post('/owner/tables', [OwnerManagementController::class, 'storeTable']
     )->name('owner.tables.store');
 
-    Route::delete(
-        '/owner/tables/{table}',
-        [OwnerManagementController::class, 'destroyTable']
+    Route::delete('/owner/tables/{table}', [OwnerManagementController::class, 'destroyTable']
     )->name('owner.tables.destroy');
 });
 
