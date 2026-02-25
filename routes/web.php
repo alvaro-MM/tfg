@@ -80,6 +80,10 @@ Route::middleware(['auth'])->group(function () {
     // Dashboard genérico (si aplica a cualquier rol autenticado)
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
+    //Rutas a las que puede acceder cualquier usuario
+    Route::resource('review', ReviewController::class)->except('store', 'update');
+    Route::resource('bookings', BookingController::class);
+
     /*
     |--------------------------------------------------------------------------
     | Rutas de configuración / perfil (accesibles a cualquier usuario autenticado)
@@ -115,13 +119,11 @@ Route::middleware(['auth', 'role:owner|admin'])->group(function () {
     Route::resource('dishes', DishController::class)->except('store', 'update');
     Route::resource('drinks', DrinkController::class)->except('store', 'update');
     Route::resource('allergens', AllergenController::class);
-    Route::resource('review', ReviewController::class)->except('store', 'update');
     Route::resource('tables', TableController::class);
     Route::post('tables/{table}/generate-qr', [TableController::class, 'generateQr'])->name('tables.generate-qr');
     Route::resource('menus', MenuController::class);
     Route::resource('offers', OfferController::class);
     Route::resource('invoices', InvoiceController::class);
-    Route::resource('bookings', BookingController::class);
 });
 
 /*
