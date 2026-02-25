@@ -2,9 +2,13 @@
 
 use App\Models\User;
 use App\Models\Category;
+use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
+    Role::firstOrCreate(['name' => 'admin']);
+
     $this->user = User::factory()->create();
+    $this->user->assignRole('admin');
     $this->actingAs($this->user);
 });
 

@@ -6,10 +6,15 @@ use App\Models\Allergen;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
+    Role::firstOrCreate(['name' => 'admin']);
+
     $this->user = User::factory()->create();
+    $this->user->assignRole('admin');
     $this->actingAs($this->user);
+
     $this->category = Category::factory()->create();
     $this->allergen = Allergen::factory()->create();
 });

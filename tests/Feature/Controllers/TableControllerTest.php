@@ -3,9 +3,13 @@
 use App\Models\Table;
 use App\Models\User;
 use App\Models\Menu;
+use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
+    Role::firstOrCreate(['name' => 'admin']);
+
     $this->user = User::factory()->create();
+    $this->user->assignRole('admin');
     $this->actingAs($this->user);
 
     $this->menu = Menu::factory()->create();

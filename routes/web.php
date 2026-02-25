@@ -116,8 +116,8 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'role:owner|admin'])->group(function () {
     Route::resource('categories', CategoryController::class);
-    Route::resource('dishes', DishController::class)->except('store', 'update');
-    Route::resource('drinks', DrinkController::class)->except('store', 'update');
+    Route::resource('dishes', DishController::class);
+    Route::resource('drinks', DrinkController::class);
     Route::resource('allergens', AllergenController::class);
     Route::resource('tables', TableController::class);
     Route::post('tables/{table}/generate-qr', [TableController::class, 'generateQr'])->name('tables.generate-qr');

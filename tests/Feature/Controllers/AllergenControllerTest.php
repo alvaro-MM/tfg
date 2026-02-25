@@ -4,9 +4,14 @@ use App\Models\User;
 use App\Models\Allergen;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
+    Role::firstOrCreate(['name' => 'admin']);
+
     $this->user = User::factory()->create();
+    $this->user->assignRole('admin');
+
     $this->actingAs($this->user);
 });
 

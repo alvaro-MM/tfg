@@ -24,6 +24,7 @@ class StoreDishRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'slug' => ['nullable', 'string', 'max:255', 'unique:dishes,slug'],
             'description' => ['required', 'string'],
             'ingredients' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'max:2048'],
@@ -31,8 +32,8 @@ class StoreDishRequest extends FormRequest
             'available' => ['boolean'],
             'special' => ['boolean'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
-            'allergens' => ['nullable', 'array'],
-            'allergens.*' => ['integer', 'exists:allergens,id'],
+            'allergen_ids' => ['nullable', 'array'],
+            'allergen_ids.*' => ['integer', 'exists:allergens,id'],
         ];
     }
 }

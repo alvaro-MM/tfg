@@ -4,9 +4,13 @@ use App\Models\Review;
 use App\Models\User;
 use App\Models\Dish;
 use App\Models\Drink;
+use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
+    Role::firstOrCreate(['name' => 'admin']);
+
     $this->user = User::factory()->create();
+    $this->user->assignRole('admin');
     $this->actingAs($this->user);
 
     $this->dish = Dish::factory()->create();
