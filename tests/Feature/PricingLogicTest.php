@@ -111,6 +111,9 @@ class PricingLogicTest extends TestCase
      */
     public function test_order_total_with_mixed_prices(): void
     {
+        $this->table->people_count = 2;
+        $this->table->save();
+
         // Create normal dish
         $normalDish = Dish::create([
             'name' => 'Arroz',
@@ -173,7 +176,7 @@ class PricingLogicTest extends TestCase
         // Calculate total: menu 15 + special 20 + drinks charge 2.5 = 37.5
         $total = $order->calculateTotal($this->menu);
 
-        $this->assertEquals(37.50, $total);
+        $this->assertEquals(52.50, $total);
     }
 
     /**
@@ -230,11 +233,13 @@ class PricingLogicTest extends TestCase
             'category_id' => $this->category->id,
         ]);
 
+
         // Attach as special but without custom_price
         $this->menu->dishes()->attach($dish->id, [
             'is_special' => true,
             'custom_price' => null,
         ]);
+
 
         $price = $this->menu->getDishPrice($dish->id);
 
@@ -262,6 +267,9 @@ class PricingLogicTest extends TestCase
             'custom_price' => null,
         ]);
 
+        $this->table->people_count = 3;
+        $this->table->save();
+
         $order = Order::create([
             'user_id' => $this->user->id,
             'table_id' => $this->table->id,
@@ -269,13 +277,12 @@ class PricingLogicTest extends TestCase
             'date' => now(),
         ]);
 
-        // 3x dish at 5.00 each = 15.00
         $order->dishes()->attach($dish->id, ['quantity' => 3]);
 
         $total = $order->calculateTotal($this->menu);
 
         // Should be properly rounded to 2 decimals
-        $this->assertEquals(15.00, $total);
+        $this->assertEquals(45.00, $total);
         $this->assertIsFloat($total);
     }
 
@@ -315,9 +322,8 @@ class PricingLogicTest extends TestCase
 
         $total = $order->calculateTotal($this->menu);
 
-        // Con la lógica actual: un pedido = un cliente
-        // Total = precio del menú (15.00) independientemente de people_count
-        $this->assertEquals(15.00, $total);
+        // Total = precio del menú (15.00) * people_count (4) = 60.00
+        $this->assertEquals(60.00, $total);
     }
 
     /**
@@ -353,10 +359,9 @@ class PricingLogicTest extends TestCase
 
         $total = $order->calculateTotal($this->menu);
 
-        // Lógica actual: un pedido = un cliente
-        // - Precio menú: 15.00
+        // - Precio menú: 15.00 * people_count (3) = 45.00
         // - Bebidas: primera gratis, 4 de pago a 1.50 = 6.00
-        // Total esperado = 21.00
-        $this->assertEquals(21.00, $total);
+        // Total esperado = 45.00 + 6.00 = 51.00
+        $this->assertEquals(51.00, $total);
     }
 }

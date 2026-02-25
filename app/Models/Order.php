@@ -65,9 +65,9 @@ class Order extends Model
             $menu = $table->menu;
         }
 
-        // 1) Precio base del menú (una vez por pedido/cliente)
+        // 1) Precio base del menú (una vez por cliente en la mesa)
         if ($menu) {
-            $total += (float) $menu->price;
+            $total += $menu->price * $table->people_count;
         }
 
         // 2) Platos:
