@@ -118,7 +118,7 @@
         <div class="bg-gray-100 dark:bg-neutral-900 py-16">
             <div class="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
 
-                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300"">
+                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300">
                     <div class="text-3xl">🍣</div>
                     <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
                         {{ \App\Models\Dish::count() }}
@@ -126,7 +126,7 @@
                     <p class="text-sm text-gray-500">Platos</p>
                 </div>
 
-                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300"">
+                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300">
                     <div class="text-3xl">🥂</div>
                     <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
                         {{ \App\Models\Drink::count() }}
@@ -134,7 +134,7 @@
                     <p class="text-sm text-gray-500">Bebidas</p>
                 </div>
 
-                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300"">
+                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300">
                     <div class="text-3xl">🪑</div>
                     <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
                         {{ \App\Models\Table::count() }}
@@ -142,7 +142,7 @@
                     <p class="text-sm text-gray-500">Mesas</p>
                 </div>
 
-                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300"">
+                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300">
                     <div class="text-3xl">⭐</div>
                     <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
                         {{ number_format(\App\Models\Review::avg('rating'), 1) ?? '—' }}
@@ -150,7 +150,7 @@
                     <p class="text-sm text-gray-500">Valoración media</p>
                 </div>
 
-                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300"">
+                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300">
                     <div class="text-3xl">⭐</div>
                     <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
                         {{ \App\Models\Review::count() }}
@@ -161,70 +161,13 @@
                 </div>
 
 
-                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300"">
+                <div class="rounded-xl bg-white/90 dark:bg-neutral-800/80 backdrop-blur-md p-6 shadow-lg hover:shadow-2xl transition duration-300">
                     <div class="text-3xl">📄</div>
                     <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
                         {{ \App\Models\Invoice::count() }}
                     </p>
                     <p class="text-sm text-gray-500">Facturas</p>
                 </div>
-
-            </div>
-        </div>
-    @endauth
-
-    {{-- PANEL RÁPIDO --}}
-    @auth
-        <div class="max-w-7xl mx-auto py-20 px-6">
-            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-10">
-                Accesos rápidos
-            </h2>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-                <a href="{{ route('dishes.index') }}"
-                   class="group rounded-2xl bg-white dark:bg-neutral-800 p-6 shadow hover:shadow-xl hover:-translate-y-1 transition">
-                    <div class="text-4xl">🍣</div>
-                    <h3 class="mt-3 text-lg font-semibold text-gray-900 dark:text-white group-hover:text-green-600">
-                        Platos
-                    </h3>
-                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                        Crear, editar y gestionar platos.
-                    </p>
-                </a>
-
-                <a href="{{ route('drinks.index') }}"
-                   class="group rounded-2xl bg-white dark:bg-neutral-800 p-6 shadow hover:shadow-xl hover:-translate-y-1 transition">
-                    <div class="text-4xl">🥂</div>
-                    <h3 class="mt-3 text-lg font-semibold text-gray-900 dark:text-white group-hover:text-green-600">
-                        Bebidas
-                    </h3>
-                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                        Crear, editar y gestionar bebidas.
-                    </p>
-                </a>
-
-                <a href="{{ route('tables.index') }}"
-                   class="group rounded-2xl bg-white dark:bg-neutral-800 p-6 shadow hover:shadow-xl hover:-translate-y-1 transition">
-                    <div class="text-4xl">🪑</div>
-                    <h3 class="mt-3 text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600">
-                        Mesas
-                    </h3>
-                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                        Control de ocupación y reservas.
-                    </p>
-                </a>
-
-                <a href="{{ route('menus.index') }}"
-                   class="group rounded-2xl bg-white dark:bg-neutral-800 p-6 shadow hover:shadow-xl hover:-translate-y-1 transition">
-                    <div class="text-4xl">📋</div>
-                    <h3 class="mt-3 text-lg font-semibold text-gray-900 dark:text-white group-hover:text-purple-600">
-                        Menús
-                    </h3>
-                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                        Gestión de menús y combinaciones.
-                    </p>
-                </a>
 
             </div>
         </div>
