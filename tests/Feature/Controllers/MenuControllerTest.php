@@ -42,7 +42,7 @@ it('can view create menu page', function () {
 it('can store a new menu', function () {
     $data = [
         'name' => 'Menú Test',
-        'type' => 'daily',
+        'type' => 'buffet',
         'price' => 20.50,
         'dish_ids' => [$this->dish->id],
     ];
@@ -77,7 +77,7 @@ it('can update a menu', function () {
 
     $data = [
         'name' => 'Menú Actualizado',
-        'type' => 'special',
+        'type' => 'buffet',
         'price' => 30,
         'dish_ids' => [$this->dish->id],
     ];

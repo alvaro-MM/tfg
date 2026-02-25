@@ -60,10 +60,13 @@ it('loads menu data arrays', function () {
 });
 
 it('can call selectCategory without errors', function () {
+    $category = Category::factory()->create();
+
     Livewire::test(PublicMenu::class, [
         'token' => $this->table->qr_token,
     ])
-        ->call('selectCategory')
+        ->call('selectCategory', $category->id)
+        ->assertSet('selectedCategory', $category->id)
         ->assertHasNoErrors();
 });
 
