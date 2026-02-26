@@ -80,21 +80,24 @@
                                class="text-blue-600 hover:underline">
                                 Ver
                             </a>
+                            @can('update', $review)
+                                <a href="{{ route('review.edit', $review) }}"
+                                   class="text-yellow-600 hover:underline">
+                                    Editar
+                                </a>
+                            @endcan
 
-                            <a href="{{ route('review.edit', $review) }}"
-                               class="text-yellow-600 hover:underline">
-                                Editar
-                            </a>
-
-                            <form action="{{ route('review.destroy', $review) }}"
-                                  method="POST"
-                                  onsubmit="return confirm('¿Eliminar esta review?')">
-                                @csrf
-                                @method('DELETE')
-                                <button class="text-red-600 hover:underline">
-                                    Eliminar
-                                </button>
-                            </form>
+                            @can('delete', $review)
+                                <form action="{{ route('review.destroy', $review) }}"
+                                      method="POST"
+                                      onsubmit="return confirm('¿Eliminar esta review?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="text-red-600 hover:underline">
+                                        Eliminar
+                                    </button>
+                                </form>
+                            @endcan
                         </div>
                     </div>
 
